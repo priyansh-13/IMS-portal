@@ -23,18 +23,20 @@ const initialFields: FieldState[] = [
   { id: "location", name: "Location of University", section: "General Information", value: "" },
   { id: "address-1", name: "Address Line 1", section: "General Information", value: "" },
   { id: "address-2", name: "Address Line 2", section: "General Information", value: "" },
-  { id: "urban-local-body", name: "Urban Local Body", section: "Location & Area", value: "" },
-  { id: "longitude", name: "Longitude", section: "Location & Area", value: "" },
-  { id: "latitude", name: "Latitude", section: "Location & Area", value: "" },
-  { id: "total-area", name: "Total Area (in acre)", section: "Location & Area", value: "" },
-  { id: "constructed-area", name: "Total Constructed Area", section: "Location & Area", value: "" },
-  { id: "website", name: "Website", section: "Location & Area", value: "" },
-  { id: "status-prior", name: "Status Prior to Establishment", section: "Status & Classification", value: "" },
+  { id: "urban-local-body", name: "Urban Local Body", section: "General Information", value: "" },
+  { id: "longitude", name: "Longitude (in degree)", section: "General Information", value: "" },
+  { id: "latitude", name: "Latitude (in degree)", section: "General Information", value: "" },
+  { id: "total-area", name: "Total Area (in acre)", section: "General Information", value: "" },
+  { id: "constructed-area", name: "Total Constructed Area (sq. m)", section: "General Information", value: "" },
+  { id: "website", name: "Website", section: "General Information", value: "" },
+
+  { id: "status-prior", name: "Status Prior to Establishment", section: "Status & Classification", value: "Autonomous College" },
   { id: "year-declared", name: "Year Declared University/INI", section: "Status & Classification", value: "" },
-  { id: "type-institution", name: "Type of Institution", section: "Status & Classification", value: "" },
+  { id: "type-institution", name: "Type of Institution", section: "Status & Classification", value: "State Open University" },
   { id: "tier-institute", name: "Tier of Institute", section: "Status & Classification", value: "" },
   { id: "category", name: "Category (Men/Women/Coed)", section: "Status & Classification", value: "" },
   { id: "institution-specifically", name: "Institution Specifically for", section: "Status & Classification", value: "" },
+
   { id: "affiliating-university", name: "Is Affiliating University?", section: "Affiliation & Recognition", value: "" },
   { id: "affiliating-type", name: "Affiliating Univ. Type", section: "Affiliation & Recognition", value: "" },
   { id: "statutory-body", name: "Statutory Body Recognition Name", section: "Affiliation & Recognition", value: "" },
@@ -43,9 +45,42 @@ const initialFields: FieldState[] = [
   { id: "graded-autonomy", name: "Whether Graded Autonomy", section: "Affiliation & Recognition", value: "" },
   { id: "deemed-status", name: "Deemed / Autonomous Status", section: "Affiliation & Recognition", value: "" },
   { id: "institute-eminence", name: "Institute of Eminence", section: "Affiliation & Recognition", value: "" },
+
+  { id: "minority-institution", name: "Minority Institution", section: "Minority Details", value: "" },
+  { id: "minority-type", name: "Minority Type", section: "Minority Details", value: "" },
+  { id: "certificate-issued-date", name: "Certificate Issued Date", section: "Minority Details", value: "" },
+  { id: "certificate-valid-till", name: "Certificate Valid Till", section: "Minority Details", value: "" },
+
+  { id: "constituent-campus", name: "Constituent / Off-Campus", section: "Campus & Approval Details", value: "" },
+  { id: "constituent-count", name: "Number of Constituent / Off-Campus", section: "Campus & Approval Details", value: "" },
+  { id: "regional-centre-exists", name: "Regional Centre Exists", section: "Campus & Approval Details", value: "" },
+  { id: "regional-centre-count", name: "Number of Regional Centre", section: "Campus & Approval Details", value: "" },
+  { id: "odl-exists", name: "ODL Centres Exists", section: "Campus & Approval Details", value: "" },
+  { id: "odl-count", name: "Number of ODL Centre", section: "Campus & Approval Details", value: "" },
+  { id: "online-exists", name: "Online Centres Exists", section: "Campus & Approval Details", value: "" },
+  { id: "online-count", name: "Number of Online Centre", section: "Campus & Approval Details", value: "" },
+  { id: "new-approval-last-year", name: "New Approval Last Year", section: "Campus & Approval Details", value: "" },
+  { id: "approval-letter", name: "Approval / Recognition Letters", section: "Campus & Approval Details", value: "" },
+
+  { id: "disc-general", name: "General (Multi-Disciplinary)", section: "Academic Profile", value: "" },
+  { id: "disc-engineering", name: "Engineering / Technology / Architecture / Design", section: "Academic Profile", value: "" },
+  { id: "disc-arts", name: "Arts / Humanities / Social Sciences", section: "Academic Profile", value: "" },
+  { id: "disc-languages", name: "Indian and Foreign Languages", section: "Academic Profile", value: "" },
+  { id: "disc-it", name: "IT & Computer Application", section: "Academic Profile", value: "" },
+  { id: "disc-sciences", name: "Sciences", section: "Academic Profile", value: "" },
+  { id: "disc-vocational", name: "Vocational Education", section: "Academic Profile", value: "" },
+  { id: "disc-nursing", name: "Nursing and Paramedical", section: "Academic Profile", value: "" },
+  { id: "disc-others", name: "Others", section: "Academic Profile", value: "" },
 ];
 
-const SECTION_ORDER = ["General Information", "Location & Area", "Status & Classification", "Affiliation & Recognition"];
+const SECTION_ORDER = [
+  "General Information",
+  "Status & Classification",
+  "Affiliation & Recognition",
+  "Minority Details",
+  "Campus & Approval Details",
+  "Academic Profile",
+];
 
 export default function InstitutionDetailsPage() {
   const navigate = useNavigate();
@@ -124,7 +159,7 @@ export default function InstitutionDetailsPage() {
           ) : (
             <input
               id={id}
-              type="text"
+              type={type === "date" ? "date" : "text"}
               value={value}
               onChange={(e) => updateField(id, e.target.value)}
               readOnly={readOnly}
@@ -147,53 +182,96 @@ export default function InstitutionDetailsPage() {
     );
   };
 
+  const toggleCheckbox = (id: string) => {
+    const filled = isFieldFilled(id);
+    updateField(id, filled ? "" : "true");
+  };
+
+  const renderCheckboxOption = (id: string, label: string) => {
+    const checked = isFieldFilled(id);
+    return (
+      <button
+        type="button"
+        key={id}
+        onClick={() => toggleCheckbox(id)}
+        className={cn(
+          "flex items-center gap-3 rounded-2xl border px-4 py-3 text-sm font-medium text-foreground transition-all duration-200",
+          checked ? "border-success/40 bg-success/5 shadow-sm" : "border-border bg-white hover:border-accent/40 hover:bg-muted/50"
+        )}
+      >
+        <span
+          className={cn(
+            "flex h-5 w-5 items-center justify-center rounded border text-xs transition-colors duration-200",
+            checked ? "border-success bg-success text-success-foreground" : "border-border bg-card text-muted-foreground"
+          )}
+        >
+          {checked ? <CheckCircle2 className="h-3 w-3" /> : <span className="text-xs font-semibold">✓</span>}
+        </span>
+        <span className="text-xs text-muted-foreground">{label}</span>
+      </button>
+    );
+  };
+
   const renderStepContent = () => {
     switch (currentSectionName) {
       case "General Information":
         return (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5">
-            {renderField("aishe-code", "AISHE Code", { readOnly: true })}
-            {renderField("institute-name", "Institute Name", { readOnly: true })}
-            {renderField("country", "Country", { type: "select", selectOptions: ["India"] })}
-            {renderField("state", "State", { type: "select", selectOptions: ["Gujarat", "Maharashtra", "Rajasthan"] })}
-            {renderField("district", "District", { type: "select", selectOptions: ["Ahmedabad", "Surat", "Vadodara"] })}
-            {renderField("sub-district", "Sub-District", { type: "select" })}
-            {renderField("street", "Street")}
-            {renderField("city", "City")}
-            {renderField("pin-code", "Pin Code")}
-            {renderField("year-establishment", "Year of Establishment", { readOnly: true })}
-            <div className="lg:col-span-2">
-              {renderField("location", "Location of University", { type: "select" })}
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+              {renderField("aishe-code", "AISHE Code", { readOnly: true })}
+              {renderField("institute-name", "Institute Name", { readOnly: true })}
+              {renderField("country", "Country", { type: "select", selectOptions: ["India"] })}
             </div>
-            {renderField("address-1", "Address Line 1")}
-            {renderField("address-2", "Address Line 2")}
-          </div>
-        );
-      case "Location & Area":
-        return (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5">
-            {renderField("urban-local-body", "Urban Local Body", { placeholder: "Municipality / Corporation" })}
-            {renderField("longitude", "Longitude (in degree)", { placeholder: "e.g. 72.5714" })}
-            {renderField("latitude", "Latitude (in degree)", { placeholder: "e.g. 23.0225" })}
-            {renderField("total-area", "Total Area (in acre)", { placeholder: "Enter Total Area" })}
-            {renderField("constructed-area", "Total Constructed Area (sq. m)", { placeholder: "Enter Constructed Area" })}
-            {renderField("website", "Website", { placeholder: "https://example.com" })}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {renderField("state", "State", { type: "select", selectOptions: ["Gujarat", "Maharashtra", "Rajasthan"] })}
+              {renderField("district", "District", { type: "select", selectOptions: ["Ahmedabad", "Surat", "Vadodara"] })}
+              {renderField("sub-district", "Sub-District", { type: "select" })}
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {renderField("street", "Street")}
+              {renderField("city", "City")}
+              {renderField("pin-code", "Pin Code")}
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {renderField("year-establishment", "Year of Establishment", { readOnly: true })}
+              {renderField("location", "Location of University / University Level Institution", { type: "select", selectOptions: ["Main Campus", "University Level Institution"] })}
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {renderField("address-1", "Address Line 1")}
+              {renderField("address-2", "Address Line 2")}
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              {renderField("urban-local-body", "Urban Local Body", { placeholder: "Municipality / Corporation" })}
+              {renderField("longitude", "Longitude (in degree)", { placeholder: "e.g. 72.5714" })}
+              {renderField("latitude", "Latitude (in degree)", { placeholder: "e.g. 23.0225" })}
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              {renderField("total-area", "Total Area (in acre)", { placeholder: "Enter Total Area" })}
+              {renderField("constructed-area", "Total Constructed Area (sq. m)", { placeholder: "Enter Constructed Area" })}
+              {renderField("website", "Website", { placeholder: "https://example.com" })}
+            </div>
           </div>
         );
       case "Status & Classification":
         return (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {renderField("status-prior", "Status Prior to Establishment", { type: "select", selectOptions: ["Autonomous College", "Affiliated College", "Constituent College"] })}
-            {renderField("year-declared", "Year Declared University/INI")}
+            {renderField("year-declared", "Year Declared University/INI (Institute of National Importance)")}
             {renderField("type-institution", "Type of Institution", { type: "select", selectOptions: ["State Open University", "Central University", "Private University"] })}
             {renderField("tier-institute", "Tier of Institute", { type: "select" })}
             {renderField("category", "Category (Men/Women/Coed)", { type: "select", selectOptions: ["Coed", "Men", "Women"] })}
-            {renderField("institution-specifically", "Institution Specifically for", { type: "select", selectOptions: ["General", "Minority", "Women", "PwD"] })}
+            {renderField("institution-specifically", "Institution Specifically for (Minority / Women / PwD)", { type: "select", selectOptions: ["General", "Minority", "Women", "PwD"] })}
           </div>
         );
       case "Affiliation & Recognition":
         return (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {renderField("affiliating-university", "Is Affiliating University?", { type: "select", selectOptions: ["Yes", "No"] })}
             {renderField("affiliating-type", "Affiliating Univ. Type")}
             {renderField("statutory-body", "Statutory Body Recognition Name")}
@@ -202,6 +280,56 @@ export default function InstitutionDetailsPage() {
             {renderField("graded-autonomy", "Whether Graded Autonomy", { type: "radio" })}
             {renderField("deemed-status", "Deemed / Autonomous Status", { type: "select" })}
             {renderField("institute-eminence", "Institute of Eminence", { type: "radio" })}
+          </div>
+        );
+      case "Minority Details":
+        return (
+          <div className="space-y-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {renderField("minority-institution", "Minority Institution", { type: "radio", radioOptions: ["Yes", "No"] })}
+              {renderField("minority-type", "Minority Type", { type: "select", selectOptions: ["Muslim", "Christian", "Sikh", "Buddhist", "Parsi", "Jain", "Others"] })}
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {renderField("certificate-issued-date", "Certificate Issued Date", { type: "date" })}
+              {renderField("certificate-valid-till", "Certificate Valid Till", { type: "date" })}
+            </div>
+          </div>
+        );
+      case "Campus & Approval Details":
+        return (
+          <div className="space-y-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {renderField("constituent-campus", "Constituent / Off-Campus", { type: "radio", radioOptions: ["Yes", "No"] })}
+              {renderField("constituent-count", "Number of Constituent / Off-Campus")}
+              {renderField("regional-centre-exists", "Regional Centre Exists", { type: "radio", radioOptions: ["Yes", "No"] })}
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {renderField("regional-centre-count", "Number of Regional Centre")}
+              {renderField("odl-exists", "ODL Centres Exists", { type: "radio", radioOptions: ["Yes", "No"] })}
+              {renderField("odl-count", "Number of ODL Centre")}
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {renderField("online-exists", "Online Centres Exists", { type: "radio", radioOptions: ["Yes", "No"] })}
+              {renderField("online-count", "Number of Online Centre")}
+              {renderField("new-approval-last-year", "Newly Approved Last Year (LoA) & Failed to Admit Students?", { type: "radio", radioOptions: ["Yes", "No"] })}
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {renderField("approval-letter", "Approval / Recognition Letters")}
+            </div>
+          </div>
+        );
+      case "Academic Profile":
+        return (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {renderCheckboxOption("disc-general", "General (Multi-Disciplinary)")}
+            {renderCheckboxOption("disc-engineering", "Engineering / Technology / Architecture / Design")}
+            {renderCheckboxOption("disc-arts", "Arts / Humanities / Social Sciences")}
+            {renderCheckboxOption("disc-languages", "Indian and Foreign Languages")}
+            {renderCheckboxOption("disc-it", "IT & Computer Application")}
+            {renderCheckboxOption("disc-sciences", "Sciences")}
+            {renderCheckboxOption("disc-vocational", "Vocational Education")}
+            {renderCheckboxOption("disc-nursing", "Nursing and Paramedical")}
+            {renderCheckboxOption("disc-others", "Others")}
           </div>
         );
       default:

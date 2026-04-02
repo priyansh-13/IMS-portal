@@ -1,4 +1,3 @@
-import { Fragment } from "react";
 import { cn } from "@/lib/utils";
 
 export interface StepInfo {
@@ -15,24 +14,6 @@ interface FormStepperProps {
 
 type StepStatus = "completed" | "pending" | "not-started";
 
-const STEP_STYLES: Record<StepStatus, { circle: string; text: string; connector: string }> = {
-  completed: {
-    circle: "border-success bg-success text-success-foreground",
-    text: "text-success",
-    connector: "bg-success",
-  },
-  pending: {
-    circle: "border-accent bg-accent text-accent-foreground",
-    text: "text-accent",
-    connector: "bg-accent/80",
-  },
-  "not-started": {
-    circle: "border-border bg-card text-muted-foreground",
-    text: "text-muted-foreground",
-    connector: "bg-border",
-  },
-};
-
 const getStepStatus = (step: StepInfo): StepStatus => {
   if (step.completionPercentage >= 100) return "completed";
   if (step.completionPercentage > 0) return "pending";
@@ -42,56 +23,71 @@ const getStepStatus = (step: StepInfo): StepStatus => {
 export function FormStepper({ steps, currentStep, onStepClick, overallPercentage }: FormStepperProps) {
   const normalizedProgress = Math.min(Math.max(overallPercentage, 0), 100);
 
+  const connectorColor = (index: number) => {
+    const leftStatus = getStepStatus(steps[index]);
+    if (leftStatus === "completed") return "bg-accent";
+    if (leftStatus === "pending") return "bg-accent/60";
+    return "bg-border";
+  };
+
+  const circleStyles = (status: StepStatus, isCurrent: boolean) => {
+    if (status === "completed") return "bg-success text-success-foreground border-success";
+    if (status === "pending") return cn("bg-accent text-accent-foreground border-accent", isCurrent && "shadow-lg shadow-accent/25");
+    return cn("bg-white text-muted-foreground border-border", isCurrent && "ring-2 ring-accent/40");
+  };
+
+  const textColor = (status: StepStatus, isCurrent: boolean) => {
+    if (status === "completed") return "text-success";
+    if (status === "pending" || isCurrent) return "text-accent";
+    return "text-muted-foreground";
+  };
+
   return (
-    <div className="px-6 py-5">
+    <div className="px-6 pt-6 pb-4">
       <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
-        <div className="flex items-center justify-between text-[13px] font-semibold text-foreground mb-3">
+        <div className="flex items-center justify-between text-sm font-semibold text-foreground mb-2">
           <span>Overall Progress</span>
           <span className="text-accent">{normalizedProgress}%</span>
         </div>
 
-        <div className="h-2 rounded-full bg-muted/40">
+        <div className="h-2 rounded-full bg-muted/40 overflow-hidden">
           <div
-            className="h-full rounded-full bg-accent transition-all duration-500"
+            className="h-full rounded-full bg-gradient-to-r from-accent to-success transition-all duration-700"
             style={{ width: `${normalizedProgress}%` }}
           />
         </div>
 
-        <div className="mt-6 flex items-center">
+        <div className="mt-7 flex items-center gap-3">
           {steps.map((step, index) => {
-            const rawStatus = getStepStatus(step);
+            const status = getStepStatus(step);
             const isCurrent = index === currentStep;
-            const status: StepStatus = rawStatus === "not-started" && isCurrent ? "pending" : rawStatus;
-            const style = STEP_STYLES[status];
 
             return (
-              <Fragment key={step.name}>
-                <button
-                  onClick={() => onStepClick(index)}
-                  className={cn(
-                    "flex h-10 w-10 items-center justify-center rounded-full border-2 text-sm font-semibold transition-all duration-200",
-                    style.circle,
-                    isCurrent ? "scale-105 shadow-lg shadow-accent/20" : ""
+              <div key={step.name} className="flex-1 flex flex-col items-center gap-3 min-w-0">
+                <div className="flex items-center w-full gap-2">
+                  {index !== 0 && (
+                    <div className={cn("flex-1 h-[3px] rounded-full transition-colors duration-300", connectorColor(index - 1))} />
                   )}
-                  aria-current={isCurrent ? "step" : undefined}
-                >
-                  {index + 1}
-                </button>
-
-                {index < steps.length - 1 && (
-                  <div className={cn("h-px flex-1 rounded-full mx-2", STEP_STYLES[status].connector)} />
-                )}
-              </Fragment>
+                  <button
+                    onClick={() => onStepClick(index)}
+                    className={cn(
+                      "h-11 w-11 shrink-0 rounded-full border-2 text-sm font-semibold transition-all duration-200 flex items-center justify-center",
+                      circleStyles(status, isCurrent)
+                    )}
+                    aria-current={isCurrent ? "step" : undefined}
+                  >
+                    {index + 1}
+                  </button>
+                  {index !== steps.length - 1 && (
+                    <div className={cn("flex-1 h-[3px] rounded-full transition-colors duration-300", connectorColor(index))} />
+                  )}
+                </div>
+                <p className={cn("text-[12px] font-semibold uppercase tracking-wide text-center truncate", textColor(status, isCurrent))}>
+                  {step.name}
+                </p>
+              </div>
             );
           })}
-        </div>
-
-        <div className="mt-4 flex justify-between text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-          {steps.map((step) => (
-            <span key={`${step.name}-label`} className="flex-1 text-center">
-              {step.name}
-            </span>
-          ))}
         </div>
       </div>
     </div>

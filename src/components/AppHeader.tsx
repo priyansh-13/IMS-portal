@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 
 export function AppHeader() {
   return (
-    <header className="h-16 bg-card border-b border-border flex items-center justify-between px-6 shrink-0">
+    <header className="h-16 bg-card border-b border-border flex items-center justify-between px-6 shrink-0 sticky top-0 z-50">
       {/* Search */}
       <div className="relative w-80">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />

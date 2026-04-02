@@ -7,6 +7,14 @@ import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
 import InstitutionalRegistryPage from "./pages/InstitutionalRegistryPage";
 import InstitutionDetailsPage from "./pages/InstitutionDetailsPage";
+import ContactDetailsPage from "./pages/ContactDetailsPage";
+import ParentOrganizationPage from "./pages/ParentOrganizationPage";
+import AffiliationApprovalPage from "./pages/AffiliationApprovalPage";
+import CommitteesPage from "./pages/CommitteesPage";
+import FinancialDetailsPage from "./pages/FinancialDetailsPage";
+import CentresCampusesPage from "./pages/CentresCampusesPage";
+import StudentSupportPage from "./pages/StudentSupportPage";
+import RegulatoryInformationPage from "./pages/RegulatoryInformationPage";
 import ProgrammeCoursePage from "./pages/ProgrammeCoursePage";
 import NotFound from "./pages/NotFound";
 
@@ -24,6 +32,14 @@ const App = () => (
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/institutional-registry" element={<InstitutionalRegistryPage />} />
           <Route path="/institutional-registry/institution-details" element={<InstitutionDetailsPage />} />
+          <Route path="/institutional-registry/contact-details" element={<ContactDetailsPage />} />
+          <Route path="/institutional-registry/parent-org" element={<ParentOrganizationPage />} />
+          <Route path="/institutional-registry/affiliation" element={<AffiliationApprovalPage />} />
+          <Route path="/institutional-registry/committees" element={<CommitteesPage />} />
+          <Route path="/institutional-registry/financial" element={<FinancialDetailsPage />} />
+          <Route path="/institutional-registry/centres" element={<CentresCampusesPage />} />
+          <Route path="/institutional-registry/student-support" element={<StudentSupportPage />} />
+          <Route path="/institutional-registry/regulatory" element={<RegulatoryInformationPage />} />
           <Route path="/programme-course" element={<ProgrammeCoursePage />} />
           {/* Placeholder routes for other modules */}
           <Route path="/student-info" element={<DashboardPage />} />

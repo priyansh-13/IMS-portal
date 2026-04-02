@@ -31,7 +31,7 @@ interface SectionStatusSidebarProps {
   sections: SectionProgress[];
   sectionOrder?: string[];
   activeSection?: string;
-  onSectionClick?: (section: string) => void;
+  onSectionClick?: (sectionName: string) => void;
 }
 
 export function SectionStatusSidebar({ sections, sectionOrder = [], activeSection, onSectionClick }: SectionStatusSidebarProps) {
