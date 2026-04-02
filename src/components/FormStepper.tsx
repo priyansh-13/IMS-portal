@@ -57,35 +57,81 @@ export function FormStepper({ steps, currentStep, onStepClick, overallPercentage
           />
         </div>
 
-        <div className="mt-7 flex items-center gap-3">
+        <div className="mt-7 flex items-start">
           {steps.map((step, index) => {
             const status = getStepStatus(step);
             const isCurrent = index === currentStep;
 
             return (
-              <div key={step.name} className="flex-1 flex flex-col items-center gap-3 min-w-0">
-                <div className="flex items-center w-full gap-2">
-                  {index !== 0 && (
-                    <div className={cn("flex-1 h-[3px] rounded-full transition-colors duration-300", connectorColor(index - 1))} />
-                  )}
-                  <button
-                    onClick={() => onStepClick(index)}
-                    className={cn(
-                      "h-11 w-11 shrink-0 rounded-full border-2 text-sm font-semibold transition-all duration-200 flex items-center justify-center",
-                      circleStyles(status, isCurrent)
-                    )}
-                    aria-current={isCurrent ? "step" : undefined}
-                  >
-                    {index + 1}
-                  </button>
-                  {index !== steps.length - 1 && (
-                    <div className={cn("flex-1 h-[3px] rounded-full transition-colors duration-300", connectorColor(index))} />
-                  )}
-                </div>
-                <p className={cn("text-[12px] font-semibold uppercase tracking-wide text-center truncate", textColor(status, isCurrent))}>
-                  {step.name}
-                </p>
-              </div>
+//               <div key={step.name} className="flex-1 flex flex-col items-center gap-3 min-w-0">
+
+//                 <div className="flex items-center w-full gap-2">
+//                   {index !== 0 && (
+//                     <div className={cn("flex-1 h-[3px] rounded-full transition-colors duration-300", connectorColor(index - 1))} />
+//                   )}
+//                   <button
+//                     onClick={() => onStepClick(index)}
+//                     className={cn(
+//                       "h-11 w-11 shrink-0 rounded-full border-2 text-sm font-semibold transition-all duration-200 flex items-center justify-center",
+//                       circleStyles(status, isCurrent)
+//                     )}
+//                     aria-current={isCurrent ? "step" : undefined}
+//                   >
+//                     {index + 1}
+//                   </button>
+//                   {index !== steps.length - 1 && (
+//                     <div className={cn("flex-1 h-[3px] rounded-full transition-colors duration-300", connectorColor(index))} />
+//                   )}
+//                 </div>
+//                 {/* <p className={cn("text-[12px] font-semibold uppercase tracking-wide text-center truncate", textColor(status, isCurrent))}> */}
+//                   <p
+//   className={cn(
+//     "text-[11px] font-semibold uppercase tracking-wide text-center break-words leading-tight max-w-[90px]",
+//     textColor(status, isCurrent)
+//   )}
+// >
+//                   {step.name}
+//                 </p>
+//               </div>
+<div className="flex-1 flex flex-col items-center min-w-0">
+
+  {/* Top row: connectors + circle */}
+  <div className="relative w-full flex items-center justify-center">
+
+    {index !== 0 && (
+      <div className={cn(
+        "absolute left-0 right-1/2 h-[3px] rounded-full",
+        connectorColor(index - 1)
+      )} />
+    )}
+
+    <button
+      className={cn(
+        "relative z-10 h-11 w-11 rounded-full border-2 flex items-center justify-center",
+        circleStyles(status, isCurrent)
+      )}
+    >
+      {index + 1}
+    </button>
+
+    {index !== steps.length - 1 && (
+      <div className={cn(
+        "absolute left-1/2 right-0 h-[3px] rounded-full",
+        connectorColor(index)
+      )} />
+    )}
+
+  </div>
+
+  {/* Label */}
+  <p className={cn(
+    "mt-2 text-[11px] text-center leading-tight line-clamp-2 h-[32px]",
+    textColor(status, isCurrent)
+  )}>
+    {step.name}
+  </p>
+
+</div>
             );
           })}
         </div>

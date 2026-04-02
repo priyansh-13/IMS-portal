@@ -92,6 +92,7 @@ export default function FinancialDetailsPage() {
         "branch-code",
         "ifsc",
         "micr",
+        "pfms",
         "bank-address",
         "account-number",
         "account-type",
@@ -246,6 +247,7 @@ export default function FinancialDetailsPage() {
                   {renderInputField(values, setValue, "branch-code", "Branch Code")}
                   {renderInputField(values, setValue, "ifsc", "IFSC Code")}
                   {renderInputField(values, setValue, "micr", "MICR Code")}
+                  {renderInputField(values, setValue, "pfms", "PFMS ID")}
                   {renderInputField(values, setValue, "bank-address", "Bank Address")}
                   {renderInputField(values, setValue, "account-number", "Bank Account Number")}
                   {renderSelectField(values, setValue, "account-type", "Bank Account Type", accountTypes)}

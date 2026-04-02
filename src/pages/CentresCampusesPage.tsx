@@ -27,7 +27,28 @@ const renderInputField = (
     />
   </div>
 );
-
+const renderSelectField = (
+  values: FieldValueMap,
+  setValue: (field: string, value: string) => void,
+  id: string,
+  label: string,
+  options: string[]
+) => (
+  <div className="flex flex-col gap-2">
+    <label htmlFor={id} className="text-sm font-medium text-foreground">{label}</label>
+    <select
+      id={id}
+      value={values[id] || ""}
+      onChange={(e) => setValue(id, e.target.value)}
+      className="w-full rounded-xl border border-border bg-white px-3 py-2 text-sm transition-colors duration-200 focus:border-accent focus:ring-1 focus:ring-accent/30"
+    >
+      <option value="">Select</option>
+      {options.map((option) => (
+        <option key={option} value={option}>{option}</option>
+      ))}
+    </select>
+  </div>
+);
 const renderRadioGroup = (
   values: FieldValueMap,
   setValue: (field: string, value: string) => void,
@@ -64,6 +85,7 @@ export default function CentresCampusesPage() {
       fields: [
         "offshore-exists",
         "offshore-count",
+        "natureOfOffshore",
         "offshore-name",
         "offshore-country",
         "offshore-mode",
@@ -158,6 +180,7 @@ export default function CentresCampusesPage() {
   const offShoreRows = [
     { name: "Test", country: "India", mode: "Regular", students: "1,200", girls: "540" },
   ];
+    const natureOfOffshore = ["Offshore(Other than India)", "Off campus-Only in India",];
 
   return (
     <TopLayout>
@@ -188,7 +211,8 @@ export default function CentresCampusesPage() {
                   {renderInputField(values, setValue, "offshore-count", "Number of Off-Shore Centre", undefined, "number")}
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 bg-blue-50 p-4 rounded-2xl">
-                  {renderInputField(values, setValue, "offshore-name", "Name of Off-Shore Centre")}
+                     {renderSelectField(values, setValue, "natureOfOffshore", "Nature of Off-Shore Centre", natureOfOffshore)}
+                  {renderInputField(values, setValue, "offshore-name", "Name of Off-Shore")}
                   {renderInputField(values, setValue, "offshore-country", "Country")}
                   {renderInputField(values, setValue, "offshore-mode", "Study Mode")}
                   {renderInputField(values, setValue, "offshore-students", "Total Enrolled Students", undefined, "number")}
