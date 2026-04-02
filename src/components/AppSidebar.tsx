@@ -72,13 +72,72 @@ const menuItems: MenuItem[] = [
       { title: "Course Curriculum", url: "/programme-course/curriculum", icon: GraduationCap },
     ],
   },
-  { title: "Student Information", url: "/student-info", icon: Users, progress: 75 },
-  { title: "Faculty & HR Registry", url: "/faculty-hr", icon: UserCog, progress: 75 },
-  { title: "Infrastructure", url: "/infrastructure", icon: Landmark, progress: 100 },
-  { title: "Quality Assurance", url: "/quality-assurance", icon: Award, progress: 100 },
-  { title: "ABC & NCrF", url: "/abc-ncrf", icon: CreditCard, progress: 30 },
-  { title: "Innovation & Projects", url: "/innovation", icon: Lightbulb, progress: 75 },
-  { title: "Research & Outcome", url: "/research", icon: FlaskConical, progress: 50 },
+  {
+    title: "Student Information",
+    url: "/student-info",
+    icon: Users,
+    progress: 75,
+    subItems: [
+      { title: "Student Details", url: "/student-info/details", icon: Users },
+      { title: "Enrollment Info", url: "/student-info/enrollment", icon: FileText },
+    ],
+  },
+  {
+    title: "Faculty & HR Registry",
+    url: "/faculty-hr",
+    icon: UserCog,
+    progress: 75,
+    subItems: [
+      { title: "Faculty Registry", url: "/faculty-hr/registry", icon: UserCog },
+      { title: "Service Records", url: "/faculty-hr/records", icon: FileCheck },
+    ],
+  },
+  {
+    title: "Infrastructure",
+    url: "/infrastructure",
+    icon: Landmark,
+    progress: 100,
+    subItems: [
+      { title: "Building Info", url: "/infrastructure/buildings", icon: Landmark },
+      { title: "Lab Details", icon: FlaskConical, url: "/infrastructure/labs" },
+    ],
+  },
+  {
+    title: "Quality Assurance",
+    url: "/quality-assurance",
+    icon: Award,
+    progress: 100,
+    subItems: [
+      { title: "Accreditation Hub", url: "/quality-assurance/accreditation", icon: Award },
+    ],
+  },
+  {
+    title: "ABC & NCrF",
+    url: "/abc-ncrf",
+    icon: CreditCard,
+    progress: 30,
+    subItems: [
+      { title: "Credit Registry", url: "/abc-ncrf/credits", icon: CreditCard },
+    ],
+  },
+  {
+    title: "Innovation & Projects",
+    url: "/innovation",
+    icon: Lightbulb,
+    progress: 75,
+    subItems: [
+      { title: "Project Hub", url: "/innovation/projects", icon: Lightbulb },
+    ],
+  },
+  {
+    title: "Research & Outcome",
+    url: "/research",
+    icon: FlaskConical,
+    progress: 50,
+    subItems: [
+      { title: "Research Registry", url: "/research/registry", icon: FlaskConical },
+    ],
+  },
 ];
 
 function ProgressDot({ progress }: { progress?: number }) {
@@ -96,41 +155,41 @@ function ProgressDot({ progress }: { progress?: number }) {
 export function AppSidebar({ collapsed, onToggle }: { collapsed?: boolean; onToggle?: () => void }) {
   const location = useLocation();
   const navigate = useNavigate();
-  const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
+  const [expandedStates, setExpandedStates] = useState<Record<string, boolean>>({});
+
+  const isExpanded = (url: string) => {
+    if (expandedStates[url] !== undefined) {
+      return expandedStates[url];
+    }
+    // Auto-expand if active route matches
+    return location.pathname.startsWith(url) && url !== "/dashboard";
+  };
 
   const toggleMenu = (url: string) => {
-    setExpandedMenus((prev) =>
-      prev.includes(url) ? prev.filter((u) => u !== url) : [...prev, url]
-    );
+    setExpandedStates((prev) => ({
+      ...prev,
+      [url]: !isExpanded(url),
+    }));
   };
 
   const isActive = (item: MenuItem) =>
     location.pathname === item.url ||
     (item.url !== "/dashboard" && location.pathname.startsWith(item.url));
 
-  const isExpanded = (url: string) =>
-    expandedMenus.includes(url) || location.pathname.startsWith(url);
-
   return (
     <aside
       className={cn(
-        "min-h-screen bg-card border-r border-border flex flex-col shrink-0 transition-all duration-300",
+        "h-screen sticky top-0 bg-card border-r border-border flex flex-col shrink-0 transition-all duration-300",
         collapsed ? "w-16" : "w-64"
       )}
     >
       {/* Logo */}
       <div className="p-4 border-b border-border flex items-center justify-between">
         <div className="flex items-center gap-2 overflow-hidden">
-          <Landmark className="h-8 w-8 text-primary shrink-0" />
+          <img src="/images/ONOD-logo.png" alt="ONOD" className={cn("h-8 w-auto object-contain shrink-0", collapsed && "h-6")} />
           {!collapsed && (
-            <div className="animate-fade-in">
+            <div className="animate-fade-in sr-only">
               <h1 className="text-xl font-bold text-primary tracking-tight">ONOD</h1>
-              <p className="text-[10px] leading-tight">
-                <span className="text-accent font-semibold">One </span>
-                <span className="text-success font-semibold">Nation </span>
-                <span className="text-accent font-semibold">One </span>
-                <span className="text-success font-semibold">Data</span>
-              </p>
             </div>
           )}
         </div>
@@ -156,10 +215,9 @@ export function AppSidebar({ collapsed, onToggle }: { collapsed?: boolean; onTog
               {/* Main menu item */}
               <button
                 onClick={() => {
+                  navigate(item.url);
                   if (hasSubItems && !collapsed) {
                     toggleMenu(item.url);
-                  } else {
-                    navigate(item.url);
                   }
                 }}
                 className={cn(
@@ -176,14 +234,12 @@ export function AppSidebar({ collapsed, onToggle }: { collapsed?: boolean; onTog
                     <span className="leading-tight flex-1 text-left truncate">{item.title}</span>
                     <div className="flex items-center gap-1.5">
                       <ProgressDot progress={item.progress} />
-                      {hasSubItems && (
-                        <ChevronDown
-                          className={cn(
-                            "h-3.5 w-3.5 transition-transform duration-200",
-                            expanded && "rotate-180"
-                          )}
-                        />
-                      )}
+                      <ChevronDown
+                        className={cn(
+                          "h-3.5 w-3.5 transition-transform duration-300",
+                          expanded && "rotate-180"
+                        )}
+                      />
                     </div>
                   </>
                 )}
@@ -217,6 +273,17 @@ export function AppSidebar({ collapsed, onToggle }: { collapsed?: boolean; onTog
           );
         })}
       </nav>
+
+      {/* Government Bodies Logos */}
+      {!collapsed && (
+        <div className="bodiesico-sidebar">
+          <img src="/images/UGC_India_Logo.png" alt="UGC" className="dbmenu-icon" />
+          <img src="/images/AICTE.png" alt="AICTE" className="dbmenu-icon" />
+          <img src="/images/NCTE.png" alt="NCTE" className="dbmenu-icon" />
+          <img src="/images/NAAC.png" alt="NAAC" className="dbmenu-icon" />
+          <img src="/images/NIRF.png" alt="NIRF" className="dbmenu-icon" />
+        </div>
+      )}
 
       {/* Footer */}
       {!collapsed && (

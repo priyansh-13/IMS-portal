@@ -17,7 +17,7 @@ export function StatusCard({ title, icon: Icon, completed, lastUpdated, link }: 
     <div
       onClick={() => link && navigate(link)}
       className={cn(
-        "bg-card rounded-xl shadow-sm border border-border border-t-4 p-5 cursor-pointer relative",
+        "bg-card rounded-xl shadow-sm border border-border border-t-4 p-5 cursor-pointer relative flex flex-col",
         "hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 group",
         completed ? "border-t-success" : "border-t-secondary"
       )}
@@ -29,16 +29,20 @@ export function StatusCard({ title, icon: Icon, completed, lastUpdated, link }: 
           <Circle className="h-5 w-5 text-destructive/60" />
         )}
       </div>
-      <div className="flex items-center gap-3 mb-3">
+      <div className="flex items-center gap-3 mb-5">
         <div className="p-2.5 rounded-lg bg-primary/5 group-hover:bg-primary/10 transition-colors duration-200">
           <Icon className="h-7 w-7 text-primary" />
         </div>
         <h3 className="text-sm font-semibold text-foreground pr-6 leading-tight">{title}</h3>
       </div>
+
       {lastUpdated && (
-        <p className="text-xs text-muted-foreground">
-          Last Updated: <span className="text-accent font-medium">{lastUpdated}</span>
-        </p>
+        <div className="mt-auto pt-3 border-t border-border flex items-center justify-between">
+          <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-medium">Last Sync</span>
+          <span className="text-[10px] text-accent font-bold bg-accent/5 px-2 py-0.5 rounded border border-accent/10">
+            {lastUpdated}
+          </span>
+        </div>
       )}
     </div>
   );

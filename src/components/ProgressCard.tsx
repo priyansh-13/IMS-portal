@@ -6,6 +6,7 @@ interface ProgressCardProps {
   title: string;
   icon: LucideIcon;
   progress: number;
+  lastUpdated?: string;
   link?: string;
 }
 
@@ -27,7 +28,7 @@ function getBarGradient(progress: number) {
   return "from-warning to-warning/80";
 }
 
-export function ProgressCard({ title, icon: Icon, progress, link }: ProgressCardProps) {
+export function ProgressCard({ title, icon: Icon, progress, lastUpdated, link }: ProgressCardProps) {
   const navigate = useNavigate();
   const status = getStatusLabel(progress);
 
@@ -36,7 +37,7 @@ export function ProgressCard({ title, icon: Icon, progress, link }: ProgressCard
       onClick={() => link && navigate(link)}
       className={cn(
         "bg-card rounded-xl border border-border border-t-4 p-6 cursor-pointer relative group",
-        "hover:shadow-xl hover:-translate-y-1 transition-all duration-300",
+        "hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col",
         getBorderColor(progress)
       )}
     >
@@ -56,20 +57,31 @@ export function ProgressCard({ title, icon: Icon, progress, link }: ProgressCard
       </div>
 
       {/* Progress bar */}
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <span className="text-xs text-muted-foreground">Progress</span>
-          <span className="text-xs font-bold text-foreground">{progress}%</span>
+      <div className="space-y-4 mt-auto">
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Progress</span>
+            <span className="text-sm font-bold text-foreground">{progress}%</span>
+          </div>
+          <div className="w-full bg-muted rounded-full h-2 overflow-hidden shadow-inner">
+            <div
+              className={cn(
+                "h-full rounded-full bg-gradient-to-r transition-all duration-700 ease-out shadow-sm",
+                getBarGradient(progress)
+              )}
+              style={{ width: `${Math.max(progress, 4)}%` }}
+            />
+          </div>
         </div>
-        <div className="w-full bg-muted rounded-full h-2.5 overflow-hidden">
-          <div
-            className={cn(
-              "h-full rounded-full bg-gradient-to-r transition-all duration-700 ease-out",
-              getBarGradient(progress)
-            )}
-            style={{ width: `${Math.max(progress, 4)}%` }}
-          />
-        </div>
+
+        {lastUpdated && (
+          <div className="pt-3 border-t border-border flex items-center justify-between">
+            <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-medium">Last Sync</span>
+            <span className="text-[10px] text-accent font-bold bg-accent/5 px-2 py-0.5 rounded shadow-sm border border-accent/10">
+              {lastUpdated}
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );

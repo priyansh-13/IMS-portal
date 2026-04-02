@@ -6,15 +6,15 @@ import {
 } from "lucide-react";
 
 const modules = [
-  { title: "Institutional Registry and Recognition", icon: Building2, progress: 25, link: "/institutional-registry" },
-  { title: "Programme and Course Details", icon: BookOpen, progress: 50, link: "/programme-course" },
-  { title: "Student Information and Mobility", icon: Users, progress: 75, link: "/student-info" },
-  { title: "Faculty and Human Resources Registry", icon: UserCog, progress: 75, link: "/faculty-hr" },
-  { title: "Infrastructure and Resources", icon: Landmark, progress: 100, link: "/infrastructure" },
-  { title: "Quality Assurance and Accreditation Hub", icon: Award, progress: 100, link: "/quality-assurance" },
-  { title: "Academic Bank of Credits (ABC) and NCrF Integration", icon: CreditCard, progress: 30, link: "/abc-ncrf" },
-  { title: "Innovation, Industry & Projects", icon: Lightbulb, progress: 75, link: "/innovation" },
-  { title: "Research & Outcome", icon: FlaskConical, progress: 50, link: "/research" },
+  { title: "Institutional Registry and Recognition", icon: Building2, progress: 25, lastUpdated: "04 Feb 2026", link: "/institutional-registry" },
+  { title: "Programme and Course Details", icon: BookOpen, progress: 50, lastUpdated: "04 Feb 2026", link: "/programme-course" },
+  { title: "Student Information and Mobility", icon: Users, progress: 75, lastUpdated: "03 Feb 2026", link: "/student-info" },
+  { title: "Faculty and Human Resources Registry", icon: UserCog, progress: 75, lastUpdated: "02 Feb 2026", link: "/faculty-hr" },
+  { title: "Infrastructure and Resources", icon: Landmark, progress: 100, lastUpdated: "05 Feb 2026", link: "/infrastructure" },
+  { title: "Quality Assurance and Accreditation Hub", icon: Award, progress: 100, lastUpdated: "04 Feb 2026", link: "/quality-assurance" },
+  { title: "Academic Bank of Credits (ABC) and NCrF Integration", icon: CreditCard, progress: 30, lastUpdated: "01 Feb 2026", link: "/abc-ncrf" },
+  { title: "Innovation, Industry & Projects", icon: Lightbulb, progress: 75, lastUpdated: "31 Jan 2026", link: "/innovation" },
+  { title: "Research & Outcome", icon: FlaskConical, progress: 50, lastUpdated: "02 Feb 2026", link: "/research" },
 ];
 
 const overallProgress = Math.round(modules.reduce((sum, m) => sum + m.progress, 0) / modules.length);
