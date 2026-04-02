@@ -168,9 +168,6 @@ export default function StudentSupportPage() {
                   {renderInputField(values, setValue, "ncc-other-male", "Other Institution Students (Male)", undefined, "number")}
                   {renderInputField(values, setValue, "ncc-other-female", "Other Institution Students (Female)", undefined, "number")}
                 </div>
-                <div className="text-right">
-                  <button className="px-6 py-2 rounded-full bg-success text-white text-sm font-semibold">Save</button>
-                </div>
               </section>
               )}
 
@@ -183,9 +180,6 @@ export default function StudentSupportPage() {
                   {renderInputField(values, setValue, "nss-male", "Students Enrolled (Male)", undefined, "number")}
                   {renderInputField(values, setValue, "nss-female", "Students Enrolled (Female)", undefined, "number")}
                 </div>
-                <div className="text-right">
-                  <button className="px-6 py-2 rounded-full bg-success text-white text-sm font-semibold">Save</button>
-                </div>
               </section>
               )}
 
@@ -195,9 +189,6 @@ export default function StudentSupportPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {renderSelectField(values, setValue, "cbt-conducted", "Has the institution conducted any Computer Based Test (CBT)", ["Yes", "No"])}
                   {renderInputField(values, setValue, "cbt-capacity", "Student Capacity per CBT Session", undefined, "number")}
-                </div>
-                <div className="text-right">
-                  <button className="px-6 py-2 rounded-full bg-success text-white text-sm font-semibold">Save</button>
                 </div>
               </section>
               )}

@@ -195,9 +195,6 @@ export default function CentresCampusesPage() {
                   {renderInputField(values, setValue, "offshore-girls", "Total Enrolled Girls Students", undefined, "number")}
                   {renderInputField(values, setValue, "offshore-saved", "Additional Info")}
                 </div>
-                <div className="text-right">
-                  <button className="px-6 py-2 rounded-full bg-success text-white text-sm font-semibold">Save</button>
-                </div>
                 <div className="overflow-x-auto border border-border/70 rounded-2xl bg-white">
                   <table className="w-full text-sm">
                     <thead className="bg-primary text-white">
@@ -241,9 +238,6 @@ export default function CentresCampusesPage() {
                   {renderInputField(values, setValue, "offcampus-email", "Email Address", undefined, "email")}
                   {renderInputField(values, setValue, "offcampus-mobile", "Mobile Number", undefined, "tel")}
                 </div>
-                <div className="text-right">
-                  <button className="px-6 py-2 rounded-full bg-success text-white text-sm font-semibold">Save</button>
-                </div>
               </section>
               )}
 
@@ -255,9 +249,6 @@ export default function CentresCampusesPage() {
                   {renderInputField(values, setValue, "regional-name", "Name of Regional Centre")}
                   {renderInputField(values, setValue, "regional-address", "Address")}
                   {renderInputField(values, setValue, "regional-count", "Number of Study Centres")}
-                </div>
-                <div className="text-right">
-                  <button className="px-6 py-2 rounded-full bg-success text-white text-sm font-semibold">Save</button>
                 </div>
               </section>
               )}
@@ -272,9 +263,6 @@ export default function CentresCampusesPage() {
                   {renderInputField(values, setValue, "odl-email", "Email Address", undefined, "email")}
                   {renderInputField(values, setValue, "odl-mobile", "Mobile Number", undefined, "tel")}
                 </div>
-                <div className="text-right">
-                  <button className="px-6 py-2 rounded-full bg-success text-white text-sm font-semibold">Save</button>
-                </div>
               </section>
               )}
 
@@ -287,9 +275,6 @@ export default function CentresCampusesPage() {
                   {renderInputField(values, setValue, "online-address", "Address")}
                   {renderInputField(values, setValue, "online-email", "Email Address", undefined, "email")}
                   {renderInputField(values, setValue, "online-mobile", "Mobile Number", undefined, "tel")}
-                </div>
-                <div className="text-right">
-                  <button className="px-6 py-2 rounded-full bg-success text-white text-sm font-semibold">Save</button>
                 </div>
               </section>
               )}
@@ -305,9 +290,6 @@ export default function CentresCampusesPage() {
                   {renderInputField(values, setValue, "shared-id", "Permanent ID")}
                   {renderInputField(values, setValue, "shared-survey", "Survey Number")}
                   {renderInputField(values, setValue, "shared-area", "Area (Acres)")}
-                </div>
-                <div className="flex justify-end">
-                  <button className="px-6 py-2 rounded-full bg-success text-white text-sm font-semibold">Save</button>
                 </div>
               </section>
               )}

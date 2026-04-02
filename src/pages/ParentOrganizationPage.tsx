@@ -200,11 +200,6 @@ export default function ParentOrganizationPage() {
                   {renderInputField(values, setValue, "email", "Email Address", undefined, "email")}
                   {renderInputField(values, setValue, "website", "Trust / Society / Company Website")}
                 </div>
-                <div className="text-right">
-                  <button className="px-6 py-2 rounded-full bg-success text-white text-sm font-semibold transition-colors shadow-sm shadow-success/40">
-                    Save
-                  </button>
-                </div>
               </section>
               )}
 
@@ -219,11 +214,6 @@ export default function ParentOrganizationPage() {
                   {renderInputField(values, setValue, "member-mobile", "Mobile Number", undefined, "tel")}
                   {renderInputField(values, setValue, "member-email", "Email Address", undefined, "email")}
                   {renderInputField(values, setValue, "member-age", "Age")}
-                </div>
-                <div className="text-right">
-                  <button className="px-6 py-2 rounded-full bg-success text-white text-sm font-semibold transition-colors shadow-sm shadow-success/40">
-                    Save Member Details
-                  </button>
                 </div>
                 <div className="overflow-x-auto border border-border/70 rounded-2xl bg-white">
                   <table className="w-full text-sm">
@@ -267,11 +257,6 @@ export default function ParentOrganizationPage() {
                   {renderInputField(values, setValue, "new-institute-mobile", "Mobile Number", undefined, "tel")}
                   {renderInputField(values, setValue, "new-institute-category", "Category")}
                   {renderInputField(values, setValue, "new-institute-students", "Total Admitted Students")}
-                </div>
-                <div className="text-right">
-                  <button className="px-6 py-2 rounded-full bg-success text-white text-sm font-semibold transition-colors shadow-sm shadow-success/40">
-                    Add
-                  </button>
                 </div>
                 <div className="overflow-x-auto border border-border/70 rounded-2xl bg-white">
                   <table className="w-full text-sm">
