@@ -1,0 +1,64 @@
+import { Link, useLocation } from "react-router-dom";
+
+const breadcrumbLabels: Record<string, string> = {
+  dashboard: "Dashboard",
+  login: "Sign In",
+  "institutional-registry": "Institutional Registry",
+  "institution-details": "Institution Details",
+  "programme-course": "Programme & Course",
+  "student-info": "Student Information",
+  "faculty-hr": "Faculty & HR",
+  infrastructure: "Infrastructure",
+  "quality-assurance": "Quality Assurance",
+  "abc-ncrf": "ABC & NCrF",
+  innovation: "Innovation",
+  research: "Research",
+};
+
+export function Breadcrumbs() {
+  const location = useLocation();
+  const segments = location.pathname.split("/").filter(Boolean);
+  const normalizedSegments = segments[0] === "dashboard" ? segments.slice(1) : segments;
+
+  const crumbs = normalizedSegments.map((segment, index) => {
+    const path = `/${segments.slice(0, index + 1).join("/")}`;
+    const label = breadcrumbLabels[segment] || segment.replace(/-/g, " ").replace(/\b\w/g, (chr) => chr.toUpperCase());
+    return { label, path };
+  });
+
+  if (!normalizedSegments.length) {
+    return (
+      <nav className="bg-card border-b border-border px-6 py-3 text-sm text-muted-foreground">
+        <ol className="flex gap-2">
+          <li>
+            <span className="text-foreground font-semibold">Dashboard</span>
+          </li>
+        </ol>
+      </nav>
+    );
+  }
+
+  return (
+    <nav className="bg-card border-b border-border px-6 py-3 text-sm text-muted-foreground sticky top-16 z-20">
+      <ol className="flex flex-wrap items-center gap-2 text-xs uppercase tracking-wide">
+        <li>
+          <Link className="text-foreground font-medium" to="/dashboard">
+            Dashboard
+          </Link>
+        </li>
+        {crumbs.map((crumb, index) => (
+          <li key={crumb.path} className="flex items-center gap-2">
+            <span className="text-muted-foreground/80">/</span>
+            {index === crumbs.length - 1 ? (
+              <span className="text-foreground font-semibold">{crumb.label}</span>
+            ) : (
+              <Link className="hover:underline" to={crumb.path}>
+                {crumb.label}
+              </Link>
+            )}
+          </li>
+        ))}
+      </ol>
+    </nav>
+  );
+}

@@ -2,8 +2,8 @@ import { useState, useMemo } from "react";
 import { TopLayout } from "@/components/TopLayout";
 import { ModuleBanner } from "@/components/ModuleBanner";
 import { FormStepper } from "@/components/FormStepper";
-import { FormProgressBar } from "@/components/FormProgressBar";
 import { PendingFieldsPanel } from "@/components/PendingFieldsPanel";
+import { SectionStatusSidebar } from "@/components/SectionStatusSidebar";
 import { useFormProgress, FieldState } from "@/hooks/useFormProgress";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -53,11 +53,6 @@ export default function InstitutionDetailsPage() {
   const [currentStep, setCurrentStep] = useState(0);
 
   const currentSectionName = SECTION_ORDER[currentStep];
-  const currentSectionFields = useMemo(
-    () => fields.filter((f) => f.section === currentSectionName),
-    [fields, currentSectionName]
-  );
-
   const stepInfos = useMemo(
     () => SECTION_ORDER.map((name) => {
       const sec = sections.find((s) => s.name === name);
@@ -232,86 +227,90 @@ export default function InstitutionDetailsPage() {
             </button>
           </div>
 
-          {/* Overall progress */}
-          <FormProgressBar
-            sections={sections}
-            overallPercentage={overallPercentage}
-            activeSection={currentSectionName}
-          />
-
           {/* Stepper */}
-          <div className="border-b border-border bg-muted/30">
-            <FormStepper
-              steps={stepInfos}
-              currentStep={currentStep}
-              onStepClick={setCurrentStep}
-            />
-          </div>
-
-          {/* Step content */}
-          <div className="p-6 lg:p-8">
-            {/* Section header */}
-            <div className="flex items-center justify-between mb-6 pb-3 border-b border-border">
-              <div>
-                <p className="text-xs text-muted-foreground mb-1">Step {currentStep + 1} of {SECTION_ORDER.length}</p>
-                <h3 className="text-base font-semibold text-foreground">{currentSectionName}</h3>
-              </div>
-              {currentSection && (
-                <span
-                  className={cn(
-                    "text-xs font-semibold px-3 py-1.5 rounded-full",
-                    currentSection.completionPercentage >= 100
-                      ? "bg-success/10 text-success"
-                      : currentSection.completionPercentage > 0
-                      ? "bg-accent/10 text-accent"
-                      : "bg-muted text-muted-foreground"
-                  )}
-                >
-                  {currentSection.completionPercentage}% Complete
-                </span>
-              )}
+            <div>
+              <FormStepper
+                steps={stepInfos}
+                currentStep={currentStep}
+                onStepClick={setCurrentStep}
+                overallPercentage={overallPercentage}
+              />
             </div>
 
-            {renderStepContent()}
+          <div className="flex flex-col gap-6 lg:flex-row">
+            <div className="flex-1 min-w-0">
+              <div className="p-6 lg:p-8">
+                {/* Section header */}
+                <div className="flex items-center justify-between mb-6 pb-3 border-b border-border">
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1">Step {currentStep + 1} of {SECTION_ORDER.length}</p>
+                    <h3 className="text-base font-semibold text-foreground">{currentSectionName}</h3>
+                  </div>
+                  {currentSection && (
+                    <span
+                      className={cn(
+                        "text-xs font-semibold px-3 py-1.5 rounded-full",
+                        currentSection.completionPercentage >= 100
+                          ? "bg-success/10 text-success"
+                          : currentSection.completionPercentage > 0
+                          ? "bg-accent/10 text-accent"
+                          : "bg-muted text-muted-foreground"
+                      )}
+                    >
+                      {currentSection.completionPercentage}% Complete
+                    </span>
+                  )}
+                </div>
 
-            {/* Navigation buttons */}
-            <div className="flex items-center justify-between mt-8 pt-6 border-t border-border">
-              <button
-                onClick={() => setCurrentStep((s) => Math.max(0, s - 1))}
-                disabled={isFirstStep}
-                className={cn(
-                  "flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200",
-                  isFirstStep
-                    ? "bg-muted text-muted-foreground cursor-not-allowed"
-                    : "bg-muted text-foreground hover:bg-muted/80 hover:shadow-sm"
-                )}
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Back
-              </button>
+                {renderStepContent()}
 
-              <button
-                onClick={() => {
-                  if (isLastStep) {
-                    // Submit
-                  } else {
-                    setCurrentStep((s) => Math.min(SECTION_ORDER.length - 1, s + 1));
-                  }
-                }}
-                className="flex items-center gap-2 px-6 py-2.5 bg-accent text-accent-foreground rounded-xl text-sm font-semibold hover:bg-accent/90 transition-all duration-200 hover:shadow-md"
-              >
-                {isLastStep ? (
-                  <>
-                    <Save className="h-4 w-4" />
-                    Save & Submit
-                  </>
-                ) : (
-                  <>
-                    Next
-                    <ArrowRight className="h-4 w-4" />
-                  </>
-                )}
-              </button>
+                {/* Navigation buttons */}
+                <div className="flex items-center justify-between mt-8 pt-6 border-t border-border">
+                  <button
+                    onClick={() => setCurrentStep((s) => Math.max(0, s - 1))}
+                    disabled={isFirstStep}
+                    className={cn(
+                      "flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200",
+                      isFirstStep
+                        ? "bg-muted text-muted-foreground cursor-not-allowed"
+                        : "bg-muted text-foreground hover:bg-muted/80 hover:shadow-sm"
+                    )}
+                  >
+                    <ArrowLeft className="h-4 w-4" />
+                    Back
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      if (isLastStep) {
+                        // Submit
+                      } else {
+                        setCurrentStep((s) => Math.min(SECTION_ORDER.length - 1, s + 1));
+                      }
+                    }}
+                    className="flex items-center gap-2 px-6 py-2.5 bg-accent text-accent-foreground rounded-xl text-sm font-semibold hover:bg-accent/90 transition-all duration-200 hover:shadow-md"
+                  >
+                  {isLastStep ? (
+                    <>
+                      <Save className="h-4 w-4" />
+                      Save & Submit
+                    </>
+                  ) : (
+                    <>
+                      Save & Continue
+                      <ArrowRight className="h-4 w-4" />
+                    </>
+                  )}
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div className="flex-none px-2 pb-6 lg:pb-0">
+              <SectionStatusSidebar
+                sections={sections}
+                sectionOrder={SECTION_ORDER}
+                activeSection={currentSectionName}
+              />
             </div>
           </div>
         </div>

@@ -1,5 +1,5 @@
+import { Fragment } from "react";
 import { cn } from "@/lib/utils";
-import { CheckCircle2, Circle, Clock } from "lucide-react";
 
 export interface StepInfo {
   name: string;
@@ -10,70 +10,89 @@ interface FormStepperProps {
   steps: StepInfo[];
   currentStep: number;
   onStepClick: (index: number) => void;
+  overallPercentage: number;
 }
 
-export function FormStepper({ steps, currentStep, onStepClick }: FormStepperProps) {
+type StepStatus = "completed" | "pending" | "not-started";
+
+const STEP_STYLES: Record<StepStatus, { circle: string; text: string; connector: string }> = {
+  completed: {
+    circle: "border-success bg-success text-success-foreground",
+    text: "text-success",
+    connector: "bg-success",
+  },
+  pending: {
+    circle: "border-accent bg-accent text-accent-foreground",
+    text: "text-accent",
+    connector: "bg-accent/80",
+  },
+  "not-started": {
+    circle: "border-border bg-card text-muted-foreground",
+    text: "text-muted-foreground",
+    connector: "bg-border",
+  },
+};
+
+const getStepStatus = (step: StepInfo): StepStatus => {
+  if (step.completionPercentage >= 100) return "completed";
+  if (step.completionPercentage > 0) return "pending";
+  return "not-started";
+};
+
+export function FormStepper({ steps, currentStep, onStepClick, overallPercentage }: FormStepperProps) {
+  const normalizedProgress = Math.min(Math.max(overallPercentage, 0), 100);
+
   return (
-    <div className="w-full py-4 px-6">
-      <div className="flex items-center justify-between relative">
-        {/* Connector line */}
-        <div className="absolute top-5 left-0 right-0 h-0.5 bg-border" />
-        <div
-          className="absolute top-5 left-0 h-0.5 bg-gradient-to-r from-success to-accent transition-all duration-700"
-          style={{ width: `${(currentStep / Math.max(steps.length - 1, 1)) * 100}%` }}
-        />
+    <div className="px-6 py-5">
+      <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
+        <div className="flex items-center justify-between text-[13px] font-semibold text-foreground mb-3">
+          <span>Overall Progress</span>
+          <span className="text-accent">{normalizedProgress}%</span>
+        </div>
 
-        {steps.map((step, index) => {
-          const isComplete = step.completionPercentage >= 100;
-          const isCurrent = index === currentStep;
-          const isInProgress = step.completionPercentage > 0 && !isComplete;
-          const isPast = index < currentStep;
+        <div className="h-2 rounded-full bg-muted/40">
+          <div
+            className="h-full rounded-full bg-accent transition-all duration-500"
+            style={{ width: `${normalizedProgress}%` }}
+          />
+        </div>
 
-          return (
-            <button
-              key={step.name}
-              onClick={() => onStepClick(index)}
-              className="relative z-10 flex flex-col items-center gap-2 group"
-            >
-              <div
-                className={cn(
-                  "w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 border-2",
-                  isComplete
-                    ? "bg-success border-success text-success-foreground"
-                    : isCurrent
-                    ? "bg-accent border-accent text-accent-foreground scale-110 shadow-lg shadow-accent/30"
-                    : isPast
-                    ? "bg-accent/20 border-accent text-accent"
-                    : "bg-card border-border text-muted-foreground group-hover:border-accent/50"
-                )}
-              >
-                {isComplete ? (
-                  <CheckCircle2 className="h-5 w-5" />
-                ) : isInProgress ? (
-                  <Clock className="h-4 w-4" />
-                ) : (
-                  <span className="text-xs font-bold">{index + 1}</span>
-                )}
-              </div>
-              <div className="text-center max-w-[100px]">
-                <p
+        <div className="mt-6 flex items-center">
+          {steps.map((step, index) => {
+            const rawStatus = getStepStatus(step);
+            const isCurrent = index === currentStep;
+            const status: StepStatus = rawStatus === "not-started" && isCurrent ? "pending" : rawStatus;
+            const style = STEP_STYLES[status];
+
+            return (
+              <Fragment key={step.name}>
+                <button
+                  onClick={() => onStepClick(index)}
                   className={cn(
-                    "text-[11px] font-medium leading-tight transition-colors",
-                    isCurrent ? "text-accent" : isComplete ? "text-success" : "text-muted-foreground"
+                    "flex h-10 w-10 items-center justify-center rounded-full border-2 text-sm font-semibold transition-all duration-200",
+                    style.circle,
+                    isCurrent ? "scale-105 shadow-lg shadow-accent/20" : ""
                   )}
+                  aria-current={isCurrent ? "step" : undefined}
                 >
-                  {step.name}
-                </p>
-                <p className={cn(
-                  "text-[10px] mt-0.5",
-                  isComplete ? "text-success" : isInProgress ? "text-accent" : "text-muted-foreground"
-                )}>
-                  {step.completionPercentage}%
-                </p>
-              </div>
-            </button>
-          );
-        })}
+                  {index + 1}
+                </button>
+
+                {index < steps.length - 1 && (
+                  <div className={cn("h-px flex-1 rounded-full mx-2", STEP_STYLES[status].connector)} />
+                )}
+              </Fragment>
+            );
+          })}
+        </div>
+
+        <div className="mt-4 flex justify-between text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+          {steps.map((step) => (
+            <span key={`${step.name}-label`} className="flex-1 text-center">
+              {step.name}
+            </span>
+          ))}
+        </div>
       </div>
     </div>
   );
