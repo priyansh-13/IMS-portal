@@ -11,18 +11,20 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   return (
-    <div className="min-h-screen flex w-full">
+    <div className="h-screen flex w-full overflow-hidden bg-background">
       <AppSidebar
         collapsed={sidebarCollapsed}
         onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
       />
-    <div className="flex-1 flex flex-col min-w-0">
-      <AppHeader />
-      <Breadcrumbs />
-      <main className="flex-1 overflow-auto">
-        {children}
-      </main>
-    </div>
+      <div className="flex-1 flex flex-col min-w-0 h-screen">
+        <div className="flex-none z-30">
+          <AppHeader />
+          <Breadcrumbs />
+        </div>
+        <main className="flex-1 overflow-y-auto">
+          {children}
+        </main>
+      </div>
     </div>
   );
 }

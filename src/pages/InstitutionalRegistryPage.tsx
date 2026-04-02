@@ -15,7 +15,6 @@ const sections = [
   { title: "Financial Details", icon: IndianRupee, completed: true, lastUpdated: "04 Feb 2026" },
   { title: "Centres / Campuses", icon: MapPin, completed: false, lastUpdated: "06 Feb 2026" },
   { title: "Student Support & Institutional Activities", icon: HeartHandshake, completed: false, lastUpdated: "06 Feb 2026" },
-  { title: "Regulatory Information", icon: ShieldCheck, completed: false, lastUpdated: "06 Feb 2026" },
 ];
 
 export default function InstitutionalRegistryPage() {

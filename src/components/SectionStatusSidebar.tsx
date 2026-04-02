@@ -31,9 +31,10 @@ interface SectionStatusSidebarProps {
   sections: SectionProgress[];
   sectionOrder?: string[];
   activeSection?: string;
+  onSectionClick?: (section: string) => void;
 }
 
-export function SectionStatusSidebar({ sections, sectionOrder = [], activeSection }: SectionStatusSidebarProps) {
+export function SectionStatusSidebar({ sections, sectionOrder = [], activeSection, onSectionClick }: SectionStatusSidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const orderedSections = useMemo(() => {
@@ -102,23 +103,34 @@ export function SectionStatusSidebar({ sections, sectionOrder = [], activeSectio
             const isActive = activeSection === section.name;
 
             return (
-              <li
-                key={section.name}
-                className={cn(
-                  "flex items-center justify-between gap-3 rounded-2xl border px-3 py-3 transition-colors",
-                  isActive
-                    ? "border-accent/40 bg-accent/5"
-                    : "border-border bg-muted/50 hover:border-accent/40 hover:bg-accent/5"
-                )}
-              >
-                <div>
-                  <p className="text-sm font-semibold text-foreground">{section.name}</p>
-                  <p className="text-[11px] text-muted-foreground">{meta.helper}</p>
-                </div>
-                <span className={cn("flex items-center gap-1 text-[11px] font-semibold px-2 py-1 rounded-full", meta.badgeClass)}>
-                  <meta.Icon className="h-3 w-3" />
-                  {meta.label}
-                </span>
+              <li key={section.name}>
+                <button
+                  type="button"
+                  onClick={() => onSectionClick?.(section.name)}
+                  className={cn(
+                    "w-full flex items-center justify-between gap-3 rounded-2xl border px-3 py-3 transition-all duration-200 text-left group/item",
+                    isActive
+                      ? "border-accent/40 bg-accent/5 ring-1 ring-accent/20"
+                      : "border-border bg-muted/50 hover:border-accent/40 hover:bg-accent/5 hover:shadow-sm"
+                  )}
+                >
+                  <div className="min-w-0 flex-1">
+                    <p className={cn(
+                      "text-sm font-semibold truncate transition-colors",
+                      isActive ? "text-accent" : "text-foreground group-hover/item:text-accent"
+                    )}>
+                      {section.name}
+                    </p>
+                    <p className="text-[11px] text-muted-foreground">{meta.helper}</p>
+                  </div>
+                  <span className={cn(
+                    "flex-none flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-full whitespace-nowrap shadow-sm",
+                    meta.badgeClass
+                  )}>
+                    <meta.Icon className="h-3 w-3" />
+                    {meta.label}
+                  </span>
+                </button>
               </li>
             );
           })}

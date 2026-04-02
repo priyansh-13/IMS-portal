@@ -3,16 +3,16 @@ import { Link, useLocation } from "react-router-dom";
 const breadcrumbLabels: Record<string, string> = {
   dashboard: "Dashboard",
   login: "Sign In",
-  "institutional-registry": "Institutional Registry",
+  "institutional-registry": "Institutional Registry And Recognition",
   "institution-details": "Institution Details",
-  "programme-course": "Programme & Course",
-  "student-info": "Student Information",
-  "faculty-hr": "Faculty & HR",
+  "programme-course": "Programme And Course Details",
+  "student-info": "Student Information And Mobility",
+  "faculty-hr": "Faculty And Human Resources Registry",
   infrastructure: "Infrastructure",
-  "quality-assurance": "Quality Assurance",
-  "abc-ncrf": "ABC & NCrF",
-  innovation: "Innovation",
-  research: "Research",
+  "quality-assurance": "Quality Assurance And Accreditation Hub",
+  "abc-ncrf": "Academic Bank Of Credits (ABC) And NCrF Integration",
+  innovation: "Innovation, Industry & Projects",
+  research: "Research & Outcome",
 };
 
 export function Breadcrumbs() {
@@ -39,7 +39,7 @@ export function Breadcrumbs() {
   }
 
   return (
-    <nav className="bg-card border-b border-border px-6 py-3 text-sm text-muted-foreground sticky top-16 z-20">
+    <nav className="bg-card border-b border-border px-6 py-3 text-sm text-muted-foreground">
       <ol className="flex flex-wrap items-center gap-2 text-xs uppercase tracking-wide">
         <li>
           <Link className="text-foreground font-medium" to="/dashboard">

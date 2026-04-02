@@ -45,24 +45,24 @@ interface MenuItem {
 const menuItems: MenuItem[] = [
   { title: "Dashboard", url: "/dashboard", icon: Home },
   {
-    title: "Institutional Registry",
+    title: "Institutional Registry And Recognition",
     url: "/institutional-registry",
     icon: Building2,
     progress: 25,
     subItems: [
       { title: "Institution Details", url: "/institutional-registry/institution-details", icon: Building2 },
       { title: "Contact Details", url: "/institutional-registry/contact-details", icon: Phone },
-      { title: "Parent Organization", url: "/institutional-registry/parent-org", icon: Users },
+      { title: "Parent Organization/Ownership", url: "/institutional-registry/parent-org", icon: Users },
       { title: "Affiliation/Approval", url: "/institutional-registry/affiliation", icon: FileCheck },
       { title: "Committees", url: "/institutional-registry/committees", icon: UsersRound },
       { title: "Financial Details", url: "/institutional-registry/financial", icon: IndianRupee },
       { title: "Centres / Campuses", url: "/institutional-registry/centres", icon: MapPin },
-      { title: "Student Support", url: "/institutional-registry/student-support", icon: HeartHandshake },
-      { title: "Regulatory Info", url: "/institutional-registry/regulatory", icon: ShieldCheck },
+      { title: "Student Support & Institutional Activities", url: "/institutional-registry/student-support", icon: HeartHandshake },
+     
     ],
   },
   {
-    title: "Programme & Course",
+    title: "Programme And Course Details",
     url: "/programme-course",
     icon: BookOpen,
     progress: 50,
@@ -73,7 +73,7 @@ const menuItems: MenuItem[] = [
     ],
   },
   {
-    title: "Student Information",
+    title: "Student Information And Mobility",
     url: "/student-info",
     icon: Users,
     progress: 75,
@@ -83,7 +83,7 @@ const menuItems: MenuItem[] = [
     ],
   },
   {
-    title: "Faculty & HR Registry",
+    title: "Faculty And Human Resources Registry",
     url: "/faculty-hr",
     icon: UserCog,
     progress: 75,
@@ -93,7 +93,7 @@ const menuItems: MenuItem[] = [
     ],
   },
   {
-    title: "Infrastructure",
+    title: "Infrastructure And Resources",
     url: "/infrastructure",
     icon: Landmark,
     progress: 100,
@@ -103,7 +103,7 @@ const menuItems: MenuItem[] = [
     ],
   },
   {
-    title: "Quality Assurance",
+    title: "Quality Assurance And Accreditation Hub",
     url: "/quality-assurance",
     icon: Award,
     progress: 100,
@@ -112,7 +112,7 @@ const menuItems: MenuItem[] = [
     ],
   },
   {
-    title: "ABC & NCrF",
+    title: "Academic Bank of Credits (ABC) and NCrF Integration",
     url: "/abc-ncrf",
     icon: CreditCard,
     progress: 30,
@@ -121,7 +121,7 @@ const menuItems: MenuItem[] = [
     ],
   },
   {
-    title: "Innovation & Projects",
+    title: "Innovation,Industry & Projects",
     url: "/innovation",
     icon: Lightbulb,
     progress: 75,
@@ -130,7 +130,7 @@ const menuItems: MenuItem[] = [
     ],
   },
   {
-    title: "Research & Outcome",
+    title: "Research And Outcome",
     url: "/research",
     icon: FlaskConical,
     progress: 50,
@@ -179,8 +179,8 @@ export function AppSidebar({ collapsed, onToggle }: { collapsed?: boolean; onTog
   return (
     <aside
       className={cn(
-        "h-screen sticky top-0 bg-card border-r border-border flex flex-col shrink-0 transition-all duration-300",
-        collapsed ? "w-16" : "w-64"
+        "h-screen sticky top-0 bg-card border-r border-border flex flex-col shrink-0 transition-all duration-300 z-50",
+        collapsed ? "w-16" : "w-72"
       )}
     >
       {/* Logo */}
@@ -221,18 +221,18 @@ export function AppSidebar({ collapsed, onToggle }: { collapsed?: boolean; onTog
                   }
                 }}
                 className={cn(
-                  "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-200 group",
+                  "w-full flex items-start gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-200 group",
                   active
                     ? "bg-primary text-primary-foreground shadow-sm"
                     : "text-foreground hover:bg-muted"
                 )}
                 title={collapsed ? item.title : undefined}
               >
-                <item.icon className="h-4 w-4 shrink-0" />
+                <item.icon className="h-4 w-4 shrink-0 mt-0.5" />
                 {!collapsed && (
                   <>
-                    <span className="leading-tight flex-1 text-left truncate">{item.title}</span>
-                    <div className="flex items-center gap-1.5">
+                    <span className="leading-snug flex-1 text-left whitespace-normal break-words">{item.title}</span>
+                    <div className="flex items-center gap-1.5 shrink-0 mt-0.5">
                       <ProgressDot progress={item.progress} />
                       <ChevronDown
                         className={cn(
@@ -248,25 +248,23 @@ export function AppSidebar({ collapsed, onToggle }: { collapsed?: boolean; onTog
               {/* Submenu accordion */}
               {hasSubItems && expanded && !collapsed && (
                 <div className="mt-1 ml-3 pl-3 border-l-2 border-border space-y-0.5 animate-accordion-down overflow-hidden">
-                  {item.subItems!.map((sub) => {
-                    const subActive = location.pathname === sub.url;
-                    return (
+                   {item.subItems!.map((sub) => (
                       <NavLink
                         key={sub.url}
                         to={sub.url}
-                        className={cn(
-                          "flex items-center gap-2.5 px-3 py-2 rounded-md text-xs transition-all duration-200",
-                          subActive
-                            ? "bg-accent/10 text-accent font-medium border-l-2 border-accent -ml-[2px] pl-[14px]"
-                            : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-                        )}
-                        activeClassName=""
+                        className={({ isActive: subActive }) =>
+                          cn(
+                            "group flex items-start gap-3 px-3 py-2 rounded-lg text-xs transition-all duration-200",
+                            subActive
+                              ? "bg-accent/10 text-accent font-semibold"
+                              : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                          )
+                        }
                       >
-                        <sub.icon className="h-3.5 w-3.5 shrink-0" />
-                        <span className="truncate">{sub.title}</span>
+                        <sub.icon className="h-3.5 w-3.5 shrink-0 opacity-70 mt-0.5" />
+                        <span className="whitespace-normal leading-normal">{sub.title}</span>
                       </NavLink>
-                    );
-                  })}
+                    ))}
                 </div>
               )}
             </div>

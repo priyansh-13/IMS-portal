@@ -310,6 +310,10 @@ export default function InstitutionDetailsPage() {
                 sections={sections}
                 sectionOrder={SECTION_ORDER}
                 activeSection={currentSectionName}
+                onSectionClick={(sectionName) => {
+                  const index = SECTION_ORDER.indexOf(sectionName);
+                  if (index !== -1) setCurrentStep(index);
+                }}
               />
             </div>
           </div>
