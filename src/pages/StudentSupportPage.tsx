@@ -156,7 +156,7 @@ export default function StudentSupportPage() {
           />
 
           <div className="flex flex-col lg:flex-row gap-6 px-6 pb-6">
-            <div className="flex-1 space-y-6">
+            <div className="flex-1 min-w-0 space-y-6">
               {activeSubStep === 0 && (
               <section id="section-ncc" className="rounded-2xl border border-border/70 bg-muted/40 p-5 space-y-4">
                 <h3 className="text-base font-semibold text-foreground">National Cadet Corps (NCC)</h3>
@@ -220,7 +220,7 @@ export default function StudentSupportPage() {
               </div>
             </div>
 
-            <div className="flex-none lg:w-80">
+            <div className="flex-none px-2 pb-6 lg:pb-0">
               <SectionStatusSidebar
                 sections={sectionsWithProgress}
                 sectionOrder={sectionsWithProgress.map((s) => s.name)}

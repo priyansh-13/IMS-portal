@@ -145,7 +145,7 @@ export default function AffiliationApprovalPage() {
           />
 
           <div className="flex flex-col lg:flex-row gap-6 px-6 pb-6">
-            <div className="flex-1 space-y-6">
+            <div className="flex-1 min-w-0 space-y-6">
               {activeSubStep === 0 && (
               <section id="section-affiliation" className="space-y-4 rounded-2xl border border-border/70 bg-muted/40 p-5">
                 <h3 className="text-base font-semibold text-foreground">Affiliation / Approval Details</h3>
@@ -210,7 +210,7 @@ export default function AffiliationApprovalPage() {
               </div>
             </div>
 
-            <div className="flex-none lg:w-80">
+            <div className="flex-none px-2 pb-6 lg:pb-0">
               <SectionStatusSidebar
                 sections={sectionsWithProgress}
                 sectionOrder={sectionsWithProgress.map((s) => s.name)}

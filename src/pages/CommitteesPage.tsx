@@ -179,7 +179,7 @@ export default function CommitteesPage() {
           />
 
           <div className="flex flex-col lg:flex-row gap-6 px-6 pb-6">
-            <div className="flex-1 space-y-6">
+            <div className="flex-1 min-w-0 space-y-6">
               {activeSubStep === 0 && (
               <section id="section-general" className="rounded-2xl border border-border/70 bg-muted/40 p-5">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -311,7 +311,7 @@ export default function CommitteesPage() {
               </div>
             </div>
 
-            <div className="flex-none lg:w-80">
+            <div className="flex-none px-2 pb-6 lg:pb-0">
               <SectionStatusSidebar
                 sections={sectionsWithProgress}
                 sectionOrder={sectionsWithProgress.map((s) => s.name)}
