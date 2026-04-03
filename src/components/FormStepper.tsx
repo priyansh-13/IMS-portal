@@ -57,7 +57,8 @@ export function FormStepper({ steps, currentStep, onStepClick, overallPercentage
           />
         </div>
 
-        <div className="mt-7 flex items-start">
+        <div className="mt-7 overflow-x-auto pb-4 -mx-1 px-1 sm:mx-0 sm:px-0 sm:pb-0 sm:overflow-visible custom-scrollbar">
+          <div className="flex items-start min-w-[600px] sm:min-w-0">
           {steps.map((step, index) => {
             const status = getStepStatus(step);
             const isCurrent = index === currentStep;
@@ -134,6 +135,7 @@ export function FormStepper({ steps, currentStep, onStepClick, overallPercentage
 </div>
             );
           })}
+          </div>
         </div>
       </div>
     </div>

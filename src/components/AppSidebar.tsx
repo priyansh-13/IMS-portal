@@ -152,7 +152,7 @@ function ProgressDot({ progress }: { progress?: number }) {
   );
 }
 
-export function AppSidebar({ collapsed, onToggle }: { collapsed?: boolean; onToggle?: () => void }) {
+export function AppSidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: { collapsed?: boolean; onToggle?: () => void; mobileOpen?: boolean; onMobileClose?: () => void }) {
   const location = useLocation();
   const navigate = useNavigate();
   const [expandedStates, setExpandedStates] = useState<Record<string, boolean>>({});
@@ -179,8 +179,13 @@ export function AppSidebar({ collapsed, onToggle }: { collapsed?: boolean; onTog
   return (
     <aside
       className={cn(
-        "h-screen sticky top-0 bg-card border-r border-border flex flex-col shrink-0 transition-all duration-300 z-50",
-        collapsed ? "w-16" : "w-72"
+        "h-screen bg-card border-r border-border flex flex-col shrink-0 transition-transform duration-300 z-50",
+        // Desktop
+        "lg:sticky lg:top-0 lg:translate-x-0",
+        collapsed ? "lg:w-16" : "lg:w-72",
+        // Mobile
+        "fixed inset-y-0 left-0 w-72",
+        mobileOpen ? "translate-x-0" : "-translate-x-full"
       )}
     >
       {/* Logo */}
@@ -193,14 +198,26 @@ export function AppSidebar({ collapsed, onToggle }: { collapsed?: boolean; onTog
             </div>
           )}
         </div>
-        {onToggle && (
-          <button
-            onClick={onToggle}
-            className="p-1 rounded-md hover:bg-muted transition-colors text-muted-foreground"
-          >
-            {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-          </button>
-        )}
+        <div className="flex items-center">
+          {onToggle && (
+            <button
+              onClick={onToggle}
+              className="hidden lg:block p-1 rounded-md hover:bg-muted transition-colors text-muted-foreground"
+              aria-label="Toggle sidebar"
+            >
+              {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+            </button>
+          )}
+          {onMobileClose && (
+            <button
+              onClick={onMobileClose}
+              className="lg:hidden p-1 rounded-md hover:bg-muted transition-colors text-muted-foreground"
+              aria-label="Close sidebar"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Menu */}
