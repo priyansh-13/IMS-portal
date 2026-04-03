@@ -69,9 +69,20 @@ export function useFormProgress(initialFields: FieldState[]) {
     }
   }, []);
 
+  const addFields = useCallback((newFields: FieldState[]) => {
+    setFields((prev) => [...prev, ...newFields]);
+  }, []);
+
+  const removeFields = useCallback((fieldIds: string[]) => {
+    setFields((prev) => prev.filter((f) => !fieldIds.includes(f.id)));
+  }, []);
+
   return {
     fields,
+    setFields,
     updateField,
+    addFields,
+    removeFields,
     sections,
     overallPercentage,
     pendingFields,

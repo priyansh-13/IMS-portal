@@ -107,6 +107,7 @@ export function FormStepper({ steps, currentStep, onStepClick, overallPercentage
     )}
 
     <button
+      onClick={() => onStepClick(index)}
       className={cn(
         "relative z-10 h-11 w-11 rounded-full border-2 flex items-center justify-center",
         circleStyles(status, isCurrent)
@@ -125,10 +126,13 @@ export function FormStepper({ steps, currentStep, onStepClick, overallPercentage
   </div>
 
   {/* Label */}
-  <p className={cn(
-    "mt-2 text-[11px] text-center leading-tight line-clamp-2 h-[32px]",
-    textColor(status, isCurrent)
-  )}>
+  <p
+    onClick={() => onStepClick(index)}
+    className={cn(
+      "mt-2 text-[11px] text-center leading-tight line-clamp-2 h-[32px] cursor-pointer hover:text-accent transition-colors",
+      textColor(status, isCurrent)
+    )}
+  >
     {step.name}
   </p>
 

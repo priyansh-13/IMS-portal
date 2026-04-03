@@ -27,6 +27,13 @@ import {
 import { NavLink } from "@/components/NavLink";
 import { useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
 
 interface SubMenuItem {
   title: string;
@@ -230,37 +237,50 @@ export function AppSidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: {
           return (
             <div key={item.url} className="mx-2 my-0.5">
               {/* Main menu item */}
-              <button
-                onClick={() => {
-                  navigate(item.url);
-                  if (hasSubItems && !collapsed) {
-                    toggleMenu(item.url);
-                  }
-                }}
-                className={cn(
-                  "w-full flex items-start gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-200 group",
-                  active
-                    ? "bg-primary text-primary-foreground shadow-sm"
-                    : "text-foreground hover:bg-muted"
+              <Tooltip delayDuration={0}>
+                <TooltipTrigger asChild>
+                  <button
+                    onClick={() => {
+                      navigate(item.url);
+                      if (hasSubItems && !collapsed) {
+                        toggleMenu(item.url);
+                      }
+                    }}
+                    className={cn(
+                      "w-full flex items-start gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-200 group",
+                      active
+                        ? "bg-primary text-primary-foreground shadow-sm"
+                        : "text-foreground hover:bg-muted"
+                    )}
+                  >
+                    <item.icon className="h-4 w-4 shrink-0 mt-0.5" />
+                    {!collapsed && (
+                      <>
+                        <span className="leading-snug flex-1 text-left whitespace-normal break-words">{item.title}</span>
+                        <div className="flex items-center gap-1.5 shrink-0 mt-0.5">
+                          <ProgressDot progress={item.progress} />
+                          <ChevronDown
+                            className={cn(
+                              "h-3.5 w-3.5 transition-transform duration-300",
+                              expanded && "rotate-180"
+                            )}
+                          />
+                        </div>
+                      </>
+                    )}
+                  </button>
+                </TooltipTrigger>
+                {collapsed && (
+                  <TooltipContent 
+                    side="right" 
+                    className="bg-primary text-primary-foreground border-primary font-medium shadow-lg px-4 py-2"
+                    sideOffset={10}
+                  >
+                    {item.title}
+                  </TooltipContent>
                 )}
-                title={collapsed ? item.title : undefined}
-              >
-                <item.icon className="h-4 w-4 shrink-0 mt-0.5" />
-                {!collapsed && (
-                  <>
-                    <span className="leading-snug flex-1 text-left whitespace-normal break-words">{item.title}</span>
-                    <div className="flex items-center gap-1.5 shrink-0 mt-0.5">
-                      <ProgressDot progress={item.progress} />
-                      <ChevronDown
-                        className={cn(
-                          "h-3.5 w-3.5 transition-transform duration-300",
-                          expanded && "rotate-180"
-                        )}
-                      />
-                    </div>
-                  </>
-                )}
-              </button>
+              </Tooltip>
+
 
               {/* Submenu accordion */}
               {hasSubItems && expanded && !collapsed && (

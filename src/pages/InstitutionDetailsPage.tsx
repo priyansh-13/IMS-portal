@@ -105,7 +105,7 @@ export default function InstitutionDetailsPage() {
   const renderField = (
     id: string,
     label: string,
-    options?: { type?: "text" | "select" | "radio"; readOnly?: boolean; placeholder?: string; selectOptions?: string[]; radioOptions?: string[] }
+    options?: { type?: "text" | "select" | "radio" | "date" | "number"; readOnly?: boolean; placeholder?: string; selectOptions?: string[]; radioOptions?: string[] }
   ) => {
     const { type = "text", readOnly, placeholder, selectOptions, radioOptions } = options || {};
     const filled = isFieldFilled(id);

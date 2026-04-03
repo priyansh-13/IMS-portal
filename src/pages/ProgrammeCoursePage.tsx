@@ -6,9 +6,9 @@ import { Input } from "@/components/ui/input";
 import { BookOpen, FileText, GraduationCap, Search, Download } from "lucide-react";
 
 const subSections = [
-  { title: "Programme-Course Details", icon: BookOpen, completed: true, lastUpdated: "04 Feb 2026" },
-  { title: "Programme Summary", icon: FileText, completed: false, lastUpdated: "02 Feb 2026" },
-  { title: "Course Curriculum", icon: GraduationCap, completed: false, lastUpdated: "02 Feb 2026" },
+  { title: "Programme-Course Details", icon: BookOpen, completed: true, lastUpdated: "10:15 AM, 04 Feb 2026" },
+  { title: "Programme Summary", icon: FileText, completed: false, lastUpdated: "09:45 AM, 02 Feb 2026" },
+  { title: "Course Curriculum", icon: GraduationCap, completed: false, lastUpdated: "03:20 PM, 02 Feb 2026" },
 ];
 
 const tabs = ["List of Program", "Programme Identification", "Programme Type & Mode", "Intake & Admission"];
@@ -461,9 +461,13 @@ function ListOfProgramTab({ onNavigate }: { onNavigate: (tab: number) => void })
                   </span>
                 </td>
                 <td className="px-4 py-3">
-                  <div className="flex gap-2">
-                    <button className="px-3 py-1 bg-accent text-accent-foreground rounded text-xs font-medium hover:bg-accent/90">Edit</button>
-                    <button className="px-3 py-1 bg-destructive text-destructive-foreground rounded text-xs font-medium hover:bg-destructive/90">Delete</button>
+                  <div className="flex items-center gap-2">
+                    <button className="text-[10px] bg-accent/10 text-accent hover:bg-accent/20 font-bold px-2 py-1 rounded transition-colors uppercase">
+                      Edit
+                    </button>
+                    <button className="text-[10px] bg-red-50 text-red-600 hover:bg-red-100 font-bold px-2 py-1 rounded transition-colors uppercase">
+                      Delete
+                    </button>
                   </div>
                 </td>
               </tr>

@@ -1,163 +1,158 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { TopLayout } from "@/components/TopLayout";
 import { ModuleBanner } from "@/components/ModuleBanner";
 import { FormStepper } from "@/components/FormStepper";
 import { SectionStatusSidebar } from "@/components/SectionStatusSidebar";
+import { useFormProgress, FieldState } from "@/hooks/useFormProgress";
+import { PendingFieldsPanel } from "@/components/PendingFieldsPanel";
+import { cn } from "@/lib/utils";
+import { CheckCircle2 } from "lucide-react";
+
+const COMMITTEE_FIELDS: FieldState[] = [
+  // General Committees
+  { id: "icc-exists", name: "Internal Complaints Committee (ICC) Exists", section: "General Committees", value: "" },
+  { id: "equal-opportunity", name: "Equal Opportunity Cell Exists", section: "General Committees", value: "" },
+  { id: "vigilance-cell", name: "Vigilance Cell Exists", section: "General Committees", value: "" },
+
+  // Ombudsman
+  { id: "grievance-exists", name: "Grievance Committee Exists", section: "Ombudsman / Grievance Redressal Committee", value: "" },
+  { id: "ombudsman-appointed", name: "Ombudsman Appointed", section: "Ombudsman / Grievance Redressal Committee", value: "" },
+  { id: "ombudsman-date", name: "Date of Appointment", section: "Ombudsman / Grievance Redressal Committee", value: "" },
+  { id: "ombudsman-name", name: "Ombudsman Name", section: "Ombudsman / Grievance Redressal Committee", value: "" },
+  { id: "ombudsman-contact", name: "Contact Number", section: "Ombudsman / Grievance Redressal Committee", value: "" },
+  { id: "ombudsman-email", name: "Email Address", section: "Ombudsman / Grievance Redressal Committee", value: "" },
+  { id: "online-grievance", name: "Online Grievance Redressal Mechanism", section: "Ombudsman / Grievance Redressal Committee", value: "" },
+
+  // Anti-Ragging
+  { id: "anti-ragging-exists", name: "Anti-Ragging Committee Exists", section: "Anti-Ragging Cell / Committee", value: "" },
+  { id: "anti-ragging-date", name: "Date of Constitution", section: "Anti-Ragging Cell / Committee", value: "" },
+  { id: "anti-ragging-type", name: "Type of Committee", section: "Anti-Ragging Cell / Committee", value: "" },
+  { id: "ragging-squad", name: "Anti-Ragging Squad Exists", section: "Anti-Ragging Cell / Committee", value: "" },
+
+  // IC
+  { id: "ic-exists", name: "Committee Exists", section: "Internal Committee (IC)", value: "" },
+  { id: "ic-type", name: "Type of Committee", section: "Internal Committee (IC)", value: "" },
+  { id: "ic-date", name: "Date of Appointment", section: "Internal Committee (IC)", value: "" },
+
+  // SC/ST
+  { id: "scst-exists", name: "Committee Exists", section: "SC / ST Committee", value: "" },
+  { id: "scst-date", name: "Date of Constitution", section: "SC / ST Committee", value: "" },
+
+  // Student Counselor
+  { id: "student-counselor", name: "Student Counselor Appointed", section: "Student Counselor", value: "" },
+  { id: "counselor-date", name: "Date of Appointment", section: "Student Counselor", value: "" },
+  { id: "counselor-name", name: "Counselor Name", section: "Student Counselor", value: "" },
+  { id: "counselor-contact", name: "Contact Number", section: "Student Counselor", value: "" },
+  { id: "counselor-email", name: "Email Address", section: "Student Counselor", value: "" },
+
+  // IQAC
+  { id: "iqac-established", name: "IQAC Established", section: "Internal Quality Assurance Cell (IQAC)", value: "" },
+  { id: "iqac-date", name: "Date of Establishment", section: "Internal Quality Assurance Cell (IQAC)", value: "" },
+  { id: "iqac-contact", name: "Contact Email", section: "Internal Quality Assurance Cell (IQAC)", value: "" },
+  { id: "iqac-number", name: "Contact Number", section: "Internal Quality Assurance Cell (IQAC)", value: "" },
+  { id: "stakeholders-involved", name: "Involves all relevant stakeholders", section: "Internal Quality Assurance Cell (IQAC)", value: "" },
+  { id: "intertwines-committees", name: "Intertwines activities with institutional committees", section: "Internal Quality Assurance Cell (IQAC)", value: "" },
+  { id: "promotes-quality", name: "Promotes quality through orientation / seminars / workshops", section: "Internal Quality Assurance Cell (IQAC)", value: "" },
+  { id: "audits-external", name: "Conducts Academic & Administrative Audit by external experts", section: "Internal Quality Assurance Cell (IQAC)", value: "" },
+  { id: "quality-circles", name: "Practice of Quality Circles", section: "Internal Quality Assurance Cell (IQAC)", value: "" },
+];
+
+const SECTION_ORDER = [
+  "General Committees",
+  "Ombudsman / Grievance Redressal Committee",
+  "Anti-Ragging Cell / Committee",
+  "Internal Committee (IC)",
+  "SC / ST Committee",
+  "Student Counselor",
+  "Internal Quality Assurance Cell (IQAC)",
+];
 
 type FieldValueMap = Record<string, string>;
 
 const renderInputField = (
-  values: FieldValueMap,
+  fields: FieldState[],
   setValue: (field: string, value: string) => void,
   id: string,
   label: string,
   placeholder?: string,
   type: "text" | "date" | "email" | "tel" = "text"
-) => (
-  <div className="flex flex-col gap-2">
-    <label htmlFor={id} className="text-sm font-medium text-foreground">{label}</label>
-    <input
-      id={id}
-      type={type}
-      value={values[id] || ""}
-      onChange={(e) => setValue(id, e.target.value)}
-      placeholder={placeholder}
-      className="w-full rounded-xl border border-border px-3 py-2 text-sm transition-colors duration-200 focus:border-accent focus:ring-1 focus:ring-accent/30"
-    />
-  </div>
-);
+) => {
+  const fieldVal = fields.find((f) => f.id === id)?.value || "";
+  const filled = fieldVal.trim().length > 0;
+  
+  return (
+    <div className="flex flex-col gap-2">
+      <label htmlFor={id} className="text-sm font-medium text-foreground">{label}</label>
+      <div className="relative">
+        <input
+          id={id}
+          type={type}
+          value={fieldVal}
+          onChange={(e) => setValue(id, e.target.value)}
+          placeholder={placeholder}
+          className={cn(
+            "w-full rounded-xl border px-3 py-2 text-sm transition-all duration-200 outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent",
+            filled ? "border-success/50 bg-success/5" : "border-border bg-muted/20"
+          )}
+        />
+        {filled && (
+          <CheckCircle2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-success" />
+        )}
+      </div>
+    </div>
+  );
+};
 
 const renderRadioGroup = (
-  values: FieldValueMap,
+  fields: FieldState[],
   setValue: (field: string, value: string) => void,
   id: string,
   label: string,
   options: string[] = ["Yes", "No"]
-) => (
-  <div className="flex flex-col gap-2">
-    <p className="text-sm font-medium text-foreground">{label}</p>
-    <div className="flex gap-4">
-      {options.map((opt) => (
-        <label key={opt} className="flex items-center gap-2 text-sm text-foreground">
-          <input
-            type="radio"
-            name={id}
-            value={opt}
-            checked={values[id] === opt}
-            onChange={(e) => setValue(id, e.target.value)}
-            className="accent-accent"
-          />
-          {opt}
-        </label>
-      ))}
+) => {
+  const fieldVal = fields.find((f) => f.id === id)?.value || "";
+
+  return (
+    <div className="flex flex-col gap-2">
+      <p className="text-sm font-medium text-foreground">{label}</p>
+      <div className="flex gap-4">
+        {options.map((opt) => (
+          <label key={opt} className="flex items-center gap-2 text-sm text-foreground cursor-pointer">
+            <input
+              type="radio"
+              name={id}
+              value={opt}
+              checked={fieldVal === opt}
+              onChange={(e) => setValue(id, e.target.value)}
+              className="accent-accent"
+            />
+            {opt}
+          </label>
+        ))}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default function CommitteesPage() {
-  const [values, setValues] = useState<FieldValueMap>({});
   const navigate = useNavigate();
+  const initialFields: FieldState[] = [...COMMITTEE_FIELDS];
 
-  const pageSteps = [
-    {
-      name: "General Committees",
-      fields: [
-        "icc-exists",
-        "equal-opportunity",
-        "vigilance-cell",
-      ],
-      targetId: "section-general",
-    },
-    {
-      name: "Ombudsman / Grievance Redressal Committee",
-      fields: [
-        "grievance-exists",
-        "ombudsman-appointed",
-        "ombudsman-date",
-        "ombudsman-name",
-        "ombudsman-contact",
-        "ombudsman-email",
-        "online-grievance",
-      ],
-      targetId: "section-ombudsman",
-    },
-    {
-      name: "Anti-Ragging Cell / Committee",
-      fields: [
-        "anti-ragging-exists",
-        "anti-ragging-date",
-        "anti-ragging-type",
-        "ragging-squad",
-      ],
-      targetId: "section-ragging",
-    },
-    {
-      name: "Internal Committee (IC)",
-      fields: [
-        "ic-exists",
-        "ic-type",
-        "ic-date",
-      ],
-      targetId: "section-ic",
-    },
-    {
-      name: "SC / ST Committee",
-      fields: [
-        "scst-exists",
-        "scst-date",
-      ],
-      targetId: "section-scst",
-    },
-    {
-      name: "Student Counselor",
-      fields: [
-        "student-counselor",
-        "counselor-date",
-        "counselor-name",
-        "counselor-contact",
-        "counselor-email",
-      ],
-      targetId: "section-counselor",
-    },
-    {
-      name: "Internal Quality Assurance Cell (IQAC)",
-      fields: [
-        "iqac-established",
-        "iqac-date",
-        "iqac-contact",
-        "iqac-number",
-        "stakeholders-involved",
-        "intertwines-committees",
-        "promotes-quality",
-        "audits-external",
-        "quality-circles",
-      ],
-      targetId: "section-iqac",
-    },
-  ];
-
+  const { fields, updateField, sections, overallPercentage, pendingFields, scrollToField } = useFormProgress(initialFields);
   const [activeSubStep, setActiveSubStep] = useState(0);
 
-  const setValue = (field: string, value: string) => {
-    setValues((prev) => ({ ...prev, [field]: value }));
-  };
+  const stepInfos = useMemo(
+    () => SECTION_ORDER.map((name) => {
+      const sec = sections.find((s) => s.name === name);
+      return { name, completionPercentage: sec?.completionPercentage ?? 0 };
+    }),
+    [sections]
+  );
 
-  const sectionsWithProgress = pageSteps.map((step) => {
-    const filled = step.fields.filter((field) => (values[field] || "").trim().length > 0).length;
-    return {
-      name: step.name,
-      totalFields: step.fields.length,
-      filledFields: filled,
-      completionPercentage: Math.round((filled / step.fields.length) * 100) || 0,
-      targetId: step.targetId,
-    };
-  });
-
-  const totalFields = sectionsWithProgress.reduce((sum, s) => sum + s.totalFields, 0);
-  const totalFilled = sectionsWithProgress.reduce((sum, s) => sum + s.filledFields, 0);
-  const overallPercentage = totalFields ? Math.round((totalFilled / totalFields) * 100) : 0;
-  const isLastStep = activeSubStep === pageSteps.length - 1;
+  const currentSectionName = SECTION_ORDER[activeSubStep];
+  const currentSection = sections.find((s) => s.name === currentSectionName);
+  const isLastStep = activeSubStep === SECTION_ORDER.length - 1;
 
   return (
     <TopLayout>
@@ -166,13 +161,17 @@ export default function CommitteesPage() {
         <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
           <div className="flex items-center justify-between px-6 py-4 border-b border-border border-l-4 border-l-primary">
             <h2 className="text-lg font-semibold text-foreground">Committees</h2>
-            <button className="px-4 py-2 bg-accent text-accent-foreground rounded-lg text-sm font-medium hover:bg-accent/90 transition-colors">
+            <button 
+              onClick={() => navigate(-1)}
+              className="px-4 py-2 bg-accent text-accent-foreground rounded-lg text-sm font-medium hover:bg-accent/90 transition-colors"
+            >
               Back
             </button>
+
           </div>
 
           <FormStepper
-            steps={sectionsWithProgress.map(({ name, completionPercentage }) => ({ name, completionPercentage }))}
+            steps={stepInfos}
             currentStep={activeSubStep}
             onStepClick={(idx) => setActiveSubStep(idx)}
             overallPercentage={overallPercentage}
@@ -181,71 +180,154 @@ export default function CommitteesPage() {
           <div className="flex flex-col lg:flex-row gap-6 px-6 pb-6">
             <div className="flex-1 min-w-0 space-y-6">
               {activeSubStep === 0 && (
-              <section id="section-general" className="rounded-2xl border border-border/70 bg-muted/40 p-5">
+              <section id="section-general" className="space-y-4 rounded-2xl border border-border/70 bg-muted/40 p-5">
+                <div className="flex items-center justify-between mb-4 pb-2 border-b border-border/30">
+                  <h3 className="text-base font-semibold text-foreground">General Committees</h3>
+                  {currentSection && (
+                    <span className={cn(
+                      "text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider",
+                      currentSection.completionPercentage >= 100 
+                        ? "bg-success/10 text-success" 
+                        : currentSection.completionPercentage > 0
+                        ? "bg-accent/10 text-accent"
+                        : "bg-muted text-muted-foreground"
+                    )}>
+                      {currentSection.completionPercentage}% Complete
+                    </span>
+                  )}
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {renderRadioGroup(values, setValue, "icc-exists", "Internal Complaints Committee (ICC) Exists")}
-                  {renderRadioGroup(values, setValue, "equal-opportunity", "Equal Opportunity Cell Exists")}
-                  {renderRadioGroup(values, setValue, "vigilance-cell", "Vigilance Cell Exists")}
+                  {renderRadioGroup(fields, updateField, "icc-exists", "Internal Complaints Committee (ICC) Exists")}
+                  {renderRadioGroup(fields, updateField, "equal-opportunity", "Equal Opportunity Cell Exists")}
+                  {renderRadioGroup(fields, updateField, "vigilance-cell", "Vigilance Cell Exists")}
                 </div>
               </section>
               )}
 
               {activeSubStep === 1 && (
               <section id="section-ombudsman" className="rounded-2xl border border-border/70 bg-muted/40 p-5 space-y-4">
-                <h3 className="text-base font-semibold text-foreground">Ombudsman / Grievance Redressal Committee</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {renderRadioGroup(values, setValue, "grievance-exists", "Grievance Committee Exists")}
-                  {renderRadioGroup(values, setValue, "ombudsman-appointed", "Ombudsman Appointed")}
-                  {renderInputField(values, setValue, "ombudsman-date", "Date of Appointment", "dd-mm-yyyy", "date")}
-                  {renderInputField(values, setValue, "ombudsman-name", "Ombudsman Name")}
-                  {renderInputField(values, setValue, "ombudsman-contact", "Contact Number", undefined, "tel")}
-                  {renderInputField(values, setValue, "ombudsman-email", "Email Address", undefined, "email")}
-                  {renderRadioGroup(values, setValue, "online-grievance", "Online Grievance Redressal Mechanism")}
+                <div className="flex items-center justify-between mb-4 pb-2 border-b border-border/30">
+                  <h3 className="text-base font-semibold text-foreground">Ombudsman / Grievance Redressal Committee</h3>
+                  {currentSection && (
+                    <span className={cn(
+                      "text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider",
+                      currentSection.completionPercentage >= 100 
+                        ? "bg-success/10 text-success" 
+                        : currentSection.completionPercentage > 0
+                        ? "bg-accent/10 text-accent"
+                        : "bg-muted text-muted-foreground"
+                    )}>
+                      {currentSection.completionPercentage}% Complete
+                    </span>
+                  )}
                 </div>
-                <div className="flex gap-2">
-                  <button className="rounded-full bg-blue-500 px-4 py-2 text-xs font-semibold text-white">View</button>
-                  <button className="rounded-full bg-blue-900 px-4 py-2 text-xs font-semibold text-white">Manage Members</button>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {renderRadioGroup(fields, updateField, "grievance-exists", "Grievance Committee Exists")}
+                  {renderRadioGroup(fields, updateField, "ombudsman-appointed", "Ombudsman Appointed")}
+                  {renderInputField(fields, updateField, "ombudsman-date", "Date of Appointment", "dd-mm-yyyy", "date")}
+                  {renderInputField(fields, updateField, "ombudsman-name", "Ombudsman Name")}
+                  {renderInputField(fields, updateField, "ombudsman-contact", "Contact Number", undefined, "tel")}
+                  {renderInputField(fields, updateField, "ombudsman-email", "Email Address", undefined, "email")}
+                  {renderRadioGroup(fields, updateField, "online-grievance", "Online Grievance Redressal Mechanism")}
+                </div>
+                <div className="flex items-center gap-2">
+                  <button className="text-[10px] bg-primary/10 text-primary hover:bg-primary/20 font-bold px-2 py-1 rounded transition-colors uppercase">
+                    View
+                  </button>
+                  <button className="text-[10px] bg-accent/10 text-accent hover:bg-accent/20 font-bold px-2 py-1 rounded transition-colors uppercase">
+                    Manage Members
+                  </button>
                 </div>
               </section>
               )}
 
               {activeSubStep === 2 && (
               <section id="section-ragging" className="rounded-2xl border border-border/70 bg-muted/40 p-5 space-y-4">
-                <h3 className="text-base font-semibold text-foreground">Anti-Ragging Cell / Committee</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {renderRadioGroup(values, setValue, "anti-ragging-exists", "Anti-Ragging Committee Exists")}
-                  {renderInputField(values, setValue, "anti-ragging-date", "Date of Constitution", "dd-mm-yyyy", "date")}
-                  {renderInputField(values, setValue, "anti-ragging-type", "Type of Committee")}
-                  {renderRadioGroup(values, setValue, "ragging-squad", "Anti-Ragging Squad Exists")}
+                <div className="flex items-center justify-between mb-4 pb-2 border-b border-border/30">
+                  <h3 className="text-base font-semibold text-foreground">Anti-Ragging Cell / Committee</h3>
+                  {currentSection && (
+                    <span className={cn(
+                      "text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider",
+                      currentSection.completionPercentage >= 100 
+                        ? "bg-success/10 text-success" 
+                        : currentSection.completionPercentage > 0
+                        ? "bg-accent/10 text-accent"
+                        : "bg-muted text-muted-foreground"
+                    )}>
+                      {currentSection.completionPercentage}% Complete
+                    </span>
+                  )}
                 </div>
-                <div className="flex gap-2">
-                  <button className="rounded-full bg-blue-500 px-4 py-2 text-xs font-semibold text-white">View</button>
-                  <button className="rounded-full bg-blue-900 px-4 py-2 text-xs font-semibold text-white">Manage Members</button>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {renderRadioGroup(fields, updateField, "anti-ragging-exists", "Anti-Ragging Committee Exists")}
+                  {renderInputField(fields, updateField, "anti-ragging-date", "Date of Constitution", "dd-mm-yyyy", "date")}
+                  {renderInputField(fields, updateField, "anti-ragging-type", "Type of Committee")}
+                  {renderRadioGroup(fields, updateField, "ragging-squad", "Anti-Ragging Squad Exists")}
+                </div>
+                <div className="flex items-center gap-2">
+                  <button className="text-[10px] bg-primary/10 text-primary hover:bg-primary/20 font-bold px-2 py-1 rounded transition-colors uppercase">
+                    View
+                  </button>
+                  <button className="text-[10px] bg-accent/10 text-accent hover:bg-accent/20 font-bold px-2 py-1 rounded transition-colors uppercase">
+                    Manage Members
+                  </button>
                 </div>
               </section>
               )}
 
               {activeSubStep === 3 && (
               <section id="section-ic" className="rounded-2xl border border-border/70 bg-muted/40 p-5 space-y-4">
-                <h3 className="text-base font-semibold text-foreground">Internal Committee (IC)</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {renderRadioGroup(values, setValue, "ic-exists", "Committee Exists")}
-                  {renderInputField(values, setValue, "ic-type", "Type of Committee")}
-                  {renderInputField(values, setValue, "ic-date", "Date of Appointment", "dd-mm-yyyy", "date")}
+                <div className="flex items-center justify-between mb-4 pb-2 border-b border-border/30">
+                  <h3 className="text-base font-semibold text-foreground">Internal Committee (IC)</h3>
+                  {currentSection && (
+                    <span className={cn(
+                      "text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider",
+                      currentSection.completionPercentage >= 100 
+                        ? "bg-success/10 text-success" 
+                        : currentSection.completionPercentage > 0
+                        ? "bg-accent/10 text-accent"
+                        : "bg-muted text-muted-foreground"
+                    )}>
+                      {currentSection.completionPercentage}% Complete
+                    </span>
+                  )}
                 </div>
-                <div className="flex gap-2">
-                  <button className="rounded-full bg-blue-500 px-4 py-2 text-xs font-semibold text-white">View</button>
-                  <button className="rounded-full bg-blue-900 px-4 py-2 text-xs font-semibold text-white">Manage Members</button>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {renderRadioGroup(fields, updateField, "ic-exists", "Committee Exists")}
+                  {renderInputField(fields, updateField, "ic-type", "Type of Committee")}
+                  {renderInputField(fields, updateField, "ic-date", "Date of Appointment", "dd-mm-yyyy", "date")}
+                </div>
+                <div className="flex items-center gap-2">
+                  <button className="text-[10px] bg-primary/10 text-primary hover:bg-primary/20 font-bold px-2 py-1 rounded transition-colors uppercase">
+                    View
+                  </button>
+                  <button className="text-[10px] bg-accent/10 text-accent hover:bg-accent/20 font-bold px-2 py-1 rounded transition-colors uppercase">
+                    Manage Members
+                  </button>
                 </div>
               </section>
               )}
 
               {activeSubStep === 4 && (
               <section id="section-scst" className="rounded-2xl border border-border/70 bg-muted/40 p-5 space-y-4">
-                <h3 className="text-base font-semibold text-foreground">SC / ST Committee</h3>
+                <div className="flex items-center justify-between mb-4 pb-2 border-b border-border/30">
+                  <h3 className="text-base font-semibold text-foreground">SC / ST Committee</h3>
+                  {currentSection && (
+                    <span className={cn(
+                      "text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider",
+                      currentSection.completionPercentage >= 100 
+                        ? "bg-success/10 text-success" 
+                        : currentSection.completionPercentage > 0
+                        ? "bg-accent/10 text-accent"
+                        : "bg-muted text-muted-foreground"
+                    )}>
+                      {currentSection.completionPercentage}% Complete
+                    </span>
+                  )}
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {renderRadioGroup(values, setValue, "scst-exists", "Committee Exists")}
-                  {renderInputField(values, setValue, "scst-date", "Date of Constitution", "dd-mm-yyyy", "date")}
+                  {renderRadioGroup(fields, updateField, "scst-exists", "Committee Exists")}
+                  {renderInputField(fields, updateField, "scst-date", "Date of Constitution", "dd-mm-yyyy", "date")}
                 </div>
                 <div className="flex gap-2">
                   <button className="rounded-full bg-blue-500 px-4 py-2 text-xs font-semibold text-white">View</button>
@@ -256,30 +338,58 @@ export default function CommitteesPage() {
 
               {activeSubStep === 5 && (
               <section id="section-counselor" className="rounded-2xl border border-border/70 bg-muted/40 p-5 space-y-4">
-                <h3 className="text-base font-semibold text-foreground">Student Counselor</h3>
+                <div className="flex items-center justify-between mb-4 pb-2 border-b border-border/30">
+                  <h3 className="text-base font-semibold text-foreground">Student Counselor</h3>
+                  {currentSection && (
+                    <span className={cn(
+                      "text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider",
+                      currentSection.completionPercentage >= 100 
+                        ? "bg-success/10 text-success" 
+                        : currentSection.completionPercentage > 0
+                        ? "bg-accent/10 text-accent"
+                        : "bg-muted text-muted-foreground"
+                    )}>
+                      {currentSection.completionPercentage}% Complete
+                    </span>
+                  )}
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {renderRadioGroup(values, setValue, "student-counselor", "Student Counselor Appointed")}
-                  {renderInputField(values, setValue, "counselor-date", "Date of Appointment", "dd-mm-yyyy", "date")}
-                  {renderInputField(values, setValue, "counselor-name", "Counselor Name")}
-                  {renderInputField(values, setValue, "counselor-contact", "Contact Number", undefined, "tel")}
-                  {renderInputField(values, setValue, "counselor-email", "Email Address", undefined, "email")}
+                  {renderRadioGroup(fields, updateField, "student-counselor", "Student Counselor Appointed")}
+                  {renderInputField(fields, updateField, "counselor-date", "Date of Appointment", "dd-mm-yyyy", "date")}
+                  {renderInputField(fields, updateField, "counselor-name", "Counselor Name")}
+                  {renderInputField(fields, updateField, "counselor-contact", "Contact Number", undefined, "tel")}
+                  {renderInputField(fields, updateField, "counselor-email", "Email Address", undefined, "email")}
                 </div>
               </section>
               )}
 
               {activeSubStep === 6 && (
               <section id="section-iqac" className="rounded-2xl border border-border/70 bg-muted/40 p-5 space-y-4">
-                <h3 className="text-base font-semibold text-foreground">Internal Quality Assurance Cell (IQAC / IQAS / CIQA)</h3>
+                <div className="flex items-center justify-between mb-4 pb-2 border-b border-border/30">
+                  <h3 className="text-base font-semibold text-foreground">Internal Quality Assurance Cell (IQAC / IQAS / CIQA)</h3>
+                  {currentSection && (
+                    <span className={cn(
+                      "text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider",
+                      currentSection.completionPercentage >= 100 
+                        ? "bg-success/10 text-success" 
+                        : currentSection.completionPercentage > 0
+                        ? "bg-accent/10 text-accent"
+                        : "bg-muted text-muted-foreground"
+                    )}>
+                      {currentSection.completionPercentage}% Complete
+                    </span>
+                  )}
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {renderRadioGroup(values, setValue, "iqac-established", "IQAC Established")}
-                  {renderInputField(values, setValue, "iqac-date", "Date of Establishment", "dd-mm-yyyy", "date")}
-                  {renderInputField(values, setValue, "iqac-contact", "Contact Email", undefined, "email")}
-                  {renderInputField(values, setValue, "iqac-number", "Contact Number", undefined, "tel")}
-                  {renderRadioGroup(values, setValue, "stakeholders-involved", "Involves all relevant stakeholders")}
-                  {renderRadioGroup(values, setValue, "intertwines-committees", "Intertwines activities with institutional committees")}
-                  {renderRadioGroup(values, setValue, "promotes-quality", "Promotes quality through orientation / seminars / workshops")}
-                  {renderRadioGroup(values, setValue, "audits-external", "Conducts Academic & Administrative Audit by external experts")}
-                  {renderRadioGroup(values, setValue, "quality-circles", "Practice of Quality Circles")}
+                  {renderRadioGroup(fields, updateField, "iqac-established", "IQAC Established")}
+                  {renderInputField(fields, updateField, "iqac-date", "Date of Establishment", "dd-mm-yyyy", "date")}
+                  {renderInputField(fields, updateField, "iqac-contact", "Contact Email", undefined, "email")}
+                  {renderInputField(fields, updateField, "iqac-number", "Contact Number", undefined, "tel")}
+                  {renderRadioGroup(fields, updateField, "stakeholders-involved", "Involves all relevant stakeholders")}
+                  {renderRadioGroup(fields, updateField, "intertwines-committees", "Intertwines activities with institutional committees")}
+                  {renderRadioGroup(fields, updateField, "promotes-quality", "Promotes quality through orientation / seminars / workshops")}
+                  {renderRadioGroup(fields, updateField, "audits-external", "Conducts Academic & Administrative Audit by external experts")}
+                  {renderRadioGroup(fields, updateField, "quality-circles", "Practice of Quality Circles")}
                 </div>
               </section>
               )}
@@ -301,8 +411,7 @@ export default function CommitteesPage() {
                   className="flex items-center gap-2 px-6 py-3 rounded-full bg-accent text-accent-foreground text-sm font-semibold shadow-sm shadow-accent/40"
                   onClick={() => {
                     if (!isLastStep) {
-                      const next = Math.min(activeSubStep + 1, pageSteps.length - 1);
-                      setActiveSubStep(next);
+                      setActiveSubStep((s) => Math.min(SECTION_ORDER.length - 1, s + 1));
                     }
                   }}
                 >
@@ -313,11 +422,11 @@ export default function CommitteesPage() {
 
             <div className="flex-none px-2 pb-6 lg:pb-0">
               <SectionStatusSidebar
-                sections={sectionsWithProgress}
-                sectionOrder={sectionsWithProgress.map((s) => s.name)}
-                activeSection={sectionsWithProgress[activeSubStep].name}
+                sections={sections}
+                sectionOrder={SECTION_ORDER}
+                activeSection={currentSectionName}
                 onSectionClick={(name) => {
-                  const targetIndex = sectionsWithProgress.findIndex((s) => s.name === name);
+                  const targetIndex = SECTION_ORDER.indexOf(name);
                   if (targetIndex >= 0) {
                     setActiveSubStep(targetIndex);
                   }
@@ -327,6 +436,10 @@ export default function CommitteesPage() {
           </div>
         </div>
       </div>
+      <PendingFieldsPanel
+        pendingFields={pendingFields}
+        onFieldClick={scrollToField}
+      />
     </TopLayout>
   );
 }
