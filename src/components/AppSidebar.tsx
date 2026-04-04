@@ -74,7 +74,7 @@ const menuItems: MenuItem[] = [
     icon: BookOpen,
     progress: 50,
     subItems: [
-      { title: "Programme-Course Details", url: "/programme-course", icon: BookOpen },
+      { title: "Programme-Course Details", url: "/programme-course/details", icon: BookOpen },
       { title: "Programme Summary", url: "/programme-course/summary", icon: FileText },
       { title: "Course Curriculum", url: "/programme-course/curriculum", icon: GraduationCap },
     ],

@@ -554,6 +554,8 @@ export default function CentresCampusesPage() {
                   onClick={() => {
                     if (!isLastStep) {
                       setActiveSubStep((s) => Math.min(activeSections.length - 1, s + 1));
+                    } else {
+                      navigate("/institutional-registry");
                     }
                   }}
                 >

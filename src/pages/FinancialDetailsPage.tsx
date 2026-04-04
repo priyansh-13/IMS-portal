@@ -469,6 +469,8 @@ export default function FinancialDetailsPage() {
                   onClick={() => {
                     if (!isLastStep) {
                       setActiveSubStep((s) => Math.min(SECTION_ORDER.length - 1, s + 1));
+                    } else {
+                      navigate("/institutional-registry");
                     }
                   }}
                 >

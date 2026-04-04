@@ -1,9 +1,13 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { TopLayout } from "@/components/TopLayout";
 import { ModuleBanner } from "@/components/ModuleBanner";
 import { StatusCard } from "@/components/StatusCard";
 import { Input } from "@/components/ui/input";
 import { BookOpen, FileText, GraduationCap, Search, Download } from "lucide-react";
+
+import { FormStepper } from "@/components/FormStepper";
+import { SectionStatusSidebar } from "@/components/SectionStatusSidebar";
 
 const subSections = [
   { title: "Programme-Course Details", icon: BookOpen, completed: true, lastUpdated: "10:15 AM, 04 Feb 2026" },
@@ -11,7 +15,44 @@ const subSections = [
   { title: "Course Curriculum", icon: GraduationCap, completed: false, lastUpdated: "03:20 PM, 02 Feb 2026" },
 ];
 
+type FieldValueMap = Record<string, string>;
+
 const tabs = ["List of Program", "Programme Identification", "Programme Type & Mode", "Intake & Admission"];
+
+const pageSteps = [
+  {
+    name: "List of Program",
+    fields: [],
+    targetId: "list-of-program",
+  },
+  {
+    name: "Programme Identification",
+    fields: [
+      "faculty", "department", "broadCategory", "broadGroupName", "discipline", "level", 
+      "programmeName", "yearStarting", "duration", "newExisting", "currentStatus", 
+      "closure", "changeName", "skillBased", "edpMdp", "nbaAccredited", "validFrom", "validTill"
+    ],
+    targetId: "programme-identification",
+  },
+  {
+    name: "Programme Type & Mode",
+    fields: [
+      "programmeType", "courseType", "medium", "vocational", "integrated", 
+      "teachingIndian", "multidisciplinary", "affiliationBoard", "foreignBody", 
+      "twinning", "twinningApproved", "nriForeign"
+    ],
+    targetId: "programme-type-mode",
+  },
+  {
+    name: "Intake & Admission",
+    fields: [
+      "academicYear", "admissionYear", "sanctionedIntake", "actualStudents", 
+      "changeInIntake", "reasonForChange", "modeOfAdmission", "entranceExam", 
+      "admissionAuthority", "examPattern", "centralizedExam"
+    ],
+    targetId: "intake-admission",
+  }
+];
 
 const programs = [
   { id: 1, name: "B.Tech", course: "Computer Science & Engineering", level: "UG", dept: "CSE", year: 2010, status: "Active" as const },
@@ -68,150 +109,94 @@ function TextField({ label, value, placeholder, onChange, type = "text" }: { lab
   );
 }
 
-/* ───── Tab: Programme Identification ───── */
-function ProgrammeIdentificationTab() {
-  const [form, setForm] = useState({
-    faculty: "Faculty of Computer Science",
-    department: "Department of Computer Science",
-    broadCategory: "IT & Computer",
-    broadGroupName: "Computer Science & Engineering",
-    discipline: "Computer Science",
-    level: "Select Level",
-    programmeName: "Select Programme",
-    yearStarting: "",
-    duration: "",
-    newExisting: "Select",
-    currentStatus: "Select Status",
-    closure: "No",
-    changeName: "No",
-    skillBased: "No",
-    edpMdp: "No",
-    nbaAccredited: "Yes",
-    validFrom: "",
-    validTill: "",
-  });
-  const u = (key: string, val: string) => setForm((p) => ({ ...p, [key]: val }));
-
+/* ───── Tab Components (Stateless) ───── */
+function ProgrammeIdentificationTab({ values, setValue }: { values: FieldValueMap; setValue: (k: string, v: string) => void }) {
   return (
     <div className="space-y-6">
       <h3 className="text-base font-semibold text-foreground border-b border-border pb-2">Programme / Course Identification</h3>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <SelectField label="Faculty / School" value={form.faculty} options={["Faculty of Computer Science", "Faculty of Engineering", "Faculty of Arts"]} onChange={(v) => u("faculty", v)} />
-        <SelectField label="Department / Centre" value={form.department} options={["Department of Computer Science", "Department of Electronics", "Department of Mathematics"]} onChange={(v) => u("department", v)} />
-        <SelectField label="Broad Discipline Group Category" value={form.broadCategory} options={["IT & Computer", "Engineering", "Science"]} onChange={(v) => u("broadCategory", v)} />
+        <SelectField label="Faculty / School" value={values.faculty} options={["Faculty of Computer Science", "Faculty of Engineering", "Faculty of Arts"]} onChange={(v) => setValue("faculty", v)} />
+        <SelectField label="Department / Centre" value={values.department} options={["Department of Computer Science", "Department of Electronics", "Department of Mathematics"]} onChange={(v) => setValue("department", v)} />
+        <SelectField label="Broad Discipline Group Category" value={values.broadCategory} options={["IT & Computer", "Engineering", "Science"]} onChange={(v) => setValue("broadCategory", v)} />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <SelectField label="Broad Discipline Group Name" value={form.broadGroupName} options={["Computer Science & Engineering", "Electronics & Communication", "Mechanical Engineering"]} onChange={(v) => u("broadGroupName", v)} />
-        <SelectField label="Discipline" value={form.discipline} options={["Computer Science", "Information Technology", "Data Science"]} onChange={(v) => u("discipline", v)} />
-        <SelectField label="Level" value={form.level} options={["Select Level", "UG", "PG", "Diploma", "PhD"]} onChange={(v) => u("level", v)} />
+        <SelectField label="Broad Discipline Group Name" value={values.broadGroupName} options={["Computer Science & Engineering", "Electronics & Communication", "Mechanical Engineering"]} onChange={(v) => setValue("broadGroupName", v)} />
+        <SelectField label="Discipline" value={values.discipline} options={["Computer Science", "Information Technology", "Data Science"]} onChange={(v) => setValue("discipline", v)} />
+        <SelectField label="Level" value={values.level} options={["Select Level", "UG", "PG", "Diploma", "PhD"]} onChange={(v) => setValue("level", v)} />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <SelectField label="Name of the Programme" value={form.programmeName} options={["Select Programme", "B.Tech", "M.Tech", "BCA", "MCA"]} onChange={(v) => u("programmeName", v)} />
-        <TextField label="Year of Starting / Approval" value={form.yearStarting} placeholder="YYYY" onChange={(v) => u("yearStarting", v)} />
-        <TextField label="Programme / Course Duration (Years)" value={form.duration} placeholder="" onChange={(v) => u("duration", v)} />
+        <SelectField label="Name of the Programme" value={values.programmeName} options={["Select Programme", "B.Tech", "M.Tech", "BCA", "MCA"]} onChange={(v) => setValue("programmeName", v)} />
+        <TextField label="Year of Starting / Approval" value={values.yearStarting} placeholder="YYYY" onChange={(v) => setValue("yearStarting", v)} />
+        <TextField label="Programme / Course Duration (Years)" value={values.duration} placeholder="" onChange={(v) => setValue("duration", v)} />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <SelectField label="New / Existing Programme" value={form.newExisting} options={["Select", "New", "Existing"]} onChange={(v) => u("newExisting", v)} />
-        <SelectField label="Current Status of Programme" value={form.currentStatus} options={["Select Status", "Active", "Inactive", "Phased Out"]} onChange={(v) => u("currentStatus", v)} />
+        <SelectField label="New / Existing Programme" value={values.newExisting} options={["Select", "New", "Existing"]} onChange={(v) => setValue("newExisting", v)} />
+        <SelectField label="Current Status of Programme" value={values.currentStatus} options={["Select Status", "Active", "Inactive", "Phased Out"]} onChange={(v) => setValue("currentStatus", v)} />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <RadioField label="Programme Closure / Withdrawal" value={form.closure} onChange={(v) => u("closure", v)} />
-        <RadioField label="Change in Programme Name" value={form.changeName} onChange={(v) => u("changeName", v)} />
-        <RadioField label="Skill-based / Field-work Oriented Course" value={form.skillBased} onChange={(v) => u("skillBased", v)} />
+        <RadioField label="Programme Closure / Withdrawal" value={values.closure} onChange={(v) => setValue("closure", v)} />
+        <RadioField label="Change in Programme Name" value={values.changeName} onChange={(v) => setValue("changeName", v)} />
+        <RadioField label="Skill-based / Field-work Oriented Course" value={values.skillBased} onChange={(v) => setValue("skillBased", v)} />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <RadioField label="EDP / MDP Conducted" value={form.edpMdp} onChange={(v) => u("edpMdp", v)} />
+        <RadioField label="EDP / MDP Conducted" value={values.edpMdp} onChange={(v) => setValue("edpMdp", v)} />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
-        <RadioField label="NBA Accredited?" value={form.nbaAccredited} onChange={(v) => u("nbaAccredited", v)} />
-        <TextField label="Valid From" value={form.validFrom} type="date" onChange={(v) => u("validFrom", v)} />
-        <TextField label="Valid Till" value={form.validTill} type="date" onChange={(v) => u("validTill", v)} />
+        <RadioField label="NBA Accredited?" value={values.nbaAccredited} onChange={(v) => setValue("nbaAccredited", v)} />
+        <TextField label="Valid From" value={values.validFrom} type="date" onChange={(v) => setValue("validFrom", v)} />
+        <TextField label="Valid Till" value={values.validTill} type="date" onChange={(v) => setValue("validTill", v)} />
       </div>
     </div>
   );
 }
 
-/* ───── Tab: Programme Type & Mode ───── */
-function ProgrammeTypeModeTab() {
-  const [form, setForm] = useState({
-    programmeType: "Select",
-    courseType: "Select",
-    medium: "Select",
-    vocational: "Yes",
-    integrated: "Yes",
-    teachingIndian: "Yes",
-    multidisciplinary: "No",
-    affiliationBoard: "",
-    foreignBody: "",
-    twinning: "Yes",
-    twinningApproved: "No",
-    nriForeign: "Yes",
-  });
-  const u = (key: string, val: string) => setForm((p) => ({ ...p, [key]: val }));
-
+function ProgrammeTypeModeTab({ values, setValue }: { values: FieldValueMap; setValue: (k: string, v: string) => void }) {
   return (
     <div className="space-y-6">
       <h3 className="text-base font-semibold text-foreground border-b border-border pb-2">Programme Type & Mode</h3>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <SelectField label="Programme Type" value={form.programmeType} options={["Select", "General", "Professional", "Technical"]} onChange={(v) => u("programmeType", v)} />
-        <SelectField label="Course Type" value={form.courseType} options={["Select", "Full Time", "Part Time", "Distance"]} onChange={(v) => u("courseType", v)} />
-        <SelectField label="Medium of Instruction" value={form.medium} options={["Select", "English", "Hindi", "Regional"]} onChange={(v) => u("medium", v)} />
+        <SelectField label="Programme Type" value={values.programmeType} options={["Select", "General", "Professional", "Technical"]} onChange={(v) => setValue("programmeType", v)} />
+        <SelectField label="Course Type" value={values.courseType} options={["Select", "Full Time", "Part Time", "Distance"]} onChange={(v) => setValue("courseType", v)} />
+        <SelectField label="Medium of Instruction" value={values.medium} options={["Select", "English", "Hindi", "Regional"]} onChange={(v) => setValue("medium", v)} />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <RadioField label="Vocational Course" value={form.vocational} onChange={(v) => u("vocational", v)} />
-        <RadioField label="Integrated Programme" value={form.integrated} onChange={(v) => u("integrated", v)} />
-        <RadioField label="Teaching in Indian Languages" value={form.teachingIndian} onChange={(v) => u("teachingIndian", v)} />
+        <RadioField label="Vocational Course" value={values.vocational} onChange={(v) => setValue("vocational", v)} />
+        <RadioField label="Integrated Programme" value={values.integrated} onChange={(v) => setValue("integrated", v)} />
+        <RadioField label="Teaching in Indian Languages" value={values.teachingIndian} onChange={(v) => setValue("teachingIndian", v)} />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <RadioField label="Multidisciplinary Programme" value={form.multidisciplinary} onChange={(v) => u("multidisciplinary", v)} />
+        <RadioField label="Multidisciplinary Programme" value={values.multidisciplinary} onChange={(v) => setValue("multidisciplinary", v)} />
       </div>
 
       <h3 className="text-base font-semibold text-foreground border-b border-border pb-2 pt-4">Affiliation & Collaboration</h3>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <TextField label="Affiliation / Approval by University / Board" value={form.affiliationBoard} placeholder="University / Board name" onChange={(v) => u("affiliationBoard", v)} />
-        <TextField label="Affiliating Foreign Body (if any)" value={form.foreignBody} placeholder="Foreign University / Institution" onChange={(v) => u("foreignBody", v)} />
+        <TextField label="Affiliation / Approval by University / Board" value={values.affiliationBoard} placeholder="University / Board name" onChange={(v) => setValue("affiliationBoard", v)} />
+        <TextField label="Affiliating Foreign Body (if any)" value={values.foreignBody} placeholder="Foreign University / Institution" onChange={(v) => setValue("foreignBody", v)} />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <RadioField label="Twinning / Collaboration Programme" value={form.twinning} onChange={(v) => u("twinning", v)} />
-        <RadioField label="Twinning Approved by Competent Authority" value={form.twinningApproved} onChange={(v) => u("twinningApproved", v)} />
-        <RadioField label="NRI / OCI / Foreign Student Quota" value={form.nriForeign} onChange={(v) => u("nriForeign", v)} />
+        <RadioField label="Twinning / Collaboration Programme" value={values.twinning} onChange={(v) => setValue("twinning", v)} />
+        <RadioField label="Twinning Approved by Competent Authority" value={values.twinningApproved} onChange={(v) => setValue("twinningApproved", v)} />
+        <RadioField label="NRI / OCI / Foreign Student Quota" value={values.nriForeign} onChange={(v) => setValue("nriForeign", v)} />
       </div>
     </div>
   );
 }
 
-/* ───── Tab: Intake & Admission ───── */
-function IntakeAdmissionTab() {
-  const [form, setForm] = useState({
-    academicYear: "Select Academic Year",
-    admissionYear: "",
-    sanctionedIntake: "",
-    actualStudents: "",
-    changeInIntake: "Select",
-    reasonForChange: "",
-    modeOfAdmission: "Select",
-    entranceExam: "",
-    admissionAuthority: "Select",
-    examPattern: "Select",
-    centralizedExam: "Yes",
-  });
-  const u = (key: string, val: string) => setForm((p) => ({ ...p, [key]: val }));
-
+function IntakeAdmissionTab({ values, setValue }: { values: FieldValueMap; setValue: (k: string, v: string) => void }) {
   const intakeData = [
     { year: "2022-2023", programme: "B.Tech (CSE)", intake: "60", admitted: "55", seats: "Auto" },
     { year: "2023-2024", programme: "B.Tech (CSE)", intake: "60", admitted: "55", seats: "Auto" },
     { year: "2024-2025", programme: "B.Tech (CSE)", intake: "60", admitted: "55", seats: "Auto" },
   ];
-
   const seatCategories = ["General", "OBC", "Scheduled Caste", "ST", "Total Excluding EWS", "EWS", "Supernumerary Seats"];
 
   return (
     <div className="space-y-6">
       <h3 className="text-base font-semibold text-foreground border-b border-border pb-2">Intake & Admission Details</h3>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <SelectField label="Academic Year *" value={form.academicYear} options={["Select Academic Year", "2024-2025", "2023-2024", "2022-2023"]} onChange={(v) => u("academicYear", v)} />
+        <SelectField label="Academic Year *" value={values.academicYear} options={["Select Academic Year", "2024-2025", "2023-2024", "2022-2023"]} onChange={(v) => setValue("academicYear", v)} />
       </div>
 
       <h4 className="text-sm font-semibold text-foreground">Programme Intake Details</h4>
@@ -220,26 +205,26 @@ function IntakeAdmissionTab() {
           <label className="text-xs font-medium text-accent mb-1 block">Programme</label>
           <div className="h-10 px-3 rounded-lg bg-primary text-primary-foreground flex items-center text-sm font-medium">B.Tech (CSE)</div>
         </div>
-        <TextField label="Admission Year / Batch" value={form.admissionYear} placeholder="YYYY" onChange={(v) => u("admissionYear", v)} />
-        <TextField label="Sanctioned Intake" value={form.sanctionedIntake} onChange={(v) => u("sanctionedIntake", v)} />
-        <TextField label="Actual Students Enrolled" value={form.actualStudents} onChange={(v) => u("actualStudents", v)} />
+        <TextField label="Admission Year / Batch" value={values.admissionYear} placeholder="YYYY" onChange={(v) => setValue("admissionYear", v)} />
+        <TextField label="Sanctioned Intake" value={values.sanctionedIntake} onChange={(v) => setValue("sanctionedIntake", v)} />
+        <TextField label="Actual Students Enrolled" value={values.actualStudents} onChange={(v) => setValue("actualStudents", v)} />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <SelectField label="Change in Intake" value={form.changeInIntake} options={["Select", "Yes", "No"]} onChange={(v) => u("changeInIntake", v)} />
-        <TextField label="Reason for Change (if any)" value={form.reasonForChange} onChange={(v) => u("reasonForChange", v)} />
+        <SelectField label="Change in Intake" value={values.changeInIntake} options={["Select", "Yes", "No"]} onChange={(v) => setValue("changeInIntake", v)} />
+        <TextField label="Reason for Change (if any)" value={values.reasonForChange} onChange={(v) => setValue("reasonForChange", v)} />
       </div>
 
       <h4 className="text-sm font-semibold text-foreground border-b border-border pb-2 pt-2">Admission Details</h4>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <SelectField label="Mode of Admission" value={form.modeOfAdmission} options={["Select", "Entrance Based", "Merit Based", "Management Quota"]} onChange={(v) => u("modeOfAdmission", v)} />
-        <TextField label="Entrance Exam Name" value={form.entranceExam} placeholder="e.g., JEE / CET / University Test" onChange={(v) => u("entranceExam", v)} />
-        <SelectField label="Admission Authority" value={form.admissionAuthority} options={["Select", "University", "State Govt", "Institute"]} onChange={(v) => u("admissionAuthority", v)} />
+        <SelectField label="Mode of Admission" value={values.modeOfAdmission} options={["Select", "Entrance Based", "Merit Based", "Management Quota"]} onChange={(v) => setValue("modeOfAdmission", v)} />
+        <TextField label="Entrance Exam Name" value={values.entranceExam} placeholder="e.g., JEE / CET / University Test" onChange={(v) => setValue("entranceExam", v)} />
+        <SelectField label="Admission Authority" value={values.admissionAuthority} options={["Select", "University", "State Govt", "Institute"]} onChange={(v) => setValue("admissionAuthority", v)} />
       </div>
 
       <h4 className="text-sm font-semibold text-foreground border-b border-border pb-2 pt-2">Examination System</h4>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <SelectField label="Examination Pattern" value={form.examPattern} options={["Select", "Semester", "Annual", "Trimester"]} onChange={(v) => u("examPattern", v)} />
-        <RadioField label="Centralized Examination" value={form.centralizedExam} onChange={(v) => u("centralizedExam", v)} />
+        <SelectField label="Examination Pattern" value={values.examPattern} options={["Select", "Semester", "Annual", "Trimester"]} onChange={(v) => setValue("examPattern", v)} />
+        <RadioField label="Centralized Examination" value={values.centralizedExam} onChange={(v) => setValue("centralizedExam", v)} />
       </div>
 
       <h4 className="text-sm font-semibold text-foreground pt-4">
@@ -298,9 +283,29 @@ function IntakeAdmissionTab() {
   );
 }
 
-export default function ProgrammeCoursePage() {
-  const [view, setView] = useState<"cards" | "details">("cards");
+export default function ProgrammeCoursePage({ defaultView = "cards" }: { defaultView?: "cards" | "details" }) {
+  const [view, setView] = useState<"cards" | "details">(defaultView);
   const [activeTab, setActiveTab] = useState(0);
+  const [values, setValues] = useState<FieldValueMap>({});
+  const navigate = useNavigate();
+
+  const setValue = (k: string, v: string) => setValues((p) => ({ ...p, [k]: v }));
+
+  const sectionsWithProgress = pageSteps.map((step) => {
+    const filled = step.fields.filter((field) => (values[field] || "").trim().length > 0).length;
+    return {
+      name: step.name,
+      totalFields: step.fields.length || 1, // Avoid 0
+      filledFields: filled,
+      completionPercentage: step.fields.length ? Math.round((filled / step.fields.length) * 100) : 100,
+      targetId: step.targetId,
+    };
+  });
+
+  const totalFields = sectionsWithProgress.reduce((sum, s) => sum + s.totalFields, 0);
+  const totalFilled = sectionsWithProgress.reduce((sum, s) => sum + s.filledFields, 0);
+  const overallPercentage = totalFields ? Math.round((totalFilled / totalFields) * 100) : 0;
+  const isLastStep = activeTab === pageSteps.length - 1;
 
   if (view === "cards") {
     return (
@@ -309,7 +314,15 @@ export default function ProgrammeCoursePage() {
         <div className="p-6 lg:p-8">
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
             {subSections.map((section) => (
-              <div key={section.title} onClick={() => section.title === "Programme-Course Details" && setView("details")}>
+              <div 
+                key={section.title} 
+                className="cursor-pointer" 
+                onClick={() => {
+                  if (section.title === "Programme-Course Details") navigate("/programme-course/details");
+                  if (section.title === "Programme Summary") navigate("/programme-course/summary");
+                  if (section.title === "Course Curriculum") navigate("/programme-course/curriculum");
+                }}
+              >
                 <StatusCard {...section} />
               </div>
             ))}
@@ -321,9 +334,9 @@ export default function ProgrammeCoursePage() {
 
   const renderTabContent = () => {
     switch (activeTab) {
-      case 1: return <ProgrammeIdentificationTab />;
-      case 2: return <ProgrammeTypeModeTab />;
-      case 3: return <IntakeAdmissionTab />;
+      case 1: return <ProgrammeIdentificationTab values={values} setValue={setValue} />;
+      case 2: return <ProgrammeTypeModeTab values={values} setValue={setValue} />;
+      case 3: return <IntakeAdmissionTab values={values} setValue={setValue} />;
       default: return <ListOfProgramTab onNavigate={setActiveTab} />;
     }
   };
@@ -340,40 +353,58 @@ export default function ProgrammeCoursePage() {
             </button>
           </div>
 
-          <div className="p-6">
-            <div className="flex gap-1 mb-6 overflow-x-auto scrollbar-hide">
-              {tabs.map((tab, i) => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(i)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${
-                    activeTab === i ? "bg-accent text-accent-foreground" : "text-accent hover:bg-muted"
-                  }`}
-                >
-                  {tab}
-                </button>
-              ))}
-            </div>
+          <FormStepper
+            steps={sectionsWithProgress.map(({ name, completionPercentage }) => ({ name, completionPercentage }))}
+            currentStep={activeTab}
+            onStepClick={(idx) => setActiveTab(idx)}
+            overallPercentage={overallPercentage}
+          />
 
-            {renderTabContent()}
+          <div className="flex flex-col lg:flex-row gap-6 px-6 pb-6">
+            <div className="flex-1 min-w-0 space-y-6">
+              {renderTabContent()}
 
-            {/* Navigation buttons for form tabs */}
-            {activeTab > 0 && (
-              <div className="flex items-center justify-between mt-8 pt-4 border-t border-border">
+              <div className="flex flex-col sm:flex-row justify-between items-center gap-3 pt-6 border-t border-border mt-8">
                 <button
-                  onClick={() => setActiveTab((p) => Math.max(0, p - 1))}
-                  className="px-5 py-2.5 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors"
+                  className="flex items-center gap-2 px-5 py-3 rounded-full border border-border text-sm font-semibold text-foreground hover:bg-muted transition-colors"
+                  onClick={() => {
+                    if (activeTab > 0) {
+                      setActiveTab((p) => Math.max(0, p - 1));
+                    } else {
+                      setView("cards");
+                    }
+                  }}
                 >
                   ← Previous
                 </button>
                 <button
-                  onClick={() => setActiveTab((p) => Math.min(tabs.length - 1, p + 1))}
-                  className="px-5 py-2.5 bg-accent text-accent-foreground rounded-lg text-sm font-medium hover:bg-accent/90 transition-colors"
+                  className="flex items-center gap-2 px-6 py-3 rounded-full bg-accent text-accent-foreground text-sm font-semibold shadow-sm shadow-accent/40"
+                  onClick={() => {
+                    if (isLastStep) {
+                      navigate("/institutional-registry");
+                    } else {
+                      setActiveTab((p) => Math.min(pageSteps.length - 1, p + 1));
+                    }
+                  }}
                 >
-                  {activeTab === tabs.length - 1 ? "Save & Submit" : "Save & Continue →"}
+                  {isLastStep ? "Save & Submit" : "Save & Continue →"}
                 </button>
               </div>
-            )}
+            </div>
+
+            <div className="flex-none px-2 pb-6 lg:pb-0">
+              <SectionStatusSidebar
+                sections={sectionsWithProgress}
+                sectionOrder={sectionsWithProgress.map((s) => s.name)}
+                activeSection={sectionsWithProgress[activeTab].name}
+                onSectionClick={(name) => {
+                  const targetIndex = sectionsWithProgress.findIndex((s) => s.name === name);
+                  if (targetIndex >= 0) {
+                    setActiveTab(targetIndex);
+                  }
+                }}
+              />
+            </div>
           </div>
         </div>
 

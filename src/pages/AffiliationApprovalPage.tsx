@@ -22,7 +22,6 @@ const AFFILIATION_FIELDS: FieldState[] = [
   { id: "nri-approval", name: "Approval for NRI / OCI / Foreign Student Quota", section: "Affiliation / Approval Details", value: "" },
   { id: "state-govt", name: "State Government Recommendation / NOC", section: "Affiliation / Approval Details", value: "" },
   { id: "university-rec", name: "University / Board Recommendation", section: "Affiliation / Approval Details", value: "" },
-  { id: "additional-comments", name: "Additional Comments", section: "Affiliation / Approval Details", value: "" },
 ];
 
 const SECTION_ORDER = ["Affiliation / Approval Details"];
@@ -191,15 +190,16 @@ export default function AffiliationApprovalPage() {
                     </span>
                   )}
                 </div>
-                <div className="flex items-center justify-between gap-4">
-                  {renderInputField(fields, updateField, "affiliation-university", "Name of Affiliating University / Board")}
-                  <div className="flex items-center gap-2">
-                    <button className="text-[10px] bg-primary/10 text-primary hover:bg-primary/20 font-bold px-2 py-1 rounded transition-colors uppercaseTracking">
-                      View
-                    </button>
-                    <button className="text-[10px] bg-accent/10 text-accent hover:bg-accent/20 font-bold px-2 py-1 rounded transition-colors uppercaseTracking">
-                      Manage Programmes
-                    </button>
+                <div className="flex flex-col xl:flex-row items-start xl:items-end justify-between gap-4 md:gap-6">
+                  <div className="w-full xl:w-2/5">
+                    {renderInputField(fields, updateField, "affiliation-university", "Name of Affiliating University / Board")}
+                  </div>
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                    <span className="text-sm font-semibold text-foreground">Programme-wise Affiliation / Approval Status</span>
+                    <div className="flex items-center gap-2">
+                       <button className="rounded-full bg-blue-500 px-5 py-2 text-sm font-semibold text-white hover:bg-blue-600 transition-colors">View</button>
+                       <button className="rounded-full bg-blue-900 px-5 py-2 text-sm font-semibold text-white hover:bg-blue-950 transition-colors">Manage Programmes</button>
+                    </div>
                   </div>
                 </div>
 
@@ -224,7 +224,6 @@ export default function AffiliationApprovalPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {renderRadioGroup(fields, updateField, "state-govt", "State Government Recommendation / NOC")}
                   {renderRadioGroup(fields, updateField, "university-rec", "University / Board Recommendation")}
-                  {renderInputField(fields, updateField, "additional-comments", "Additional Comments")}
                 </div>
               </section>
               )}
@@ -247,6 +246,8 @@ export default function AffiliationApprovalPage() {
                   onClick={() => {
                     if (!isLastStep) {
                       setActiveSubStep((s) => Math.min(SECTION_ORDER.length - 1, s + 1));
+                    } else {
+                      navigate("/institutional-registry");
                     }
                   }}
                 >

@@ -230,13 +230,12 @@ export default function CommitteesPage() {
                   {renderInputField(fields, updateField, "ombudsman-email", "Email Address", undefined, "email")}
                   {renderRadioGroup(fields, updateField, "online-grievance", "Online Grievance Redressal Mechanism")}
                 </div>
-                <div className="flex items-center gap-2">
-                  <button className="text-[10px] bg-primary/10 text-primary hover:bg-primary/20 font-bold px-2 py-1 rounded transition-colors uppercase">
-                    View
-                  </button>
-                  <button className="text-[10px] bg-accent/10 text-accent hover:bg-accent/20 font-bold px-2 py-1 rounded transition-colors uppercase">
-                    Manage Members
-                  </button>
+                <div className="flex items-center gap-3 mt-2">
+                  <span className="text-sm font-semibold text-foreground">Committee Members</span>
+                  <div className="flex gap-2">
+                    <button className="rounded-full bg-blue-500 px-4 py-2 text-xs font-semibold text-white hover:bg-blue-600 transition-colors">View</button>
+                    <button className="rounded-full bg-blue-900 px-4 py-2 text-xs font-semibold text-white hover:bg-blue-950 transition-colors">Manage Members</button>
+                  </div>
                 </div>
               </section>
               )}
@@ -264,13 +263,12 @@ export default function CommitteesPage() {
                   {renderInputField(fields, updateField, "anti-ragging-type", "Type of Committee")}
                   {renderRadioGroup(fields, updateField, "ragging-squad", "Anti-Ragging Squad Exists")}
                 </div>
-                <div className="flex items-center gap-2">
-                  <button className="text-[10px] bg-primary/10 text-primary hover:bg-primary/20 font-bold px-2 py-1 rounded transition-colors uppercase">
-                    View
-                  </button>
-                  <button className="text-[10px] bg-accent/10 text-accent hover:bg-accent/20 font-bold px-2 py-1 rounded transition-colors uppercase">
-                    Manage Members
-                  </button>
+                <div className="flex items-center gap-3 mt-2">
+                  <span className="text-sm font-semibold text-foreground">Committee Members</span>
+                  <div className="flex gap-2">
+                    <button className="rounded-full bg-blue-500 px-4 py-2 text-xs font-semibold text-white hover:bg-blue-600 transition-colors">View</button>
+                    <button className="rounded-full bg-blue-900 px-4 py-2 text-xs font-semibold text-white hover:bg-blue-950 transition-colors">Manage Members</button>
+                  </div>
                 </div>
               </section>
               )}
@@ -297,13 +295,12 @@ export default function CommitteesPage() {
                   {renderInputField(fields, updateField, "ic-type", "Type of Committee")}
                   {renderInputField(fields, updateField, "ic-date", "Date of Appointment", "dd-mm-yyyy", "date")}
                 </div>
-                <div className="flex items-center gap-2">
-                  <button className="text-[10px] bg-primary/10 text-primary hover:bg-primary/20 font-bold px-2 py-1 rounded transition-colors uppercase">
-                    View
-                  </button>
-                  <button className="text-[10px] bg-accent/10 text-accent hover:bg-accent/20 font-bold px-2 py-1 rounded transition-colors uppercase">
-                    Manage Members
-                  </button>
+                <div className="flex items-center gap-3 mt-2">
+                  <span className="text-sm font-semibold text-foreground">Committee Members</span>
+                  <div className="flex gap-2">
+                    <button className="rounded-full bg-blue-500 px-4 py-2 text-xs font-semibold text-white hover:bg-blue-600 transition-colors">View</button>
+                    <button className="rounded-full bg-blue-900 px-4 py-2 text-xs font-semibold text-white hover:bg-blue-950 transition-colors">Manage Members</button>
+                  </div>
                 </div>
               </section>
               )}
@@ -329,9 +326,12 @@ export default function CommitteesPage() {
                   {renderRadioGroup(fields, updateField, "scst-exists", "Committee Exists")}
                   {renderInputField(fields, updateField, "scst-date", "Date of Constitution", "dd-mm-yyyy", "date")}
                 </div>
-                <div className="flex gap-2">
-                  <button className="rounded-full bg-blue-500 px-4 py-2 text-xs font-semibold text-white">View</button>
-                  <button className="rounded-full bg-blue-900 px-4 py-2 text-xs font-semibold text-white">Manage Members</button>
+                <div className="flex items-center gap-3">
+                  <span className="text-sm font-semibold text-foreground">Committee Members</span>
+                  <div className="flex gap-2">
+                    <button className="rounded-full bg-blue-500 px-4 py-2 text-xs font-semibold text-white">View</button>
+                    <button className="rounded-full bg-blue-900 px-4 py-2 text-xs font-semibold text-white">Manage Members</button>
+                  </div>
                 </div>
               </section>
               )}
@@ -412,6 +412,8 @@ export default function CommitteesPage() {
                   onClick={() => {
                     if (!isLastStep) {
                       setActiveSubStep((s) => Math.min(SECTION_ORDER.length - 1, s + 1));
+                    } else {
+                      navigate("/institutional-registry");
                     }
                   }}
                 >

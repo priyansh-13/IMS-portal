@@ -16,6 +16,8 @@ import CentresCampusesPage from "./pages/CentresCampusesPage";
 import StudentSupportPage from "./pages/StudentSupportPage";
 import RegulatoryInformationPage from "./pages/RegulatoryInformationPage";
 import ProgrammeCoursePage from "./pages/ProgrammeCoursePage";
+import ProgrammeSummaryPage from "./pages/ProgrammeSummaryPage";
+import CourseCurriculumPage from "./pages/CourseCurriculumPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -41,6 +43,9 @@ const App = () => (
           <Route path="/institutional-registry/student-support" element={<StudentSupportPage />} />
           <Route path="/institutional-registry/regulatory" element={<RegulatoryInformationPage />} />
           <Route path="/programme-course" element={<ProgrammeCoursePage />} />
+          <Route path="/programme-course/details" element={<ProgrammeCoursePage defaultView="details" />} />
+          <Route path="/programme-course/summary" element={<ProgrammeSummaryPage />} />
+          <Route path="/programme-course/curriculum" element={<CourseCurriculumPage />} />
           {/* Placeholder routes for other modules */}
           <Route path="/student-info" element={<DashboardPage />} />
           <Route path="/faculty-hr" element={<DashboardPage />} />

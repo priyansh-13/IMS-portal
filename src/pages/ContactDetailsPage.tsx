@@ -114,7 +114,6 @@ export default function ContactDetailsPage() {
       { id: `additional-mobile-${i}`, name: `Officer ${i + 1} Mobile Number`, section: "Additional Contact / Nodal Officer", value: "" },
       { id: `additional-email-${i}`, name: `Officer ${i + 1} Email Address`, section: "Additional Contact / Nodal Officer", value: "" },
       { id: `additional-landline-${i}`, name: `Officer ${i + 1} Landline Number`, section: "Additional Contact / Nodal Officer", value: "" },
-      { id: `additional-alt-mobile-${i}`, name: `Officer ${i + 1} Alternate Mobile Number`, section: "Additional Contact / Nodal Officer", value: "" },
     ]),
     ...REPRESENTATIVE_FIELDS,
   ];
@@ -131,7 +130,6 @@ export default function ContactDetailsPage() {
       { id: `additional-mobile-${i}`, name: `Officer ${i + 1} Mobile Number`, section: "Additional Contact / Nodal Officer", value: "" },
       { id: `additional-email-${i}`, name: `Officer ${i + 1} Email Address`, section: "Additional Contact / Nodal Officer", value: "" },
       { id: `additional-landline-${i}`, name: `Officer ${i + 1} Landline Number`, section: "Additional Contact / Nodal Officer", value: "" },
-      { id: `additional-alt-mobile-${i}`, name: `Officer ${i + 1} Alternate Mobile Number`, section: "Additional Contact / Nodal Officer", value: "" },
     ]);
   };
 
@@ -144,7 +142,6 @@ export default function ContactDetailsPage() {
       `additional-mobile-${officerCount - 1}`,
       `additional-email-${officerCount - 1}`,
       `additional-landline-${officerCount - 1}`,
-      `additional-alt-mobile-${officerCount - 1}`,
     ];
     removeFields(fieldIdsToRemove);
   };
@@ -264,7 +261,6 @@ export default function ContactDetailsPage() {
                           {renderInputField(fields, updateField, `additional-mobile-${i}`, "Mobile Number", undefined, "tel")}
                           {renderInputField(fields, updateField, `additional-email-${i}`, "Email Address", undefined, "email")}
                           {renderInputField(fields, updateField, `additional-landline-${i}`, "Landline Number", undefined, "tel")}
-                          {renderInputField(fields, updateField, `additional-alt-mobile-${i}`, "Alternate Mobile Number", undefined, "tel")}
                         </div>
                       </div>
                     ))}
@@ -319,6 +315,8 @@ export default function ContactDetailsPage() {
                   onClick={() => {
                     if (!isLastStep) {
                       setActiveSubStep((s) => Math.min(SECTION_ORDER.length - 1, s + 1));
+                    } else {
+                      navigate("/institutional-registry");
                     }
                   }}
                 >

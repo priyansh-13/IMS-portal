@@ -7,7 +7,7 @@ import { SectionStatusSidebar } from "@/components/SectionStatusSidebar";
 import { useFormProgress, FieldState } from "@/hooks/useFormProgress";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { CheckCircle2, ArrowLeft, ArrowRight, Save } from "lucide-react";
+import { CheckCircle2, ArrowLeft, ArrowRight, Save, UploadCloud, FileCheck, X } from "lucide-react";
 
 const initialFields: FieldState[] = [
   { id: "aishe-code", name: "AISHE Code", section: "General Information", value: "U-123", required: true },
@@ -105,9 +105,16 @@ export default function InstitutionDetailsPage() {
   const renderField = (
     id: string,
     label: string,
-    options?: { type?: "text" | "select" | "radio" | "date" | "number"; readOnly?: boolean; placeholder?: string; selectOptions?: string[]; radioOptions?: string[] }
+    options?: { 
+      type?: "text" | "select" | "radio" | "date" | "number" | "file"; 
+      readOnly?: boolean; 
+      placeholder?: string; 
+      selectOptions?: string[]; 
+      radioOptions?: string[];
+      accept?: string;
+    }
   ) => {
-    const { type = "text", readOnly, placeholder, selectOptions, radioOptions } = options || {};
+    const { type = "text", readOnly, placeholder, selectOptions, radioOptions, accept } = options || {};
     const filled = isFieldFilled(id);
     const value = getFieldValue(id);
 
@@ -129,6 +136,60 @@ export default function InstitutionDetailsPage() {
                 <span className="text-sm text-foreground group-hover:text-accent transition-colors">{opt}</span>
               </label>
             ))}
+          </div>
+        </div>
+      );
+    }
+
+    if (type === "file") {
+      return (
+        <div className="animate-fade-in">
+          <label className="text-sm font-medium text-foreground mb-2 block">{label}</label>
+          <div className={cn(
+            "flex flex-col gap-3 p-4 rounded-xl border border-dashed transition-all duration-200",
+            filled ? "border-success/50 bg-success/5" : "border-border bg-muted/20 hover:bg-muted/50"
+          )}>
+            {value ? (
+              <div className="flex items-center justify-between gap-3 text-sm text-foreground bg-background p-3 rounded-lg border border-border shadow-sm">
+                <div className="flex items-center gap-3 overflow-hidden">
+                  <FileCheck className="h-5 w-5 text-success shrink-0" />
+                  <span className="truncate max-w-[200px] font-medium">{value}</span>
+                </div>
+                <button 
+                  type="button"
+                  onClick={() => updateField(id, "")}
+                  className="p-1 rounded-md text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors shrink-0"
+                  aria-label="Remove file"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            ) : (
+              <div className="flex flex-col sm:flex-row items-center gap-4">
+                <label className="flex items-center justify-center gap-2 px-4 py-2.5 bg-primary text-primary-foreground rounded-lg text-sm font-semibold hover:bg-primary/90 transition-all duration-200 shadow-sm cursor-pointer whitespace-nowrap">
+                  <UploadCloud className="h-4 w-4" />
+                  Choose File
+                  <input
+                    id={id}
+                    type="file"
+                    accept={accept || ".pdf,.doc,.docx"}
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        updateField(id, file.name);
+                      }
+                    }}
+                    className="sr-only"
+                  />
+                </label>
+                <div className="text-center sm:text-left">
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    Max size: 5MB<br/>
+                    Supported formats: {accept ? accept.toUpperCase().replace(/\./g, '') : "PDF, DOC, DOCX"}
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       );
@@ -311,10 +372,10 @@ export default function InstitutionDetailsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {renderField("online-exists", "Online Centres Exists", { type: "radio", radioOptions: ["Yes", "No"] })}
               {renderField("online-count", "Number of Online Centre")}
-              {renderField("new-approval-last-year", "Newly Approved Last Year (LoA) & Failed to Admit Students?", { type: "radio", radioOptions: ["Yes", "No"] })}
+              {renderField("new-approval-last-year", "Is your Institution newly Approved Last Year (LoA) & Failed to Admit Students?", { type: "radio", radioOptions: ["Yes", "No"] })}
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {renderField("approval-letter", "Approval / Recognition Letters")}
+              {renderField("approval-letter", "Approval / Recognition Letters", { type: "file" })}
             </div>
           </div>
         );
@@ -356,14 +417,14 @@ export default function InstitutionDetailsPage() {
           </div>
 
           {/* Stepper */}
-            <div>
-              <FormStepper
-                steps={stepInfos}
-                currentStep={currentStep}
-                onStepClick={setCurrentStep}
-                overallPercentage={overallPercentage}
-              />
-            </div>
+          <div>
+            <FormStepper
+              steps={stepInfos}
+              currentStep={currentStep}
+              onStepClick={setCurrentStep}
+              overallPercentage={overallPercentage}
+            />
+          </div>
 
           <div className="flex flex-col gap-6 lg:flex-row">
             <div className="flex-1 min-w-0">
@@ -381,8 +442,8 @@ export default function InstitutionDetailsPage() {
                         currentSection.completionPercentage >= 100
                           ? "bg-success/10 text-success"
                           : currentSection.completionPercentage > 0
-                          ? "bg-accent/10 text-accent"
-                          : "bg-muted text-muted-foreground"
+                            ? "bg-accent/10 text-accent"
+                            : "bg-muted text-muted-foreground"
                       )}
                     >
                       {currentSection.completionPercentage}% Complete
@@ -411,24 +472,24 @@ export default function InstitutionDetailsPage() {
                   <button
                     onClick={() => {
                       if (isLastStep) {
-                        // Submit
+                        navigate("/institutional-registry");
                       } else {
                         setCurrentStep((s) => Math.min(SECTION_ORDER.length - 1, s + 1));
                       }
                     }}
                     className="flex items-center gap-2 px-6 py-2.5 bg-accent text-accent-foreground rounded-xl text-sm font-semibold hover:bg-accent/90 transition-all duration-200 hover:shadow-md"
                   >
-                  {isLastStep ? (
-                    <>
-                      <Save className="h-4 w-4" />
-                      Save & Submit
-                    </>
-                  ) : (
-                    <>
-                      Save & Continue
-                      <ArrowRight className="h-4 w-4" />
-                    </>
-                  )}
+                    {isLastStep ? (
+                      <>
+                        <Save className="h-4 w-4" />
+                        Save & Submit
+                      </>
+                    ) : (
+                      <>
+                        Save & Continue
+                        <ArrowRight className="h-4 w-4" />
+                      </>
+                    )}
                   </button>
                 </div>
               </div>
