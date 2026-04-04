@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { TopLayout } from "@/components/TopLayout";
 import { ModuleBanner } from "@/components/ModuleBanner";
@@ -10,9 +10,9 @@ import { FormStepper } from "@/components/FormStepper";
 import { SectionStatusSidebar } from "@/components/SectionStatusSidebar";
 
 const subSections = [
-  { title: "Programme-Course Details", icon: BookOpen, completed: true, lastUpdated: "10:15 AM, 04 Feb 2026" },
-  { title: "Programme Summary", icon: FileText, completed: false, lastUpdated: "09:45 AM, 02 Feb 2026" },
-  { title: "Course Curriculum", icon: GraduationCap, completed: false, lastUpdated: "03:20 PM, 02 Feb 2026" },
+  { title: "Programme-Course Details", icon: BookOpen, completed: true, lastUpdated: "10:15 AM, 04 Feb 2026", link: "/programme-course/details" },
+  { title: "Programme Summary", icon: FileText, completed: false, lastUpdated: "09:45 AM, 02 Feb 2026", link: "/programme-course/summary" },
+  { title: "Course Curriculum", icon: GraduationCap, completed: false, lastUpdated: "03:20 PM, 02 Feb 2026", link: "/programme-course/curriculum" },
 ];
 
 type FieldValueMap = Record<string, string>;
@@ -28,8 +28,8 @@ const pageSteps = [
   {
     name: "Programme Identification",
     fields: [
-      "faculty", "department", "broadCategory", "broadGroupName", "discipline", "level", 
-      "programmeName", "yearStarting", "duration", "newExisting", "currentStatus", 
+      "faculty", "department", "broadCategory", "broadGroupName", "discipline", "level",
+      "programmeName", "yearStarting", "duration", "newExisting", "currentStatus",
       "closure", "changeName", "skillBased", "edpMdp", "nbaAccredited", "validFrom", "validTill"
     ],
     targetId: "programme-identification",
@@ -37,8 +37,8 @@ const pageSteps = [
   {
     name: "Programme Type & Mode",
     fields: [
-      "programmeType", "courseType", "medium", "vocational", "integrated", 
-      "teachingIndian", "multidisciplinary", "affiliationBoard", "foreignBody", 
+      "programmeType", "courseType", "medium", "vocational", "integrated",
+      "teachingIndian", "multidisciplinary", "affiliationBoard", "foreignBody",
       "twinning", "twinningApproved", "nriForeign"
     ],
     targetId: "programme-type-mode",
@@ -46,8 +46,8 @@ const pageSteps = [
   {
     name: "Intake & Admission",
     fields: [
-      "academicYear", "admissionYear", "sanctionedIntake", "actualStudents", 
-      "changeInIntake", "reasonForChange", "modeOfAdmission", "entranceExam", 
+      "academicYear", "admissionYear", "sanctionedIntake", "actualStudents",
+      "changeInIntake", "reasonForChange", "modeOfAdmission", "entranceExam",
       "admissionAuthority", "examPattern", "centralizedExam"
     ],
     targetId: "intake-admission",
@@ -289,6 +289,17 @@ export default function ProgrammeCoursePage({ defaultView = "cards" }: { default
   const [values, setValues] = useState<FieldValueMap>({});
   const navigate = useNavigate();
 
+  const sectionProgress = subSections.map((section) => ({
+    name: section.title,
+    totalFields: 1,
+    filledFields: section.completed ? 1 : 0,
+    completionPercentage: section.completed ? 100 : 0,
+  }));
+
+  useEffect(() => {
+    setView(defaultView);
+  }, [defaultView]);
+
   const setValue = (k: string, v: string) => setValues((p) => ({ ...p, [k]: v }));
 
   const sectionsWithProgress = pageSteps.map((step) => {
@@ -312,20 +323,34 @@ export default function ProgrammeCoursePage({ defaultView = "cards" }: { default
       <TopLayout>
         <ModuleBanner title="Programme and Course Details" />
         <div className="p-6 lg:p-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            {subSections.map((section) => (
-              <div 
-                key={section.title} 
-                className="cursor-pointer" 
-                onClick={() => {
-                  if (section.title === "Programme-Course Details") navigate("/programme-course/details");
-                  if (section.title === "Programme Summary") navigate("/programme-course/summary");
-                  if (section.title === "Course Curriculum") navigate("/programme-course/curriculum");
-                }}
-              >
-                <StatusCard {...section} />
+          <div className="flex flex-col lg:flex-row gap-6">
+            <div className="flex-1 min-w-0">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                {subSections.map((section) => (
+                  <div
+                    key={section.title}
+                    className="cursor-pointer"
+                    onClick={() => {
+                      if (section.title === "Programme-Course Details") navigate("/programme-course/details");
+                      if (section.title === "Programme Summary") navigate("/programme-course/summary");
+                      if (section.title === "Course Curriculum") navigate("/programme-course/curriculum");
+                    }}
+                  >
+                    <StatusCard {...section} />
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
+            <div className="flex-none px-2 pb-6 lg:pb-0">
+              <SectionStatusSidebar
+                sections={sectionProgress}
+                sectionOrder={sectionProgress.map((s) => s.name)}
+                onSectionClick={(name) => {
+                  const target = subSections.find((s) => s.title === name);
+                  if (target?.link) navigate(target.link);
+                }}
+              />
+            </div>
           </div>
         </div>
       </TopLayout>
@@ -343,7 +368,16 @@ export default function ProgrammeCoursePage({ defaultView = "cards" }: { default
 
   return (
     <TopLayout>
-      <ModuleBanner title="Programme and Course Details" />
+      <ModuleBanner title="Programme and Course Details">
+        <FormStepper
+          steps={sectionsWithProgress.map(({ name, completionPercentage }) => ({ name, completionPercentage }))}
+          currentStep={activeTab}
+          onStepClick={(idx) => setActiveTab(idx)}
+          overallPercentage={overallPercentage}
+          variant="transparent"
+          size="sm"
+        />
+      </ModuleBanner>
       <div className="p-6 lg:p-8">
         <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
           <div className="flex items-center justify-between px-6 py-4 border-b border-border border-l-4 border-l-primary">
@@ -353,14 +387,7 @@ export default function ProgrammeCoursePage({ defaultView = "cards" }: { default
             </button>
           </div>
 
-          <FormStepper
-            steps={sectionsWithProgress.map(({ name, completionPercentage }) => ({ name, completionPercentage }))}
-            currentStep={activeTab}
-            onStepClick={(idx) => setActiveTab(idx)}
-            overallPercentage={overallPercentage}
-          />
-
-          <div className="flex flex-col lg:flex-row gap-6 px-6 pb-6">
+          <div className="flex flex-col lg:flex-row gap-6 px-6 pb-6 pt-6">
             <div className="flex-1 min-w-0 space-y-6">
               {renderTabContent()}
 
@@ -419,7 +446,7 @@ export default function ProgrammeCoursePage({ defaultView = "cards" }: { default
       </div>
 
       {/* Download FAB */}
-      <button className="fixed bottom-6 right-6 h-12 w-12 rounded-full bg-secondary text-secondary-foreground shadow-lg flex items-center justify-center hover:bg-secondary/90 transition-colors z-50">
+      <button className="fixed bottom-6 right-6 h-12 w-12 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center hover:bg-primary/90 transition-colors z-50">
         <Download className="h-5 w-5" />
       </button>
     </TopLayout>
@@ -432,7 +459,7 @@ function ListOfProgramTab({ onNavigate }: { onNavigate: (tab: number) => void })
     <div>
       <h3 className="text-base font-semibold text-foreground mb-4">List of Program</h3>
 
-      <button className="mb-4 px-4 py-2 bg-secondary text-secondary-foreground rounded-lg text-sm font-medium hover:bg-secondary/90 transition-colors">
+      <button className="mb-4 px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors">
         + Add Programme
       </button>
 
@@ -485,9 +512,8 @@ function ListOfProgramTab({ onNavigate }: { onNavigate: (tab: number) => void })
                 <td className="px-4 py-3">{prog.dept}</td>
                 <td className="px-4 py-3">{prog.year}</td>
                 <td className="px-4 py-3">
-                  <span className={`px-2.5 py-1 rounded text-xs font-semibold ${
-                    prog.status === "Active" ? "bg-success/10 text-success" : "bg-warning/10 text-warning"
-                  }`}>
+                  <span className={`px-2.5 py-1 rounded text-xs font-semibold ${prog.status === "Active" ? "bg-success/10 text-success" : "bg-warning/10 text-warning"
+                    }`}>
                     {prog.status}
                   </span>
                 </td>

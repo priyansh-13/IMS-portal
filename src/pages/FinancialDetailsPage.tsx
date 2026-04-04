@@ -227,7 +227,16 @@ export default function FinancialDetailsPage() {
 
   return (
     <TopLayout>
-      <ModuleBanner title="Institutional Registry and Recognition Module" />
+      <ModuleBanner title="Institutional Registry and Recognition Module">
+        <FormStepper
+          steps={stepInfos}
+          currentStep={activeSubStep}
+          onStepClick={(idx) => setActiveSubStep(idx)}
+          overallPercentage={overallPercentage}
+          variant="transparent"
+          size="sm"
+        />
+      </ModuleBanner>
       <div className="p-6 lg:p-8">
         <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
           <div className="flex items-center justify-between px-6 py-4 border-b border-border border-l-4 border-l-primary">
@@ -240,14 +249,7 @@ export default function FinancialDetailsPage() {
             </button>
           </div>
 
-          <FormStepper
-            steps={stepInfos}
-            currentStep={activeSubStep}
-            onStepClick={(idx) => setActiveSubStep(idx)}
-            overallPercentage={overallPercentage}
-          />
-
-          <div className="flex flex-col lg:flex-row gap-6 px-6 pb-6">
+          <div className="flex flex-col lg:flex-row gap-6 px-6 pb-6 pt-6">
             <div className="flex-1 min-w-0 space-y-6">
               {activeSubStep === 0 && (
               <section id="section-bank-account" className="rounded-2xl border border-border/70 bg-muted/40 p-5 space-y-4">

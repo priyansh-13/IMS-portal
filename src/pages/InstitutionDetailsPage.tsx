@@ -105,11 +105,11 @@ export default function InstitutionDetailsPage() {
   const renderField = (
     id: string,
     label: string,
-    options?: { 
-      type?: "text" | "select" | "radio" | "date" | "number" | "file"; 
-      readOnly?: boolean; 
-      placeholder?: string; 
-      selectOptions?: string[]; 
+    options?: {
+      type?: "text" | "select" | "radio" | "date" | "number" | "file";
+      readOnly?: boolean;
+      placeholder?: string;
+      selectOptions?: string[];
       radioOptions?: string[];
       accept?: string;
     }
@@ -155,7 +155,7 @@ export default function InstitutionDetailsPage() {
                   <FileCheck className="h-5 w-5 text-success shrink-0" />
                   <span className="truncate max-w-[200px] font-medium">{value}</span>
                 </div>
-                <button 
+                <button
                   type="button"
                   onClick={() => updateField(id, "")}
                   className="p-1 rounded-md text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors shrink-0"
@@ -184,7 +184,7 @@ export default function InstitutionDetailsPage() {
                 </label>
                 <div className="text-center sm:text-left">
                   <p className="text-xs text-muted-foreground leading-relaxed">
-                    Max size: 5MB<br/>
+                    Max size: 5MB<br />
                     Supported formats: {accept ? accept.toUpperCase().replace(/\./g, '') : "PDF, DOC, DOCX"}
                   </p>
                 </div>
@@ -402,7 +402,19 @@ export default function InstitutionDetailsPage() {
 
   return (
     <TopLayout>
-      <ModuleBanner title="Institutional Registry and Recognition Module" />
+      <ModuleBanner
+        title="Institutional Registry and Recognition Module"
+      >
+        <FormStepper
+          steps={stepInfos}
+          currentStep={currentStep}
+          onStepClick={setCurrentStep}
+          overallPercentage={overallPercentage}
+          variant="transparent"
+          size="sm"
+        />
+      </ModuleBanner>
+
       <div className="p-6 lg:p-8">
         <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
           {/* Header */}
@@ -414,16 +426,6 @@ export default function InstitutionDetailsPage() {
             >
               Back
             </button>
-          </div>
-
-          {/* Stepper */}
-          <div>
-            <FormStepper
-              steps={stepInfos}
-              currentStep={currentStep}
-              onStepClick={setCurrentStep}
-              overallPercentage={overallPercentage}
-            />
           </div>
 
           <div className="flex flex-col gap-6 lg:flex-row">

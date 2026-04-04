@@ -10,6 +10,8 @@ interface FormStepperProps {
   currentStep: number;
   onStepClick: (index: number) => void;
   overallPercentage: number;
+  variant?: "default" | "transparent";
+  size?: "default" | "sm";
 }
 
 type StepStatus = "completed" | "pending" | "not-started";
@@ -20,123 +22,114 @@ const getStepStatus = (step: StepInfo): StepStatus => {
   return "not-started";
 };
 
-export function FormStepper({ steps, currentStep, onStepClick, overallPercentage }: FormStepperProps) {
+export function FormStepper({ 
+  steps, 
+  currentStep, 
+  onStepClick, 
+  overallPercentage,
+  variant = "default",
+  size = "default" 
+}: FormStepperProps) {
   const normalizedProgress = Math.min(Math.max(overallPercentage, 0), 100);
-
-  const connectorColor = (index: number) => {
-    const leftStatus = getStepStatus(steps[index]);
-    if (leftStatus === "completed") return "bg-accent";
-    if (leftStatus === "pending") return "bg-accent/60";
-    return "bg-border";
-  };
-
-  const circleStyles = (status: StepStatus, isCurrent: boolean) => {
-    if (status === "completed") return "bg-success text-success-foreground border-success";
-    if (status === "pending") return cn("bg-accent text-accent-foreground border-accent", isCurrent && "shadow-lg shadow-accent/25");
-    return cn("bg-white text-muted-foreground border-border", isCurrent && "ring-2 ring-accent/40");
-  };
+  const isTransparent = variant === "transparent";
+  const isSmall = size === "sm";
 
   const textColor = (status: StepStatus, isCurrent: boolean) => {
-    if (status === "completed") return "text-success";
-    if (status === "pending" || isCurrent) return "text-accent";
-    return "text-muted-foreground";
+    if (status === "completed") return isTransparent ? "text-success font-semibold" : "text-success font-semibold";
+    if (status === "pending" || isCurrent) return isTransparent ? "text-accent-foreground font-bold" : "text-accent-foreground font-bold";
+    return isTransparent ? "text-white/80" : "text-muted-foreground";
   };
 
   return (
-    <div className="px-6 pt-6 pb-4">
-      <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
-        <div className="flex items-center justify-between text-sm font-semibold text-foreground mb-2">
-          <span>Overall Progress</span>
-          <span className="text-accent">{normalizedProgress}%</span>
+    <div className={cn(
+      "w-full transition-all duration-300",
+      isTransparent ? "bg-transparent p-0" : "bg-transparent px-6 pt-2 pb-4"
+    )}>
+      <div className={cn(
+        "transition-all",
+        isTransparent ? "p-0" : "p-6"
+      )}>
+        {/* Progress Bar Header */}
+        <div className="flex items-center justify-between text-sm font-semibold mb-2">
+          <span className={isTransparent ? "text-white/90" : "text-foreground"}>Overall Progress</span>
+          <span className="text-accent-foreground">{normalizedProgress}%</span>
         </div>
 
-        <div className="h-2 rounded-full bg-muted/40 overflow-hidden">
+        {/* Progress Bar Container */}
+        <div className={cn(
+          "h-2 rounded-full overflow-hidden transition-all",
+          isTransparent ? "bg-white/10" : "bg-muted"
+        )}>
           <div
-            className="h-full rounded-full bg-gradient-to-r from-accent to-success transition-all duration-700"
+            className="h-full rounded-full bg-gradient-to-r from-accent to-success transition-all duration-700 shadow-[0_0_8px_rgba(var(--accent-rgb),0.3)]"
             style={{ width: `${normalizedProgress}%` }}
           />
         </div>
 
-        <div className="mt-7 overflow-x-auto pb-4 -mx-1 px-1 sm:mx-0 sm:px-0 sm:pb-0 sm:overflow-visible custom-scrollbar">
+        {/* Stepper Steps */}
+        <div className={cn(
+          "overflow-x-auto pb-4 -mx-1 px-1 sm:mx-0 sm:px-0 sm:pb-0 sm:overflow-visible custom-scrollbar",
+          isSmall ? "mt-4" : "mt-7"
+        )}>
           <div className="flex items-start min-w-[600px] sm:min-w-0">
           {steps.map((step, index) => {
             const status = getStepStatus(step);
             const isCurrent = index === currentStep;
 
             return (
-//               <div key={step.name} className="flex-1 flex flex-col items-center gap-3 min-w-0">
+              <div key={index} className="flex-1 flex flex-col items-center min-w-0">
+                <div className="relative w-full flex items-center justify-center">
+                  {/* Left Connector */}
+                  {index !== 0 && (
+                    <div className={cn(
+                      "absolute left-0 right-1/2 rounded-full transition-all",
+                      isSmall ? "h-[2px]" : "h-[3px]",
+                      status === "completed" || status === "pending" || isCurrent 
+                        ? "bg-accent shadow-[0_0_4px_rgba(var(--accent-rgb),0.2)]" 
+                        : (isTransparent ? "bg-white/20" : "bg-muted")
+                    )} />
+                  )}
 
-//                 <div className="flex items-center w-full gap-2">
-//                   {index !== 0 && (
-//                     <div className={cn("flex-1 h-[3px] rounded-full transition-colors duration-300", connectorColor(index - 1))} />
-//                   )}
-//                   <button
-//                     onClick={() => onStepClick(index)}
-//                     className={cn(
-//                       "h-11 w-11 shrink-0 rounded-full border-2 text-sm font-semibold transition-all duration-200 flex items-center justify-center",
-//                       circleStyles(status, isCurrent)
-//                     )}
-//                     aria-current={isCurrent ? "step" : undefined}
-//                   >
-//                     {index + 1}
-//                   </button>
-//                   {index !== steps.length - 1 && (
-//                     <div className={cn("flex-1 h-[3px] rounded-full transition-colors duration-300", connectorColor(index))} />
-//                   )}
-//                 </div>
-//                 {/* <p className={cn("text-[12px] font-semibold uppercase tracking-wide text-center truncate", textColor(status, isCurrent))}> */}
-//                   <p
-//   className={cn(
-//     "text-[11px] font-semibold uppercase tracking-wide text-center break-words leading-tight max-w-[90px]",
-//     textColor(status, isCurrent)
-//   )}
-// >
-//                   {step.name}
-//                 </p>
-//               </div>
-<div className="flex-1 flex flex-col items-center min-w-0">
+                  {/* Circle Indicator */}
+                  <button
+                    onClick={() => onStepClick(index)}
+                    className={cn(
+                      "relative z-10 rounded-full border-2 flex items-center justify-center transition-all duration-300",
+                      isSmall ? "h-8 w-8 text-xs" : "h-11 w-11 text-sm font-bold",
+                      status === "completed" 
+                        ? "bg-success text-success-foreground border-success shadow-[0_0_10px_rgba(var(--success-rgb),0.2)]" 
+                        : status === "pending" 
+                        ? "bg-accent text-accent-foreground border-accent shadow-lg shadow-accent/25" 
+                        : (isTransparent ? "bg-white text-[#1e3a8a] border-white/40" : "bg-white text-[#1e3a8a] border-slate-200")
+                    )}
+                  >
+                    {status === "completed" ? "✓" : index + 1}
+                  </button>
 
-  {/* Top row: connectors + circle */}
-  <div className="relative w-full flex items-center justify-center">
+                  {/* Right Connector */}
+                  {index !== steps.length - 1 && (
+                    <div className={cn(
+                      "absolute left-1/2 right-0 rounded-full transition-all",
+                      isSmall ? "h-[2px]" : "h-[3px]",
+                      status === "completed" 
+                        ? "bg-accent shadow-[0_0_4px_rgba(var(--accent-rgb),0.2)]" 
+                        : (isTransparent ? "bg-white/20" : "bg-muted")
+                    )} />
+                  )}
+                </div>
 
-    {index !== 0 && (
-      <div className={cn(
-        "absolute left-0 right-1/2 h-[3px] rounded-full",
-        connectorColor(index - 1)
-      )} />
-    )}
-
-    <button
-      onClick={() => onStepClick(index)}
-      className={cn(
-        "relative z-10 h-11 w-11 rounded-full border-2 flex items-center justify-center",
-        circleStyles(status, isCurrent)
-      )}
-    >
-      {index + 1}
-    </button>
-
-    {index !== steps.length - 1 && (
-      <div className={cn(
-        "absolute left-1/2 right-0 h-[3px] rounded-full",
-        connectorColor(index)
-      )} />
-    )}
-
-  </div>
-
-  {/* Label */}
-  <p
-    onClick={() => onStepClick(index)}
-    className={cn(
-      "mt-2 text-[11px] text-center leading-tight line-clamp-2 h-[32px] cursor-pointer hover:text-accent transition-colors",
-      textColor(status, isCurrent)
-    )}
-  >
-    {step.name}
-  </p>
-
-</div>
+                {/* Label */}
+                <p
+                  onClick={() => onStepClick(index)}
+                  className={cn(
+                    "mt-3 text-center leading-tight line-clamp-2 h-[32px] cursor-pointer hover:text-accent transition-colors",
+                    isSmall ? "text-[10px]" : "text-[11px]",
+                    textColor(status, isCurrent)
+                  )}
+                >
+                  {step.name}
+                </p>
+              </div>
             );
           })}
           </div>
