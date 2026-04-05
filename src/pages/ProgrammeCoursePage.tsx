@@ -325,7 +325,7 @@ export default function ProgrammeCoursePage({ defaultView = "cards" }: { default
         <div className="p-6 lg:p-8">
           <div className="flex flex-col lg:flex-row gap-6">
             <div className="flex-1 min-w-0">
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+              <div className="flex flex-col gap-3">
                 {subSections.map((section) => (
                   <div
                     key={section.title}
