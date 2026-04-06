@@ -1,26 +1,39 @@
 import { useState } from "react";
-import { User, Menu, CalendarDays } from "lucide-react";
+import { User, Menu, CalendarDays, Search } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 
 export function AppHeader({ onMenuClick }: { onMenuClick?: () => void }) {
   const [year, setYear] = useState("2025-2026");
   const years = ["2023-2024", "2024-2025", "2025-2026", "2026-2027"];
 
   return (
-    <header className="h-14 bg-card border-b border-border flex items-center justify-between px-4 lg:px-6 shrink-0 sticky top-0 z-50 gap-2">
-      <div className="flex items-center gap-1 lg:gap-4 shrink-0 sm:flex-1">
+    <header className="h-16 bg-card/90 backdrop-blur-md border-b border-border/60 flex items-center justify-between px-4 lg:px-6 shrink-0 sticky top-0 z-50 gap-4 shadow-sm">
+      <div className="flex items-center gap-3 shrink-0 sm:flex-1">
         <button
           onClick={onMenuClick}
           className="lg:hidden p-2 -ml-2 rounded-md hover:bg-muted text-muted-foreground shrink-0"
         >
           <Menu className="h-5 w-5" />
         </button>
-        {/* Select Year */}
-        <div className="w-[105px] sm:w-[240px] lg:w-48 transition-all">
+
+        {/* Global Search Header Box */}
+        <div className="hidden sm:flex relative w-full max-w-[260px] lg:max-w-xs transition-all group">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+          <Input 
+            placeholder="Search modules..." 
+            className="pl-9 h-9 bg-muted/40 border-transparent hover:bg-muted/60 focus-visible:bg-background focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:border-primary/30 rounded-full shadow-sm transition-all text-sm"
+          />
+        </div>
+      </div>
+
+      <div className="flex flex-1 items-center justify-end gap-3 lg:gap-5 min-w-0">
+        {/* Select Year Filter */}
+        <div className="w-[105px] sm:w-36 transition-all">
           <Select value={year} onValueChange={setYear}>
-            <SelectTrigger className="h-8 lg:h-10 bg-background border-border text-[10px] sm:text-sm px-1.5 sm:px-3">
-              <div className="flex items-center gap-1 sm:gap-2">
-                <CalendarDays className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
+            <SelectTrigger className="h-9 bg-primary/5 hover:bg-primary/10 border-border/50 text-xs sm:text-sm px-3 rounded-full transition-colors focus:ring-1 focus:ring-primary/20 shadow-sm">
+              <div className="flex items-center gap-2">
+                <CalendarDays className="h-4 w-4 text-primary/70" />
                 <SelectValue placeholder="Year" />
               </div>
             </SelectTrigger>
@@ -33,34 +46,29 @@ export function AppHeader({ onMenuClick }: { onMenuClick?: () => void }) {
             </SelectContent>
           </Select>
         </div>
-      </div>
 
-      {/* HEI ID & Year Badge */}
-      <div className="flex flex-1 items-center justify-center px-1 min-w-0">
-        <div className="px-2 py-0.5 lg:py-1 bg-muted/60 lg:bg-muted/40 rounded-full border border-border flex items-center gap-1 lg:gap-3 shadow-[inset_0_1px_4px_rgba(0,0,0,0.02)] transition-all hover:bg-muted/80 cursor-pointer group whitespace-nowrap">
-          <div className="relative shrink-0">
-            <div className="w-1.5 lg:w-2 lg:h-2 rounded-full bg-accent animate-pulse" />
+        {/* HEI ID Premium Badge */}
+        <div className="hidden md:flex px-3 py-1.5 bg-gradient-to-r from-accent/10 to-primary/5 rounded-full border border-accent/20 items-center gap-2.5 shadow-[0_2px_10px_rgba(0,0,0,0.02)] transition-all hover:shadow-[0_2px_15px_rgba(0,0,0,0.05)] cursor-pointer group whitespace-nowrap">
+          <div className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
           </div>
-          <p className="text-[10px] lg:text-sm font-semibold text-foreground tracking-tight flex items-center gap-1 lg:gap-2">
-            <span className="text-muted-foreground font-medium uppercase tracking-wider hidden lg:inline">HEI ID:</span>
-            <span className="text-[#1e3a8a] group-hover:text-accent transition-colors font-bold">HEI-U-0123</span>
-          </p>
-          <div className="w-[1px] h-3 bg-border shrink-0" />
-          <p className="text-[10px] lg:text-sm font-bold text-success/80 uppercase tracking-widest shrink-0">
-            {year.split("-")[0]}
+          <p className="text-xs lg:text-sm font-semibold tracking-tight flex items-center gap-1.5">
+            <span className="text-muted-foreground/80 font-medium">HEI ID:</span>
+            <span className="text-primary font-bold group-hover:text-accent transition-colors">HEI-U-0123</span>
           </p>
         </div>
-      </div>
 
-      {/* Right side */}
-      <div className="flex items-center gap-2 sm:gap-4 shrink-0">
-        <div className="flex items-center gap-2 sm:gap-3">
-          <div className="h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-primary flex items-center justify-center shrink-0">
+        <div className="w-[1px] h-6 bg-border/60 hidden sm:block shrink-0 mx-2" />
+
+        {/* Right side Profile */}
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+          <div className="h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-gradient-to-br from-primary to-primary/80 shadow-md flex items-center justify-center shrink-0 border border-primary/20">
             <User className="h-4 w-4 sm:h-5 sm:w-5 text-primary-foreground" />
           </div>
-          <div className="text-right hidden sm:block">
-            <p className="text-sm font-medium text-foreground">ONOD User</p>
-            <p className="text-xs text-muted-foreground">Admin</p>
+          <div className="text-right hidden xl:block">
+            <p className="text-sm font-bold text-foreground leading-none mb-1">ONOD User</p>
+            <p className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground leading-none">Admin</p>
           </div>
         </div>
       </div>

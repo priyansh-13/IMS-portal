@@ -55,8 +55,12 @@ export default function DashboardPage() {
   return (
     <TopLayout>
       {/* Welcome banner */}
-      <div className="bg-gradient-to-r from-primary via-primary to-primary/85 text-primary-foreground px-8 py-5">
-        <div className="flex items-center justify-between flex-wrap gap-4">
+      <div className="relative overflow-hidden bg-gradient-to-br from-primary via-primary to-primary/80 text-primary-foreground px-8 py-6 shadow-md border-b-4 border-accent">
+        {/* Decorative background elements */}
+        <div className="absolute -top-24 -right-12 w-72 h-72 bg-primary-foreground/10 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-12 left-24 w-48 h-48 bg-accent/20 rounded-full blur-2xl"></div>
+        
+        <div className="relative z-10 flex items-center justify-between flex-wrap gap-4">
           <div>
             <h1 className="text-xl font-bold tracking-tight">Welcome ONOD User!</h1>
             <p className="text-sm opacity-80 mt-1 max-w-lg">
@@ -71,7 +75,7 @@ export default function DashboardPage() {
             <TooltipProvider delayDuration={100}>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <div className="w-12 h-12 rounded-full border-[3px] border-primary-foreground/30 flex items-center justify-center bg-primary-foreground/10 backdrop-blur-sm cursor-default">
+                  <div className="w-12 h-12 rounded-full border-[3px] border-primary-foreground/30 flex items-center justify-center bg-primary-foreground/10 backdrop-blur-sm cursor-default shadow-[0_0_15px_rgba(255,255,255,0.15)] hover:shadow-[0_0_20px_rgba(255,255,255,0.3)] transition-all">
                     <span className="text-sm font-bold">
                       {completedModules.length}/{modules.length}
                     </span>
@@ -118,7 +122,7 @@ export default function DashboardPage() {
             ) : (
               <>
                 <ChevronLeft className="h-3.5 w-3.5" />
-                Notifications
+                Updates & Info
               </>
             )}
           </button>
@@ -128,7 +132,7 @@ export default function DashboardPage() {
           {/* Left: modules, take maximum space */}
           <div className="flex-1 min-w-0">
             <h2 className="text-lg font-semibold text-foreground mb-4">All Modules</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
               {modules.map((mod) => (
                 <ProgressCard key={mod.title} {...mod} />
               ))}

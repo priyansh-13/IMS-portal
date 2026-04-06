@@ -7,7 +7,13 @@ import { SectionStatusSidebar } from "@/components/SectionStatusSidebar";
 import { useFormProgress, FieldState } from "@/hooks/useFormProgress";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { CheckCircle2, ArrowLeft, ArrowRight, Save, UploadCloud, FileCheck, X } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { CheckCircle2, ArrowLeft, ArrowRight, Save, UploadCloud, FileCheck, X, Info } from "lucide-react";
 
 const initialFields: FieldState[] = [
   { id: "aishe-code", name: "AISHE Code", section: "General Information", value: "U-123", required: true },
@@ -121,7 +127,19 @@ export default function InstitutionDetailsPage() {
     if (type === "radio") {
       return (
         <div id={id} className="animate-fade-in">
-          <label className="text-sm font-medium text-foreground mb-2 block">{label}</label>
+          <div className="flex items-center gap-1.5 mb-2">
+            <label className="text-sm font-medium text-foreground">{label}</label>
+            <TooltipProvider>
+              <Tooltip delayDuration={200}>
+                <TooltipTrigger tabIndex={-1} type="button" className="cursor-help">
+                  <Info className="h-4 w-4 text-muted-foreground/60 hover:text-accent transition-colors" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p className="text-xs font-medium">Please provide accurate details for {label}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
           <div className="flex items-center gap-4">
             {(radioOptions || ["Yes", "No"]).map((opt) => (
               <label key={opt} className="flex items-center gap-2 cursor-pointer group">
@@ -144,7 +162,19 @@ export default function InstitutionDetailsPage() {
     if (type === "file") {
       return (
         <div className="animate-fade-in">
-          <label className="text-sm font-medium text-foreground mb-2 block">{label}</label>
+          <div className="flex items-center gap-1.5 mb-2">
+            <label className="text-sm font-medium text-foreground">{label}</label>
+            <TooltipProvider>
+              <Tooltip delayDuration={200}>
+                <TooltipTrigger tabIndex={-1} type="button" className="cursor-help">
+                  <Info className="h-4 w-4 text-muted-foreground/60 hover:text-accent transition-colors" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p className="text-xs font-medium">Please provide accurate details for {label}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
           <div className={cn(
             "flex flex-col gap-3 p-4 rounded-xl border border-dashed transition-all duration-200",
             filled ? "border-success/50 bg-success/5" : "border-border bg-muted/20 hover:bg-muted/50"
@@ -197,7 +227,19 @@ export default function InstitutionDetailsPage() {
 
     return (
       <div className="animate-fade-in">
-        <label className="text-sm font-medium text-foreground mb-2 block">{label}</label>
+        <div className="flex items-center gap-1.5 mb-2">
+          <label className="text-sm font-medium text-foreground">{label}</label>
+          <TooltipProvider>
+            <Tooltip delayDuration={200}>
+              <TooltipTrigger tabIndex={-1} type="button" className="cursor-help">
+                <Info className="h-4 w-4 text-muted-foreground/60 hover:text-accent transition-colors" />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p className="text-xs font-medium">Please provide accurate details for {label}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
         <div className="relative">
           {type === "select" ? (
             <select
@@ -268,7 +310,24 @@ export default function InstitutionDetailsPage() {
         >
           {checked ? <CheckCircle2 className="h-3 w-3" /> : <span className="text-xs font-semibold">✓</span>}
         </span>
-        <span className="text-xs text-muted-foreground">{label}</span>
+        <div className="flex items-center justify-between flex-1 w-full gap-2">
+          <span className="text-xs text-muted-foreground text-left leading-relaxed">{label}</span>
+          <TooltipProvider>
+            <Tooltip delayDuration={200}>
+              <TooltipTrigger asChild>
+                <div 
+                  className="cursor-help p-1 hover:bg-muted rounded-full shrink-0" 
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <Info className="h-3.5 w-3.5 text-muted-foreground/60 hover:text-accent transition-colors" />
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p className="text-xs font-medium">Check if applicable: {label}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
       </button>
     );
   };

@@ -7,7 +7,9 @@ import { SectionStatusSidebar } from "@/components/SectionStatusSidebar";
 import { useFormProgress, FieldState } from "@/hooks/useFormProgress";
 import { PendingFieldsPanel } from "@/components/PendingFieldsPanel";
 import { cn } from "@/lib/utils";
-import { CheckCircle2 } from "lucide-react";
+import { Info,  CheckCircle2  } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+
 
 const REGULATORY_FIELDS: FieldState[] = [
   // Regulatory Information
@@ -49,7 +51,19 @@ const renderRadioGroup = (
   
   return (
     <div className="flex flex-col gap-2">
-      <p className="text-sm font-medium text-foreground">{label}</p>
+      <div className="flex items-center gap-1.5 mb-1">
+        <p className="text-sm font-medium text-foreground">{label}</p>
+        <TooltipProvider>
+          <Tooltip delayDuration={200}>
+            <TooltipTrigger tabIndex={-1} type="button" className="cursor-help">
+              <Info className="h-4 w-4 text-muted-foreground/60 hover:text-accent transition-colors" />
+            </TooltipTrigger>
+            <TooltipContent>
+              <p className="text-xs font-medium">Please provide accurate details for {label}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
       <div className="flex gap-4">
         {["Yes", "No"].map((opt) => (
           <label key={opt} className="flex items-center gap-2 text-sm text-foreground cursor-pointer">
@@ -81,7 +95,19 @@ const renderSelectField = (
 
   return (
     <div className="flex flex-col gap-2">
-      <label htmlFor={id} className="text-sm font-medium text-foreground">{label}</label>
+      <div className="flex items-center gap-1.5 mb-1">
+        <label htmlFor={id} className="text-sm font-medium text-foreground">{label}</label>
+        <TooltipProvider>
+          <Tooltip delayDuration={200}>
+            <TooltipTrigger tabIndex={-1} type="button" className="cursor-help">
+              <Info className="h-4 w-4 text-muted-foreground/60 hover:text-accent transition-colors" />
+            </TooltipTrigger>
+            <TooltipContent>
+              <p className="text-xs font-medium">Please provide accurate details for {label}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
       <div className="relative">
         <select
           id={id}
@@ -116,7 +142,19 @@ const renderInputField = (
   
   return (
     <div className="flex flex-col gap-2">
-      <label htmlFor={id} className="text-sm font-medium text-foreground">{label}</label>
+      <div className="flex items-center gap-1.5 mb-1">
+        <label htmlFor={id} className="text-sm font-medium text-foreground">{label}</label>
+        <TooltipProvider>
+          <Tooltip delayDuration={200}>
+            <TooltipTrigger tabIndex={-1} type="button" className="cursor-help">
+              <Info className="h-4 w-4 text-muted-foreground/60 hover:text-accent transition-colors" />
+            </TooltipTrigger>
+            <TooltipContent>
+              <p className="text-xs font-medium">Please provide accurate details for {label}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
       <div className="relative">
         <input
           id={id}
