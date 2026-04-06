@@ -141,7 +141,7 @@ export default function DashboardPage() {
 
           {/* Right: notifications + downloads - Sticky on desktop */}
           {(!isDesktop || sidebarOpen) && (
-            <div className="w-full lg:w-64 xl:w-72 shrink-0 space-y-3 sticky top-6 self-start">
+            <div className="w-full lg:w-64 xl:w-72 shrink-0 space-y-3 sticky top-6 self-start z-10">
               <div className="bg-card border border-border rounded-xl shadow-sm p-3">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-sm font-semibold text-foreground">Notifications</h3>
