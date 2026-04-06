@@ -8,6 +8,7 @@ interface ProgressCardProps {
   progress: number;
   lastUpdated?: string;
   link?: string;
+  className?: string;
 }
 
 function getStatusInfo(progress: number) {
@@ -16,7 +17,7 @@ function getStatusInfo(progress: number) {
   return { text: "Not Started", className: "bg-muted text-muted-foreground border-border", ring: "text-muted", isPulse: false };
 }
 
-export function ProgressCard({ title, icon: Icon, progress, lastUpdated, link }: ProgressCardProps) {
+export function ProgressCard({ title, icon: Icon, progress, lastUpdated, link, className }: ProgressCardProps) {
   const navigate = useNavigate();
   const status = getStatusInfo(progress);
 
@@ -29,8 +30,9 @@ export function ProgressCard({ title, icon: Icon, progress, lastUpdated, link }:
       onClick={() => link && navigate(link)}
       className={cn(
         "bg-card rounded-2xl border border-border p-6 cursor-pointer relative group overflow-hidden",
-        "flex flex-col min-h-[180px] hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all duration-300",
-        "hover:bg-[radial-gradient(circle_at_top_right,hsla(214,80%,21%,0.03),transparent)]"
+        "flex flex-col h-full min-h-[180px] hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all duration-300",
+        "hover:bg-[radial-gradient(circle_at_top_right,hsla(214,80%,21%,0.03),transparent)]",
+        className
       )}
     >
       {/* Ghost percentage watermark */}

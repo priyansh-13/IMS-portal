@@ -167,8 +167,8 @@ export default function DashboardPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 transition-opacity duration-300">
               {filteredModules.map((mod) => (
-                <div key={mod.title} className="animate-in fade-in duration-500 fill-mode-backwards">
-                  <ProgressCard {...mod} />
+                <div key={mod.title} className="animate-in fade-in duration-500 fill-mode-backwards h-full">
+                  <ProgressCard {...mod} className="h-full" />
                 </div>
               ))}
             </div>
