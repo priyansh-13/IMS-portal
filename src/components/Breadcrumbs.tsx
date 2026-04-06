@@ -28,10 +28,10 @@ export function Breadcrumbs() {
 
   if (!normalizedSegments.length) {
     return (
-      <nav className="bg-card border-b border-border px-6 py-2 text-sm text-muted-foreground">
+      <nav className="bg-card border-b border-border px-6 py-1 text-sm text-muted-foreground">
         <ol className="flex gap-2">
           <li>
-            <span className="text-foreground font-semibold">Dashboard</span>
+            <span className="text-foreground font-semibold text-xs">Dashboard</span>
           </li>
         </ol>
       </nav>
@@ -39,15 +39,15 @@ export function Breadcrumbs() {
   }
 
   return (
-    <nav className="bg-card border-b border-border px-6 py-2 text-sm text-muted-foreground">
-      <ol className="flex flex-wrap items-center gap-2 text-xs uppercase tracking-wide">
+    <nav className="bg-card border-b border-border px-6 py-1 text-sm text-muted-foreground">
+      <ol className="flex flex-wrap items-center gap-1.5 text-[10px] uppercase tracking-wide">
         <li>
           <Link className="text-foreground font-medium" to="/dashboard">
             Dashboard
           </Link>
         </li>
         {crumbs.map((crumb, index) => (
-          <li key={crumb.path} className="flex items-center gap-2">
+          <li key={crumb.path} className="flex items-center gap-1.5">
             <span className="text-muted-foreground/80">/</span>
             {index === crumbs.length - 1 ? (
               <span className="text-foreground font-semibold">{crumb.label}</span>

@@ -60,27 +60,27 @@ export function SectionStatusSidebar({ sections, sectionOrder = [], activeSectio
     return "pending";
   };
 
-  const widthClass = isCollapsed ? "lg:w-16" : "lg:w-[320px]";
+  const widthClass = isCollapsed ? "lg:w-14" : "lg:w-[280px]";
 
-  // Collapsed view: center the toggle and a simple status dot column
+  // Collapsed view
   if (isCollapsed) {
     return (
       <aside
         className={cn(
-          "flex-none w-full lg:w-16 flex flex-col items-center justify-start border border-border rounded-2xl bg-card shadow-sm transition-all duration-300 lg:sticky lg:top-24 py-3 gap-4"
+          "flex-none w-full lg:w-14 flex flex-col items-center justify-start border border-border rounded-xl bg-card shadow-sm transition-all duration-300 lg:sticky lg:top-20 py-2 gap-3"
         )}
         aria-label="Section completion status"
       >
         <button
           type="button"
           onClick={() => setIsCollapsed(false)}
-          className="h-10 w-10 flex items-center justify-center rounded-full border border-border text-muted-foreground hover:text-foreground transition-colors"
+          className="h-8 w-8 flex items-center justify-center rounded-full border border-border text-muted-foreground hover:text-foreground transition-colors"
           aria-label="Expand section overview"
         >
-          <ChevronRight className="h-4 w-4" />
+          <ChevronRight className="h-3.5 w-3.5" />
         </button>
-        <div className="h-10 w-10 flex items-center justify-center rounded-full border border-border text-muted-foreground">
-          <Circle className="h-4 w-4" />
+        <div className="h-8 w-8 flex items-center justify-center rounded-full border border-border text-muted-foreground">
+          <Circle className="h-3.5 w-3.5" />
         </div>
       </aside>
     );
@@ -89,15 +89,15 @@ export function SectionStatusSidebar({ sections, sectionOrder = [], activeSectio
   return (
     <aside
       className={cn(
-        "flex-none w-full flex flex-col border border-border rounded-2xl bg-card shadow-sm transition-all duration-300 lg:sticky lg:top-24",
+        "flex-none w-full flex flex-col border border-border rounded-xl bg-card shadow-sm transition-all duration-300 lg:sticky lg:top-20",
         widthClass
       )}
       aria-label="Section completion status"
     >
-      <div className="flex items-center justify-between px-3 py-3 border-b border-border">
+      <div className="flex items-center justify-between px-3 py-2 border-b border-border">
         <div className="space-y-0.5">
-          <p className="text-[10px] uppercase tracking-[0.35em] text-muted-foreground">Sections</p>
-          <p className="text-sm font-semibold text-foreground">Completion status</p>
+          <p className="text-[9px] uppercase tracking-[0.35em] text-muted-foreground">Sections</p>
+          <p className="text-xs font-semibold text-foreground">Completion status</p>
         </div>
         <button
           type="button"
@@ -105,11 +105,11 @@ export function SectionStatusSidebar({ sections, sectionOrder = [], activeSectio
           className="p-1 rounded-full border border-border text-muted-foreground hover:text-foreground transition-colors"
           aria-label="Collapse section overview"
         >
-          <ChevronLeft className="h-4 w-4" />
+          <ChevronLeft className="h-3.5 w-3.5" />
         </button>
       </div>
 
-      <ul className="flex flex-col gap-3 px-3 py-4 max-h-[420px] overflow-y-auto">
+      <ul className="flex flex-col gap-2 px-2 py-3 max-h-[420px] overflow-y-auto">
         {orderedSections.map((section) => {
           const status = getStatus(section);
           const meta = STATUS_META[status];
@@ -121,7 +121,7 @@ export function SectionStatusSidebar({ sections, sectionOrder = [], activeSectio
                 type="button"
                 onClick={() => onSectionClick?.(section.name)}
                 className={cn(
-                  "w-full flex items-center justify-between gap-3 rounded-2xl border px-3 py-3 transition-all duration-200 text-left group/item",
+                  "w-full flex items-center justify-between gap-2 rounded-xl border px-2.5 py-2 transition-all duration-200 text-left group/item",
                   isActive
                     ? "border-accent/40 bg-accent/5 ring-1 ring-accent/20"
                     : "border-border bg-muted/50 hover:border-accent/40 hover:bg-accent/5 hover:shadow-sm"
@@ -129,18 +129,18 @@ export function SectionStatusSidebar({ sections, sectionOrder = [], activeSectio
               >
                 <div className="min-w-0 flex-1">
                   <p className={cn(
-                    "text-sm font-semibold truncate transition-colors",
+                    "text-xs font-semibold truncate transition-colors",
                     isActive ? "text-accent" : "text-foreground group-hover/item:text-accent"
                   )}>
                     {section.name}
                   </p>
-                  <p className="text-[11px] text-muted-foreground">{meta.helper}</p>
+                  <p className="text-[10px] text-muted-foreground">{meta.helper}</p>
                 </div>
                 <span className={cn(
-                  "flex-none flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-full whitespace-nowrap shadow-sm",
+                  "flex-none flex items-center gap-1 text-[9px] font-bold px-1.5 py-0.5 rounded-full whitespace-nowrap shadow-sm",
                   meta.badgeClass
                 )}>
-                  <meta.Icon className="h-3 w-3" />
+                  <meta.Icon className="h-2.5 w-2.5" />
                   {meta.label}
                 </span>
               </button>
