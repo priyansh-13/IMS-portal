@@ -36,24 +36,33 @@ export function ProgressCard({ title, icon: Icon, progress, lastUpdated, link }:
     <div
       onClick={() => link && navigate(link)}
       className={cn(
-        "bg-card rounded-2xl border border-border border-t-[5px] p-6 cursor-pointer relative group",
+        "bg-card rounded-2xl border border-border border-t-[5px] p-6 cursor-pointer relative group overflow-hidden",
         "hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:-translate-y-1.5 transition-all duration-300 flex flex-col",
         getBorderColor(progress)
       )}
     >
-      {/* Status badge */}
-      <div className="absolute top-4 right-4">
+      {/* Status badge: in-flow; mobile stacked, desktop inline right-aligned */}
+      <div className="flex justify-end mb-3 md:hidden">
         <span className={cn("text-[10px] font-semibold px-2.5 py-1 rounded-full border", status.className)}>
           {status.text}
         </span>
       </div>
 
-      {/* Icon + Title */}
-      <div className="flex items-start gap-4 mb-5">
+      {/* Icon + Title + Badge (desktop) */}
+      <div className="flex items-start gap-3 mb-5 flex-wrap">
         <div className="p-3 rounded-xl bg-gradient-to-br from-primary/10 to-primary/5 group-hover:from-primary/20 group-hover:to-primary/10 transition-colors duration-300 shrink-0">
           <Icon className="h-7 w-7 text-primary group-hover:scale-110 transition-transform duration-300" />
         </div>
-        <h3 className="text-sm font-semibold text-foreground leading-snug pr-16 mt-1">{title}</h3>
+        <div className="flex-1 min-w-[170px]">
+          <h3 className="text-sm font-semibold text-foreground leading-snug mt-1 whitespace-normal pr-0 md:pr-6">
+            {title}
+          </h3>
+        </div>
+        <div className="hidden md:flex items-start justify-end shrink-0">
+          <span className={cn("text-[10px] font-semibold px-2.5 py-1 rounded-full border", status.className)}>
+            {status.text}
+          </span>
+        </div>
       </div>
 
       {/* Progress bar */}
