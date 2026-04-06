@@ -1,4 +1,4 @@
-import { LucideIcon, CheckCircle2, Circle } from "lucide-react";
+import { LucideIcon, CheckCircle2, Circle, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
@@ -17,29 +17,42 @@ export function StatusCard({ title, icon: Icon, completed, lastUpdated, link }: 
     <div
       onClick={() => link && navigate(link)}
       className={cn(
-        "bg-card rounded-xl shadow-sm border border-border border-t-4 p-5 cursor-pointer relative",
-        "hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 group",
-        completed ? "border-t-success" : "border-t-secondary"
+        "bg-card rounded-xl shadow-sm border border-border px-4 lg:px-5 py-3 lg:py-4 cursor-pointer flex items-center gap-3 lg:gap-4",
+        "hover:bg-muted/30 hover:border-primary/20 hover:shadow-md hover:translate-x-1 transition-all duration-300 group",
+        completed ? "border-l-[5px] lg:border-l-[6px] border-l-success" : "border-l-[5px] lg:border-l-[6px] border-l-warning"
       )}
     >
-      <div className="absolute top-3 right-3">
-        {completed ? (
-          <CheckCircle2 className="h-5 w-5 text-success" />
-        ) : (
-          <Circle className="h-5 w-5 text-destructive/60" />
-        )}
+      <div className="p-2.5 rounded-lg bg-primary/5 group-hover:bg-primary/10 transition-colors shrink-0 hidden sm:block">
+        <Icon className="h-5 w-5 text-primary group-hover:scale-110 transition-transform" />
       </div>
-      <div className="flex items-center gap-3 mb-3">
-        <div className="p-2.5 rounded-lg bg-primary/5 group-hover:bg-primary/10 transition-colors duration-200">
-          <Icon className="h-7 w-7 text-primary" />
-        </div>
-        <h3 className="text-sm font-semibold text-foreground pr-6 leading-tight">{title}</h3>
+
+      <div className="flex-1 min-w-0">
+        <h3 className="text-sm lg:text-base font-semibold text-foreground truncate">{title}</h3>
       </div>
+
       {lastUpdated && (
-        <p className="text-xs text-muted-foreground">
-          Last Updated: <span className="text-accent font-medium">{lastUpdated}</span>
-        </p>
+        <div className="hidden md:flex items-center gap-2 shrink-0 pr-4 lg:pr-6 border-r border-border/60">
+          <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-medium">Sync:</span>
+          <span className="text-[10px] text-accent font-bold bg-accent/5 px-2 py-0.5 rounded border border-accent/10">
+            {lastUpdated}
+          </span>
+        </div>
       )}
+
+      <div className="flex items-center gap-3 shrink-0 pl-2 lg:pl-6">
+        {completed ? (
+          <div className="flex items-center gap-1.5 bg-success/10 px-2.5 py-1 rounded-full border border-success/20">
+            <CheckCircle2 className="h-4 w-4 text-success" />
+            <span className="text-[10px] font-bold text-success uppercase tracking-wider hidden sm:block">Completed</span>
+          </div>
+        ) : (
+          <div className="flex items-center gap-1.5 bg-warning/10 px-2.5 py-1 rounded-full border border-warning/20">
+            <Circle className="h-4 w-4 text-warning" />
+            <span className="text-[10px] font-bold text-warning uppercase tracking-wider hidden sm:block">Pending</span>
+          </div>
+        )}
+        <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors hidden sm:block" />
+      </div>
     </div>
   );
 }

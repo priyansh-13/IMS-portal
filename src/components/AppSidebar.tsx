@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Home,
   Building2,
@@ -10,7 +10,6 @@ import {
   CreditCard,
   Lightbulb,
   FlaskConical,
-  ChevronDown,
   ChevronLeft,
   ChevronRight,
   Phone,
@@ -27,6 +26,13 @@ import {
 import { NavLink } from "@/components/NavLink";
 import { useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
 
 interface SubMenuItem {
   title: string;
@@ -45,40 +51,99 @@ interface MenuItem {
 const menuItems: MenuItem[] = [
   { title: "Dashboard", url: "/dashboard", icon: Home },
   {
-    title: "Institutional Registry",
+    title: "Institutional Registry And Recognition",
     url: "/institutional-registry",
     icon: Building2,
     progress: 25,
     subItems: [
       { title: "Institution Details", url: "/institutional-registry/institution-details", icon: Building2 },
       { title: "Contact Details", url: "/institutional-registry/contact-details", icon: Phone },
-      { title: "Parent Organization", url: "/institutional-registry/parent-org", icon: Users },
+      { title: "Parent Organization/Ownership", url: "/institutional-registry/parent-org", icon: Users },
       { title: "Affiliation/Approval", url: "/institutional-registry/affiliation", icon: FileCheck },
       { title: "Committees", url: "/institutional-registry/committees", icon: UsersRound },
       { title: "Financial Details", url: "/institutional-registry/financial", icon: IndianRupee },
       { title: "Centres / Campuses", url: "/institutional-registry/centres", icon: MapPin },
-      { title: "Student Support", url: "/institutional-registry/student-support", icon: HeartHandshake },
-      { title: "Regulatory Info", url: "/institutional-registry/regulatory", icon: ShieldCheck },
+      { title: "Student Support & Institutional Activities", url: "/institutional-registry/student-support", icon: HeartHandshake },
+     
     ],
   },
   {
-    title: "Programme & Course",
+    title: "Programme And Course Details",
     url: "/programme-course",
     icon: BookOpen,
     progress: 50,
     subItems: [
-      { title: "Programme-Course Details", url: "/programme-course", icon: BookOpen },
+      { title: "Programme-Course Details", url: "/programme-course/details", icon: BookOpen },
       { title: "Programme Summary", url: "/programme-course/summary", icon: FileText },
       { title: "Course Curriculum", url: "/programme-course/curriculum", icon: GraduationCap },
     ],
   },
-  { title: "Student Information", url: "/student-info", icon: Users, progress: 75 },
-  { title: "Faculty & HR Registry", url: "/faculty-hr", icon: UserCog, progress: 75 },
-  { title: "Infrastructure", url: "/infrastructure", icon: Landmark, progress: 100 },
-  { title: "Quality Assurance", url: "/quality-assurance", icon: Award, progress: 100 },
-  { title: "ABC & NCrF", url: "/abc-ncrf", icon: CreditCard, progress: 30 },
-  { title: "Innovation & Projects", url: "/innovation", icon: Lightbulb, progress: 75 },
-  { title: "Research & Outcome", url: "/research", icon: FlaskConical, progress: 50 },
+  {
+    title: "Student Information And Mobility",
+    url: "/student-info",
+    icon: Users,
+    progress: 75,
+    subItems: [
+      { title: "Student Details", url: "/student-info/details", icon: Users },
+      { title: "Enrollment Info", url: "/student-info/enrollment", icon: FileText },
+    ],
+  },
+  {
+    title: "Faculty And Human Resources Registry",
+    url: "/faculty-hr",
+    icon: UserCog,
+    progress: 75,
+    subItems: [
+      { title: "Faculty Registry", url: "/faculty-hr/registry", icon: UserCog },
+      { title: "Service Records", url: "/faculty-hr/records", icon: FileCheck },
+    ],
+  },
+  {
+    title: "Infrastructure And Resources",
+    url: "/infrastructure",
+    icon: Landmark,
+    progress: 100,
+    subItems: [
+      { title: "Building Info", url: "/infrastructure/buildings", icon: Landmark },
+      { title: "Lab Details", icon: FlaskConical, url: "/infrastructure/labs" },
+    ],
+  },
+  {
+    title: "Quality Assurance And Accreditation Hub",
+    url: "/quality-assurance",
+    icon: Award,
+    progress: 100,
+    subItems: [
+      { title: "Accreditation Hub", url: "/quality-assurance/accreditation", icon: Award },
+    ],
+  },
+  {
+    title: "Academic Bank of Credits (ABC) and NCrF Integration",
+    url: "/abc-ncrf",
+    icon: CreditCard,
+    progress: 30,
+    subItems: [
+      { title: "Credit Registry", url: "/abc-ncrf/credits", icon: CreditCard },
+    ],
+  },
+  {
+    title: "Innovation,Industry & Projects",
+    url: "/innovation",
+    icon: Lightbulb,
+    progress: 75,
+    subItems: [
+      { title: "Project Hub", url: "/innovation/projects", icon: Lightbulb },
+    ],
+  },
+  {
+    title: "Research And Outcome",
+    url: "/research",
+    icon: FlaskConical,
+    progress: 50,
+    subItems: [
+      { title: "Research Registry", url: "/research/registry", icon: FlaskConical },
+    ],
+  },
 ];
 
 function ProgressDot({ progress }: { progress?: number }) {
@@ -93,130 +158,122 @@ function ProgressDot({ progress }: { progress?: number }) {
   );
 }
 
-export function AppSidebar({ collapsed, onToggle }: { collapsed?: boolean; onToggle?: () => void }) {
+export function AppSidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: { collapsed?: boolean; onToggle?: () => void; mobileOpen?: boolean; onMobileClose?: () => void }) {
   const location = useLocation();
   const navigate = useNavigate();
-  const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
-
-  const toggleMenu = (url: string) => {
-    setExpandedMenus((prev) =>
-      prev.includes(url) ? prev.filter((u) => u !== url) : [...prev, url]
-    );
-  };
 
   const isActive = (item: MenuItem) =>
     location.pathname === item.url ||
     (item.url !== "/dashboard" && location.pathname.startsWith(item.url));
 
-  const isExpanded = (url: string) =>
-    expandedMenus.includes(url) || location.pathname.startsWith(url);
+  useEffect(() => {
+    // keep mobile menu closed on route change
+    onMobileClose?.();
+  }, [location.pathname]);
 
   return (
     <aside
       className={cn(
-        "min-h-screen bg-card border-r border-border flex flex-col shrink-0 transition-all duration-300",
-        collapsed ? "w-16" : "w-64"
+        "h-screen bg-card border-r border-border flex flex-col shrink-0 transition-transform duration-300 z-50",
+        // Desktop
+        "lg:sticky lg:top-0 lg:translate-x-0",
+        collapsed ? "lg:w-16" : "lg:w-72",
+        // Mobile
+        "fixed inset-y-0 left-0 w-72",
+        mobileOpen ? "translate-x-0" : "-translate-x-full"
       )}
     >
       {/* Logo */}
       <div className="p-4 border-b border-border flex items-center justify-between">
         <div className="flex items-center gap-2 overflow-hidden">
-          <Landmark className="h-8 w-8 text-primary shrink-0" />
+          <img src="/images/ONOD-logo.png" alt="ONOD" className={cn("h-8 w-auto object-contain shrink-0", collapsed && "h-6")} />
           {!collapsed && (
-            <div className="animate-fade-in">
+            <div className="animate-fade-in sr-only">
               <h1 className="text-xl font-bold text-primary tracking-tight">ONOD</h1>
-              <p className="text-[10px] leading-tight">
-                <span className="text-accent font-semibold">One </span>
-                <span className="text-success font-semibold">Nation </span>
-                <span className="text-accent font-semibold">One </span>
-                <span className="text-success font-semibold">Data</span>
-              </p>
             </div>
           )}
         </div>
-        {onToggle && (
-          <button
-            onClick={onToggle}
-            className="p-1 rounded-md hover:bg-muted transition-colors text-muted-foreground"
-          >
-            {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-          </button>
-        )}
+        <div className="flex items-center">
+          {onToggle && (
+            <button
+              onClick={onToggle}
+              className="hidden lg:block p-1 rounded-md hover:bg-muted transition-colors text-muted-foreground"
+              aria-label="Toggle sidebar"
+            >
+              {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+            </button>
+          )}
+          {onMobileClose && (
+            <button
+              onClick={onMobileClose}
+              className="lg:hidden p-1 rounded-md hover:bg-muted transition-colors text-muted-foreground"
+              aria-label="Close sidebar"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Menu */}
       <nav className="flex-1 py-2 overflow-y-auto scrollbar-thin">
         {menuItems.map((item) => {
           const active = isActive(item);
-          const hasSubItems = item.subItems && item.subItems.length > 0;
-          const expanded = hasSubItems && isExpanded(item.url);
 
           return (
             <div key={item.url} className="mx-2 my-0.5">
               {/* Main menu item */}
-              <button
-                onClick={() => {
-                  if (hasSubItems && !collapsed) {
-                    toggleMenu(item.url);
-                  } else {
-                    navigate(item.url);
-                  }
-                }}
-                className={cn(
-                  "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-200 group",
-                  active
-                    ? "bg-primary text-primary-foreground shadow-sm"
-                    : "text-foreground hover:bg-muted"
+              <Tooltip delayDuration={0}>
+                <TooltipTrigger asChild>
+                  <button
+                    onClick={() => {
+                      navigate(item.url);
+                    }}
+                    className={cn(
+                      "w-full flex items-start gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-200 group",
+                      active
+                        ? "bg-primary text-primary-foreground shadow-sm"
+                        : "text-foreground hover:bg-muted"
+                    )}
+                  >
+                    <item.icon className="h-4 w-4 shrink-0 mt-0.5" />
+                    {!collapsed && (
+                      <>
+                        <span className="leading-snug flex-1 text-left whitespace-normal break-words">{item.title}</span>
+                        <div className="flex items-center gap-1.5 shrink-0 mt-0.5">
+                          <ProgressDot progress={item.progress} />
+                        </div>
+                      </>
+                    )}
+                  </button>
+                </TooltipTrigger>
+                {collapsed && (
+                  <TooltipContent 
+                    side="right" 
+                    className="bg-primary text-primary-foreground border-primary font-medium shadow-lg px-4 py-2"
+                    sideOffset={10}
+                  >
+                    {item.title}
+                  </TooltipContent>
                 )}
-                title={collapsed ? item.title : undefined}
-              >
-                <item.icon className="h-4 w-4 shrink-0" />
-                {!collapsed && (
-                  <>
-                    <span className="leading-tight flex-1 text-left truncate">{item.title}</span>
-                    <div className="flex items-center gap-1.5">
-                      <ProgressDot progress={item.progress} />
-                      {hasSubItems && (
-                        <ChevronDown
-                          className={cn(
-                            "h-3.5 w-3.5 transition-transform duration-200",
-                            expanded && "rotate-180"
-                          )}
-                        />
-                      )}
-                    </div>
-                  </>
-                )}
-              </button>
+              </Tooltip>
 
-              {/* Submenu accordion */}
-              {hasSubItems && expanded && !collapsed && (
-                <div className="mt-1 ml-3 pl-3 border-l-2 border-border space-y-0.5 animate-accordion-down overflow-hidden">
-                  {item.subItems!.map((sub) => {
-                    const subActive = location.pathname === sub.url;
-                    return (
-                      <NavLink
-                        key={sub.url}
-                        to={sub.url}
-                        className={cn(
-                          "flex items-center gap-2.5 px-3 py-2 rounded-md text-xs transition-all duration-200",
-                          subActive
-                            ? "bg-accent/10 text-accent font-medium border-l-2 border-accent -ml-[2px] pl-[14px]"
-                            : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-                        )}
-                        activeClassName=""
-                      >
-                        <sub.icon className="h-3.5 w-3.5 shrink-0" />
-                        <span className="truncate">{sub.title}</span>
-                      </NavLink>
-                    );
-                  })}
-                </div>
-              )}
+
             </div>
           );
         })}
       </nav>
+
+      {/* Government Bodies Logos */}
+      {!collapsed && (
+        <div className="bodiesico-sidebar">
+          <img src="/images/UGC_India_Logo.png" alt="UGC" className="dbmenu-icon" />
+          <img src="/images/AICTE.png" alt="AICTE" className="dbmenu-icon" />
+          <img src="/images/NCTE.png" alt="NCTE" className="dbmenu-icon" />
+          <img src="/images/NAAC.png" alt="NAAC" className="dbmenu-icon" />
+          <img src="/images/NIRF.png" alt="NIRF" className="dbmenu-icon" />
+        </div>
+      )}
 
       {/* Footer */}
       {!collapsed && (

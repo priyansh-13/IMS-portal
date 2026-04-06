@@ -71,4 +71,26 @@
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-muted-foreground/20 rounded-full;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    @apply bg-muted-foreground/40;
+  }
+}
+
+@layer components {
+  .bodiesico-sidebar {
+    @apply flex items-center justify-around gap-1 p-2 bg-muted/30 rounded-lg border border-border/50 mx-2 mb-2;
+  }
+
+  .dbmenu-icon {
+    @apply h-6 w-auto object-contain;
+  }
 }

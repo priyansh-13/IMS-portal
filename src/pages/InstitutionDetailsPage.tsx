@@ -2,12 +2,18 @@ import { useState, useMemo } from "react";
 import { TopLayout } from "@/components/TopLayout";
 import { ModuleBanner } from "@/components/ModuleBanner";
 import { FormStepper } from "@/components/FormStepper";
-import { FormProgressBar } from "@/components/FormProgressBar";
 import { PendingFieldsPanel } from "@/components/PendingFieldsPanel";
+import { SectionStatusSidebar } from "@/components/SectionStatusSidebar";
 import { useFormProgress, FieldState } from "@/hooks/useFormProgress";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { CheckCircle2, ArrowLeft, ArrowRight, Save } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { CheckCircle2, ArrowLeft, ArrowRight, Save, UploadCloud, FileCheck, X, Info } from "lucide-react";
 
 const initialFields: FieldState[] = [
   { id: "aishe-code", name: "AISHE Code", section: "General Information", value: "U-123", required: true },
@@ -23,18 +29,20 @@ const initialFields: FieldState[] = [
   { id: "location", name: "Location of University", section: "General Information", value: "" },
   { id: "address-1", name: "Address Line 1", section: "General Information", value: "" },
   { id: "address-2", name: "Address Line 2", section: "General Information", value: "" },
-  { id: "urban-local-body", name: "Urban Local Body", section: "Location & Area", value: "" },
-  { id: "longitude", name: "Longitude", section: "Location & Area", value: "" },
-  { id: "latitude", name: "Latitude", section: "Location & Area", value: "" },
-  { id: "total-area", name: "Total Area (in acre)", section: "Location & Area", value: "" },
-  { id: "constructed-area", name: "Total Constructed Area", section: "Location & Area", value: "" },
-  { id: "website", name: "Website", section: "Location & Area", value: "" },
-  { id: "status-prior", name: "Status Prior to Establishment", section: "Status & Classification", value: "" },
+  { id: "urban-local-body", name: "Urban Local Body", section: "General Information", value: "" },
+  { id: "longitude", name: "Longitude (in degree)", section: "General Information", value: "" },
+  { id: "latitude", name: "Latitude (in degree)", section: "General Information", value: "" },
+  { id: "total-area", name: "Total Area (in acre)", section: "General Information", value: "" },
+  { id: "constructed-area", name: "Total Constructed Area (sq. m)", section: "General Information", value: "" },
+  { id: "website", name: "Website", section: "General Information", value: "" },
+
+  { id: "status-prior", name: "Status Prior to Establishment", section: "Status & Classification", value: "Autonomous College" },
   { id: "year-declared", name: "Year Declared University/INI", section: "Status & Classification", value: "" },
-  { id: "type-institution", name: "Type of Institution", section: "Status & Classification", value: "" },
+  { id: "type-institution", name: "Type of Institution", section: "Status & Classification", value: "State Open University" },
   { id: "tier-institute", name: "Tier of Institute", section: "Status & Classification", value: "" },
   { id: "category", name: "Category (Men/Women/Coed)", section: "Status & Classification", value: "" },
   { id: "institution-specifically", name: "Institution Specifically for", section: "Status & Classification", value: "" },
+
   { id: "affiliating-university", name: "Is Affiliating University?", section: "Affiliation & Recognition", value: "" },
   { id: "affiliating-type", name: "Affiliating Univ. Type", section: "Affiliation & Recognition", value: "" },
   { id: "statutory-body", name: "Statutory Body Recognition Name", section: "Affiliation & Recognition", value: "" },
@@ -43,9 +51,42 @@ const initialFields: FieldState[] = [
   { id: "graded-autonomy", name: "Whether Graded Autonomy", section: "Affiliation & Recognition", value: "" },
   { id: "deemed-status", name: "Deemed / Autonomous Status", section: "Affiliation & Recognition", value: "" },
   { id: "institute-eminence", name: "Institute of Eminence", section: "Affiliation & Recognition", value: "" },
+
+  { id: "minority-institution", name: "Minority Institution", section: "Minority Details", value: "" },
+  { id: "minority-type", name: "Minority Type", section: "Minority Details", value: "" },
+  { id: "certificate-issued-date", name: "Certificate Issued Date", section: "Minority Details", value: "" },
+  { id: "certificate-valid-till", name: "Certificate Valid Till", section: "Minority Details", value: "" },
+
+  { id: "constituent-campus", name: "Constituent / Off-Campus", section: "Campus & Approval Details", value: "" },
+  { id: "constituent-count", name: "Number of Constituent / Off-Campus", section: "Campus & Approval Details", value: "" },
+  { id: "regional-centre-exists", name: "Regional Centre Exists", section: "Campus & Approval Details", value: "" },
+  { id: "regional-centre-count", name: "Number of Regional Centre", section: "Campus & Approval Details", value: "" },
+  { id: "odl-exists", name: "ODL Centres Exists", section: "Campus & Approval Details", value: "" },
+  { id: "odl-count", name: "Number of ODL Centre", section: "Campus & Approval Details", value: "" },
+  { id: "online-exists", name: "Online Centres Exists", section: "Campus & Approval Details", value: "" },
+  { id: "online-count", name: "Number of Online Centre", section: "Campus & Approval Details", value: "" },
+  { id: "new-approval-last-year", name: "New Approval Last Year", section: "Campus & Approval Details", value: "" },
+  { id: "approval-letter", name: "Approval / Recognition Letters", section: "Campus & Approval Details", value: "" },
+
+  { id: "disc-general", name: "General (Multi-Disciplinary)", section: "Academic Profile", value: "" },
+  { id: "disc-engineering", name: "Engineering / Technology / Architecture / Design", section: "Academic Profile", value: "" },
+  { id: "disc-arts", name: "Arts / Humanities / Social Sciences", section: "Academic Profile", value: "" },
+  { id: "disc-languages", name: "Indian and Foreign Languages", section: "Academic Profile", value: "" },
+  { id: "disc-it", name: "IT & Computer Application", section: "Academic Profile", value: "" },
+  { id: "disc-sciences", name: "Sciences", section: "Academic Profile", value: "" },
+  { id: "disc-vocational", name: "Vocational Education", section: "Academic Profile", value: "" },
+  { id: "disc-nursing", name: "Nursing and Paramedical", section: "Academic Profile", value: "" },
+  { id: "disc-others", name: "Others", section: "Academic Profile", value: "" },
 ];
 
-const SECTION_ORDER = ["General Information", "Location & Area", "Status & Classification", "Affiliation & Recognition"];
+const SECTION_ORDER = [
+  "General Information",
+  "Status & Classification",
+  "Affiliation & Recognition",
+  "Minority Details",
+  "Campus & Approval Details",
+  "Academic Profile",
+];
 
 export default function InstitutionDetailsPage() {
   const navigate = useNavigate();
@@ -53,11 +94,6 @@ export default function InstitutionDetailsPage() {
   const [currentStep, setCurrentStep] = useState(0);
 
   const currentSectionName = SECTION_ORDER[currentStep];
-  const currentSectionFields = useMemo(
-    () => fields.filter((f) => f.section === currentSectionName),
-    [fields, currentSectionName]
-  );
-
   const stepInfos = useMemo(
     () => SECTION_ORDER.map((name) => {
       const sec = sections.find((s) => s.name === name);
@@ -75,16 +111,35 @@ export default function InstitutionDetailsPage() {
   const renderField = (
     id: string,
     label: string,
-    options?: { type?: "text" | "select" | "radio"; readOnly?: boolean; placeholder?: string; selectOptions?: string[]; radioOptions?: string[] }
+    options?: {
+      type?: "text" | "select" | "radio" | "date" | "number" | "file";
+      readOnly?: boolean;
+      placeholder?: string;
+      selectOptions?: string[];
+      radioOptions?: string[];
+      accept?: string;
+    }
   ) => {
-    const { type = "text", readOnly, placeholder, selectOptions, radioOptions } = options || {};
+    const { type = "text", readOnly, placeholder, selectOptions, radioOptions, accept } = options || {};
     const filled = isFieldFilled(id);
     const value = getFieldValue(id);
 
     if (type === "radio") {
       return (
         <div id={id} className="animate-fade-in">
-          <label className="text-sm font-medium text-foreground mb-2 block">{label}</label>
+          <div className="flex items-center gap-1.5 mb-2">
+            <label className="text-sm font-medium text-foreground">{label}</label>
+            <TooltipProvider>
+              <Tooltip delayDuration={200}>
+                <TooltipTrigger tabIndex={-1} type="button" className="cursor-help">
+                  <Info className="h-4 w-4 text-muted-foreground/60 hover:text-accent transition-colors" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p className="text-xs font-medium">Please provide accurate details for {label}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
           <div className="flex items-center gap-4">
             {(radioOptions || ["Yes", "No"]).map((opt) => (
               <label key={opt} className="flex items-center gap-2 cursor-pointer group">
@@ -104,9 +159,87 @@ export default function InstitutionDetailsPage() {
       );
     }
 
+    if (type === "file") {
+      return (
+        <div className="animate-fade-in">
+          <div className="flex items-center gap-1.5 mb-2">
+            <label className="text-sm font-medium text-foreground">{label}</label>
+            <TooltipProvider>
+              <Tooltip delayDuration={200}>
+                <TooltipTrigger tabIndex={-1} type="button" className="cursor-help">
+                  <Info className="h-4 w-4 text-muted-foreground/60 hover:text-accent transition-colors" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p className="text-xs font-medium">Please provide accurate details for {label}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+          <div className={cn(
+            "flex flex-col gap-3 p-4 rounded-xl border border-dashed transition-all duration-200",
+            filled ? "border-success/50 bg-success/5" : "border-border bg-muted/20 hover:bg-muted/50"
+          )}>
+            {value ? (
+              <div className="flex items-center justify-between gap-3 text-sm text-foreground bg-background p-3 rounded-lg border border-border shadow-sm">
+                <div className="flex items-center gap-3 overflow-hidden">
+                  <FileCheck className="h-5 w-5 text-success shrink-0" />
+                  <span className="truncate max-w-[200px] font-medium">{value}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => updateField(id, "")}
+                  className="p-1 rounded-md text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors shrink-0"
+                  aria-label="Remove file"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            ) : (
+              <div className="flex flex-col sm:flex-row items-center gap-4">
+                <label className="flex items-center justify-center gap-2 px-4 py-2.5 bg-primary text-primary-foreground rounded-lg text-sm font-semibold hover:bg-primary/90 transition-all duration-200 shadow-sm cursor-pointer whitespace-nowrap">
+                  <UploadCloud className="h-4 w-4" />
+                  Choose File
+                  <input
+                    id={id}
+                    type="file"
+                    accept={accept || ".pdf,.doc,.docx"}
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        updateField(id, file.name);
+                      }
+                    }}
+                    className="sr-only"
+                  />
+                </label>
+                <div className="text-center sm:text-left">
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    Max size: 5MB<br />
+                    Supported formats: {accept ? accept.toUpperCase().replace(/\./g, '') : "PDF, DOC, DOCX"}
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="animate-fade-in">
-        <label className="text-sm font-medium text-foreground mb-2 block">{label}</label>
+        <div className="flex items-center gap-1.5 mb-2">
+          <label className="text-sm font-medium text-foreground">{label}</label>
+          <TooltipProvider>
+            <Tooltip delayDuration={200}>
+              <TooltipTrigger tabIndex={-1} type="button" className="cursor-help">
+                <Info className="h-4 w-4 text-muted-foreground/60 hover:text-accent transition-colors" />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p className="text-xs font-medium">Please provide accurate details for {label}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
         <div className="relative">
           {type === "select" ? (
             <select
@@ -129,7 +262,7 @@ export default function InstitutionDetailsPage() {
           ) : (
             <input
               id={id}
-              type="text"
+              type={type === "date" ? "date" : "text"}
               value={value}
               onChange={(e) => updateField(id, e.target.value)}
               readOnly={readOnly}
@@ -152,53 +285,113 @@ export default function InstitutionDetailsPage() {
     );
   };
 
+  const toggleCheckbox = (id: string) => {
+    const filled = isFieldFilled(id);
+    updateField(id, filled ? "" : "true");
+  };
+
+  const renderCheckboxOption = (id: string, label: string) => {
+    const checked = isFieldFilled(id);
+    return (
+      <button
+        type="button"
+        key={id}
+        onClick={() => toggleCheckbox(id)}
+        className={cn(
+          "flex items-center gap-3 rounded-2xl border px-4 py-3 text-sm font-medium text-foreground transition-all duration-200",
+          checked ? "border-success/40 bg-success/5 shadow-sm" : "border-border bg-white hover:border-accent/40 hover:bg-muted/50"
+        )}
+      >
+        <span
+          className={cn(
+            "flex h-5 w-5 items-center justify-center rounded border text-xs transition-colors duration-200",
+            checked ? "border-success bg-success text-success-foreground" : "border-border bg-card text-muted-foreground"
+          )}
+        >
+          {checked ? <CheckCircle2 className="h-3 w-3" /> : <span className="text-xs font-semibold">✓</span>}
+        </span>
+        <div className="flex items-center justify-between flex-1 w-full gap-2">
+          <span className="text-xs text-muted-foreground text-left leading-relaxed">{label}</span>
+          <TooltipProvider>
+            <Tooltip delayDuration={200}>
+              <TooltipTrigger asChild>
+                <div 
+                  className="cursor-help p-1 hover:bg-muted rounded-full shrink-0" 
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <Info className="h-3.5 w-3.5 text-muted-foreground/60 hover:text-accent transition-colors" />
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p className="text-xs font-medium">Check if applicable: {label}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+      </button>
+    );
+  };
+
   const renderStepContent = () => {
     switch (currentSectionName) {
       case "General Information":
         return (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5">
-            {renderField("aishe-code", "AISHE Code", { readOnly: true })}
-            {renderField("institute-name", "Institute Name", { readOnly: true })}
-            {renderField("country", "Country", { type: "select", selectOptions: ["India"] })}
-            {renderField("state", "State", { type: "select", selectOptions: ["Gujarat", "Maharashtra", "Rajasthan"] })}
-            {renderField("district", "District", { type: "select", selectOptions: ["Ahmedabad", "Surat", "Vadodara"] })}
-            {renderField("sub-district", "Sub-District", { type: "select" })}
-            {renderField("street", "Street")}
-            {renderField("city", "City")}
-            {renderField("pin-code", "Pin Code")}
-            {renderField("year-establishment", "Year of Establishment", { readOnly: true })}
-            <div className="lg:col-span-2">
-              {renderField("location", "Location of University", { type: "select" })}
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+              {renderField("aishe-code", "AISHE Code", { readOnly: true })}
+              {renderField("institute-name", "Institute Name", { readOnly: true })}
+              {renderField("country", "Country", { type: "select", selectOptions: ["India"] })}
             </div>
-            {renderField("address-1", "Address Line 1")}
-            {renderField("address-2", "Address Line 2")}
-          </div>
-        );
-      case "Location & Area":
-        return (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5">
-            {renderField("urban-local-body", "Urban Local Body", { placeholder: "Municipality / Corporation" })}
-            {renderField("longitude", "Longitude (in degree)", { placeholder: "e.g. 72.5714" })}
-            {renderField("latitude", "Latitude (in degree)", { placeholder: "e.g. 23.0225" })}
-            {renderField("total-area", "Total Area (in acre)", { placeholder: "Enter Total Area" })}
-            {renderField("constructed-area", "Total Constructed Area (sq. m)", { placeholder: "Enter Constructed Area" })}
-            {renderField("website", "Website", { placeholder: "https://example.com" })}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {renderField("state", "State", { type: "select", selectOptions: ["Gujarat", "Maharashtra", "Rajasthan"] })}
+              {renderField("district", "District", { type: "select", selectOptions: ["Ahmedabad", "Surat", "Vadodara"] })}
+              {renderField("sub-district", "Sub-District", { type: "select" })}
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {renderField("street", "Street")}
+              {renderField("city", "City")}
+              {renderField("pin-code", "Pin Code")}
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {renderField("year-establishment", "Year of Establishment", { readOnly: true })}
+              {renderField("location", "Location of University / University Level Institution", { type: "select", selectOptions: ["Main Campus", "University Level Institution"] })}
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {renderField("address-1", "Address Line 1")}
+              {renderField("address-2", "Address Line 2")}
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              {renderField("urban-local-body", "Urban Local Body", { placeholder: "Municipality / Corporation" })}
+              {renderField("longitude", "Longitude (in degree)", { placeholder: "e.g. 72.5714" })}
+              {renderField("latitude", "Latitude (in degree)", { placeholder: "e.g. 23.0225" })}
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              {renderField("total-area", "Total Area (in acre)", { placeholder: "Enter Total Area" })}
+              {renderField("constructed-area", "Total Constructed Area (sq. m)", { placeholder: "Enter Constructed Area" })}
+              {renderField("website", "Website", { placeholder: "https://example.com" })}
+            </div>
           </div>
         );
       case "Status & Classification":
         return (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {renderField("status-prior", "Status Prior to Establishment", { type: "select", selectOptions: ["Autonomous College", "Affiliated College", "Constituent College"] })}
-            {renderField("year-declared", "Year Declared University/INI")}
+            {renderField("year-declared", "Year Declared University/INI (Institute of National Importance)")}
             {renderField("type-institution", "Type of Institution", { type: "select", selectOptions: ["State Open University", "Central University", "Private University"] })}
             {renderField("tier-institute", "Tier of Institute", { type: "select" })}
             {renderField("category", "Category (Men/Women/Coed)", { type: "select", selectOptions: ["Coed", "Men", "Women"] })}
-            {renderField("institution-specifically", "Institution Specifically for", { type: "select", selectOptions: ["General", "Minority", "Women", "PwD"] })}
+            {renderField("institution-specifically", "Institution Specifically for (Minority / Women / PwD)", { type: "select", selectOptions: ["General", "Minority", "Women", "PwD"] })}
           </div>
         );
       case "Affiliation & Recognition":
         return (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {renderField("affiliating-university", "Is Affiliating University?", { type: "select", selectOptions: ["Yes", "No"] })}
             {renderField("affiliating-type", "Affiliating Univ. Type")}
             {renderField("statutory-body", "Statutory Body Recognition Name")}
@@ -207,6 +400,56 @@ export default function InstitutionDetailsPage() {
             {renderField("graded-autonomy", "Whether Graded Autonomy", { type: "radio" })}
             {renderField("deemed-status", "Deemed / Autonomous Status", { type: "select" })}
             {renderField("institute-eminence", "Institute of Eminence", { type: "radio" })}
+          </div>
+        );
+      case "Minority Details":
+        return (
+          <div className="space-y-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {renderField("minority-institution", "Minority Institution", { type: "radio", radioOptions: ["Yes", "No"] })}
+              {renderField("minority-type", "Minority Type", { type: "select", selectOptions: ["Muslim", "Christian", "Sikh", "Buddhist", "Parsi", "Jain", "Others"] })}
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {renderField("certificate-issued-date", "Certificate Issued Date", { type: "date" })}
+              {renderField("certificate-valid-till", "Certificate Valid Till", { type: "date" })}
+            </div>
+          </div>
+        );
+      case "Campus & Approval Details":
+        return (
+          <div className="space-y-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {renderField("constituent-campus", "Constituent / Off-Campus", { type: "radio", radioOptions: ["Yes", "No"] })}
+              {renderField("constituent-count", "Number of Constituent / Off-Campus")}
+              {renderField("regional-centre-exists", "Regional Centre Exists", { type: "radio", radioOptions: ["Yes", "No"] })}
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {renderField("regional-centre-count", "Number of Regional Centre")}
+              {renderField("odl-exists", "ODL Centres Exists", { type: "radio", radioOptions: ["Yes", "No"] })}
+              {renderField("odl-count", "Number of ODL Centre")}
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {renderField("online-exists", "Online Centres Exists", { type: "radio", radioOptions: ["Yes", "No"] })}
+              {renderField("online-count", "Number of Online Centre")}
+              {renderField("new-approval-last-year", "Is your Institution newly Approved Last Year (LoA) & Failed to Admit Students?", { type: "radio", radioOptions: ["Yes", "No"] })}
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {renderField("approval-letter", "Approval / Recognition Letters", { type: "file" })}
+            </div>
+          </div>
+        );
+      case "Academic Profile":
+        return (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {renderCheckboxOption("disc-general", "General (Multi-Disciplinary)")}
+            {renderCheckboxOption("disc-engineering", "Engineering / Technology / Architecture / Design")}
+            {renderCheckboxOption("disc-arts", "Arts / Humanities / Social Sciences")}
+            {renderCheckboxOption("disc-languages", "Indian and Foreign Languages")}
+            {renderCheckboxOption("disc-it", "IT & Computer Application")}
+            {renderCheckboxOption("disc-sciences", "Sciences")}
+            {renderCheckboxOption("disc-vocational", "Vocational Education")}
+            {renderCheckboxOption("disc-nursing", "Nursing and Paramedical")}
+            {renderCheckboxOption("disc-others", "Others")}
           </div>
         );
       default:
@@ -218,7 +461,19 @@ export default function InstitutionDetailsPage() {
 
   return (
     <TopLayout>
-      <ModuleBanner title="Institutional Registry and Recognition Module" />
+      <ModuleBanner
+        title="Institutional Registry and Recognition Module"
+      >
+        <FormStepper
+          steps={stepInfos}
+          currentStep={currentStep}
+          onStepClick={setCurrentStep}
+          overallPercentage={overallPercentage}
+          variant="transparent"
+          size="sm"
+        />
+      </ModuleBanner>
+
       <div className="p-6 lg:p-8">
         <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
           {/* Header */}
@@ -232,86 +487,84 @@ export default function InstitutionDetailsPage() {
             </button>
           </div>
 
-          {/* Overall progress */}
-          <FormProgressBar
-            sections={sections}
-            overallPercentage={overallPercentage}
-            activeSection={currentSectionName}
-          />
-
-          {/* Stepper */}
-          <div className="border-b border-border bg-muted/30">
-            <FormStepper
-              steps={stepInfos}
-              currentStep={currentStep}
-              onStepClick={setCurrentStep}
-            />
-          </div>
-
-          {/* Step content */}
-          <div className="p-6 lg:p-8">
-            {/* Section header */}
-            <div className="flex items-center justify-between mb-6 pb-3 border-b border-border">
-              <div>
-                <p className="text-xs text-muted-foreground mb-1">Step {currentStep + 1} of {SECTION_ORDER.length}</p>
-                <h3 className="text-base font-semibold text-foreground">{currentSectionName}</h3>
-              </div>
-              {currentSection && (
-                <span
-                  className={cn(
-                    "text-xs font-semibold px-3 py-1.5 rounded-full",
-                    currentSection.completionPercentage >= 100
-                      ? "bg-success/10 text-success"
-                      : currentSection.completionPercentage > 0
-                      ? "bg-accent/10 text-accent"
-                      : "bg-muted text-muted-foreground"
+          <div className="flex flex-col gap-6 lg:flex-row">
+            <div className="flex-1 min-w-0">
+              <div className="p-6 lg:p-8">
+                {/* Section header */}
+                <div className="flex items-center justify-between mb-6 pb-3 border-b border-border">
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1">Step {currentStep + 1} of {SECTION_ORDER.length}</p>
+                    <h3 className="text-base font-semibold text-foreground">{currentSectionName}</h3>
+                  </div>
+                  {currentSection && (
+                    <span
+                      className={cn(
+                        "text-xs font-semibold px-3 py-1.5 rounded-full",
+                        currentSection.completionPercentage >= 100
+                          ? "bg-success/10 text-success"
+                          : currentSection.completionPercentage > 0
+                            ? "bg-accent/10 text-accent"
+                            : "bg-muted text-muted-foreground"
+                      )}
+                    >
+                      {currentSection.completionPercentage}% Complete
+                    </span>
                   )}
-                >
-                  {currentSection.completionPercentage}% Complete
-                </span>
-              )}
+                </div>
+
+                {renderStepContent()}
+
+                {/* Navigation buttons */}
+                <div className="flex items-center justify-between mt-8 pt-6 border-t border-border">
+                  <button
+                    onClick={() => setCurrentStep((s) => Math.max(0, s - 1))}
+                    disabled={isFirstStep}
+                    className={cn(
+                      "flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200",
+                      isFirstStep
+                        ? "bg-muted text-muted-foreground cursor-not-allowed"
+                        : "bg-muted text-foreground hover:bg-muted/80 hover:shadow-sm"
+                    )}
+                  >
+                    <ArrowLeft className="h-4 w-4" />
+                    Back
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      if (isLastStep) {
+                        navigate("/institutional-registry");
+                      } else {
+                        setCurrentStep((s) => Math.min(SECTION_ORDER.length - 1, s + 1));
+                      }
+                    }}
+                    className="flex items-center gap-2 px-6 py-2.5 bg-accent text-accent-foreground rounded-xl text-sm font-semibold hover:bg-accent/90 transition-all duration-200 hover:shadow-md"
+                  >
+                    {isLastStep ? (
+                      <>
+                        <Save className="h-4 w-4" />
+                        Save & Submit
+                      </>
+                    ) : (
+                      <>
+                        Save & Continue
+                        <ArrowRight className="h-4 w-4" />
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
             </div>
-
-            {renderStepContent()}
-
-            {/* Navigation buttons */}
-            <div className="flex items-center justify-between mt-8 pt-6 border-t border-border">
-              <button
-                onClick={() => setCurrentStep((s) => Math.max(0, s - 1))}
-                disabled={isFirstStep}
-                className={cn(
-                  "flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200",
-                  isFirstStep
-                    ? "bg-muted text-muted-foreground cursor-not-allowed"
-                    : "bg-muted text-foreground hover:bg-muted/80 hover:shadow-sm"
-                )}
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Back
-              </button>
-
-              <button
-                onClick={() => {
-                  if (isLastStep) {
-                    // Submit
-                  } else {
-                    setCurrentStep((s) => Math.min(SECTION_ORDER.length - 1, s + 1));
-                  }
+            <div className="flex-none px-2 pb-6 lg:pb-0">
+              <SectionStatusSidebar
+                sections={sections}
+                sectionOrder={SECTION_ORDER}
+                activeSection={currentSectionName}
+                onSectionClick={(sectionName) => {
+                  const index = SECTION_ORDER.indexOf(sectionName);
+                  if (index !== -1) setCurrentStep(index);
                 }}
-                className="flex items-center gap-2 px-6 py-2.5 bg-accent text-accent-foreground rounded-xl text-sm font-semibold hover:bg-accent/90 transition-all duration-200 hover:shadow-md"
-              >
-                {isLastStep ? (
-                  <>
-                    <Save className="h-4 w-4" />
-                    Save & Submit
-                  </>
-                ) : (
-                  <>
-                    Next
-                    <ArrowRight className="h-4 w-4" />
-                  </>
-                )}
-              </button>
+              />
             </div>
           </div>
         </div>

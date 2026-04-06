@@ -100,11 +100,8 @@ export function TopNav() {
       <nav className="sticky top-0 z-40 bg-primary shadow-md">
         <div className="flex items-center h-14 px-4">
           {/* Logo */}
-          <button onClick={() => navigate("/dashboard")} className="flex items-center gap-2 mr-6 shrink-0">
-            <Landmark className="h-7 w-7 text-primary-foreground" />
-            <div className="hidden sm:block">
-              <span className="text-lg font-bold text-primary-foreground tracking-tight">ONOD</span>
-            </div>
+          <button onClick={() => navigate("/dashboard")} className="flex items-center gap-2 mr-6 shrink-0 h-10">
+            <img src="/images/ONOD-logo.png" alt="ONOD Logo" className="h-[28px] w-auto brightness-0 invert" />
           </button>
 
           {/* Desktop menu */}

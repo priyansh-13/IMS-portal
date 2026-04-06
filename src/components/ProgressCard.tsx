@@ -6,6 +6,7 @@ interface ProgressCardProps {
   title: string;
   icon: LucideIcon;
   progress: number;
+  lastUpdated?: string;
   link?: string;
 }
 
@@ -27,7 +28,7 @@ function getBarGradient(progress: number) {
   return "from-warning to-warning/80";
 }
 
-export function ProgressCard({ title, icon: Icon, progress, link }: ProgressCardProps) {
+export function ProgressCard({ title, icon: Icon, progress, lastUpdated, link }: ProgressCardProps) {
   const navigate = useNavigate();
   const status = getStatusLabel(progress);
 
@@ -35,8 +36,8 @@ export function ProgressCard({ title, icon: Icon, progress, link }: ProgressCard
     <div
       onClick={() => link && navigate(link)}
       className={cn(
-        "bg-card rounded-xl border border-border border-t-4 p-6 cursor-pointer relative group",
-        "hover:shadow-xl hover:-translate-y-1 transition-all duration-300",
+        "bg-card rounded-2xl border border-border border-t-[5px] p-6 cursor-pointer relative group",
+        "hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:-translate-y-1.5 transition-all duration-300 flex flex-col",
         getBorderColor(progress)
       )}
     >
@@ -49,27 +50,38 @@ export function ProgressCard({ title, icon: Icon, progress, link }: ProgressCard
 
       {/* Icon + Title */}
       <div className="flex items-start gap-4 mb-5">
-        <div className="p-3 rounded-xl bg-primary/5 group-hover:bg-primary/10 transition-colors duration-200 shrink-0">
-          <Icon className="h-7 w-7 text-primary" />
+        <div className="p-3 rounded-xl bg-gradient-to-br from-primary/10 to-primary/5 group-hover:from-primary/20 group-hover:to-primary/10 transition-colors duration-300 shrink-0">
+          <Icon className="h-7 w-7 text-primary group-hover:scale-110 transition-transform duration-300" />
         </div>
         <h3 className="text-sm font-semibold text-foreground leading-snug pr-16 mt-1">{title}</h3>
       </div>
 
       {/* Progress bar */}
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <span className="text-xs text-muted-foreground">Progress</span>
-          <span className="text-xs font-bold text-foreground">{progress}%</span>
+      <div className="space-y-4 mt-auto">
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Progress</span>
+            <span className="text-sm font-bold text-foreground">{progress}%</span>
+          </div>
+          <div className="w-full bg-muted rounded-full h-2.5 overflow-hidden shadow-inner">
+            <div
+              className={cn(
+                "h-full rounded-full bg-gradient-to-r transition-all duration-700 ease-out shadow-sm",
+                getBarGradient(progress)
+              )}
+              style={{ width: `${Math.max(progress, 4)}%` }}
+            />
+          </div>
         </div>
-        <div className="w-full bg-muted rounded-full h-2.5 overflow-hidden">
-          <div
-            className={cn(
-              "h-full rounded-full bg-gradient-to-r transition-all duration-700 ease-out",
-              getBarGradient(progress)
-            )}
-            style={{ width: `${Math.max(progress, 4)}%` }}
-          />
-        </div>
+
+        {lastUpdated && (
+          <div className="pt-3 border-t border-border flex items-center justify-between gap-2 flex-wrap">
+            <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-medium">Last Sync</span>
+            <span className="text-[10px] text-accent font-bold bg-accent/5 px-2 py-0.5 rounded shadow-sm border border-accent/10">
+              {lastUpdated}
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );
