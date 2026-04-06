@@ -1,13 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { TopLayout } from "@/components/TopLayout";
 import { ProgressCard } from "@/components/ProgressCard";
 import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import {
   Building2,
   BookOpen,
@@ -21,7 +15,12 @@ import {
   Download,
   ChevronLeft,
   ChevronRight,
+  Info,
+  AlertTriangle,
+  CheckCircle,
+  Bell,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const modules = [
   { title: "Institutional Registry and Recognition", icon: Building2, progress: 25, lastUpdated: "02:30 PM, 04 Feb 2026", link: "/institutional-registry" },
@@ -37,13 +36,25 @@ const modules = [
 
 const overallProgress = Math.round(modules.reduce((sum, m) => sum + m.progress, 0) / modules.length);
 
+type FilterType = "All" | "In Progress" | "Completed" | "Not Started";
+
 export default function DashboardPage() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isDesktop, setIsDesktop] = useState(() => window.matchMedia("(min-width: 1024px)").matches);
+  const [activeFilter, setActiveFilter] = useState<FilterType>("All");
 
-  const completedModules = modules.filter((m) => m.progress >= 100);
-  const inProgressModules = modules.filter((m) => m.progress > 0 && m.progress < 100);
-  const notStartedModules = modules.filter((m) => m.progress <= 0);
+  const completedModules = useMemo(() => modules.filter((m) => m.progress >= 100), []);
+  const inProgressModules = useMemo(() => modules.filter((m) => m.progress > 0 && m.progress < 100), []);
+  const notStartedModules = useMemo(() => modules.filter((m) => m.progress <= 0), []);
+
+  const filteredModules = useMemo(() => {
+    switch (activeFilter) {
+      case "Completed": return completedModules;
+      case "In Progress": return inProgressModules;
+      case "Not Started": return notStartedModules;
+      default: return modules;
+    }
+  }, [activeFilter, completedModules, inProgressModules, notStartedModules]);
 
   useEffect(() => {
     const handler = () => setIsDesktop(window.matchMedia("(min-width: 1024px)").matches);
@@ -51,6 +62,15 @@ export default function DashboardPage() {
     window.addEventListener("resize", handler);
     return () => window.removeEventListener("resize", handler);
   }, []);
+
+  const notifications = [
+    { icon: CheckCircle, iconColor: "text-success", bg: "bg-success/10", text: "New report generated for Student Mobility.", time: "2h ago" },
+    { icon: AlertTriangle, iconColor: "text-warning", bg: "bg-warning/10", text: "Missing data in Infrastructure registry.", time: "5h ago" },
+    { icon: Info, iconColor: "text-primary", bg: "bg-primary/10", text: "System maintenance scheduled for upcoming weekend.", time: "1d ago" },
+    { icon: Bell, iconColor: "text-accent", bg: "bg-accent/10", text: "Module 'Research & Outcome' requires review.", time: "2d ago" },
+    { icon: CheckCircle, iconColor: "text-success", bg: "bg-success/10", text: "Faculty HR data synchronization successful.", time: "3d ago" },
+    { icon: Info, iconColor: "text-primary", bg: "bg-primary/10", text: "NAAC accreditation forms are now available.", time: "4d ago" },
+  ];
 
   return (
     <TopLayout>
@@ -67,40 +87,29 @@ export default function DashboardPage() {
               Centralised data exchange for Higher Educational Institutions (HEIs)
             </p>
           </div>
-          <div className="flex items-center gap-5">
+          <div className="flex items-center gap-6">
             <div className="text-right">
               <p className="text-[10px] uppercase tracking-wider opacity-70">Overall Progress</p>
               <p className="text-2xl font-bold">{overallProgress}%</p>
             </div>
-            <TooltipProvider delayDuration={100}>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <div className="w-12 h-12 rounded-full border-[3px] border-primary-foreground/30 flex items-center justify-center bg-primary-foreground/10 backdrop-blur-sm cursor-default shadow-[0_0_15px_rgba(255,255,255,0.15)] hover:shadow-[0_0_20px_rgba(255,255,255,0.3)] transition-all">
-                    <span className="text-sm font-bold">
-                      {completedModules.length}/{modules.length}
-                    </span>
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent className="max-w-xs space-y-2 text-xs">
-                  <div className="font-semibold text-foreground">Module status</div>
-                  <div>
-                    <span className="font-semibold text-success">Completed:</span>{" "}
-                    {completedModules.length > 0 ? completedModules.map((m) => m.title).join(", ") : "None"}
-                  </div>
-                  <div>
-                    <span className="font-semibold text-accent">In Progress:</span>{" "}
-                    {inProgressModules.length > 0 ? inProgressModules.map((m) => m.title).join(", ") : "None"}
-                  </div>
-                  <div>
-                    <span className="font-semibold text-muted-foreground">Not Started:</span>{" "}
-                    {notStartedModules.length > 0 ? notStartedModules.map((m) => m.title).join(", ") : "None"}
-                  </div>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            
+            <div className="flex flex-wrap gap-2 text-primary-foreground mt-2 md:mt-0">
+              <div className="flex items-center gap-1.5 px-3 py-1.5 bg-success/20 border border-success/30 rounded-full text-sm font-medium backdrop-blur-sm shadow-sm hover:bg-success/30 transition-colors">
+                <span>✅</span>
+                <span>{completedModules.length} Completed</span>
+              </div>
+              <div className="flex items-center gap-1.5 px-3 py-1.5 bg-accent/20 border border-accent/30 rounded-full text-sm font-medium backdrop-blur-sm shadow-sm hover:bg-accent/30 transition-colors">
+                <span>🔄</span>
+                <span>{inProgressModules.length} In Progress</span>
+              </div>
+              <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white/10 border border-white/20 rounded-full text-sm font-medium backdrop-blur-sm shadow-sm hover:bg-white/20 transition-colors">
+                <span>⏸</span>
+                <span>{notStartedModules.length} Not Started</span>
+              </div>
+            </div>
           </div>
         </div>
-        <div className="mt-3 w-full bg-primary-foreground/15 rounded-full h-1.5 overflow-hidden">
+        <div className="mt-4 w-full bg-primary-foreground/15 rounded-full h-1.5 overflow-hidden">
           <div
             className="h-full rounded-full bg-gradient-to-r from-accent via-accent to-success transition-all duration-1000 ease-out"
             style={{ width: `${overallProgress}%` }}
@@ -131,10 +140,36 @@ export default function DashboardPage() {
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Left: modules, take maximum space */}
           <div className="flex-1 min-w-0">
-            <h2 className="text-lg font-semibold text-foreground mb-4">All Modules</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-              {modules.map((mod) => (
-                <ProgressCard key={mod.title} {...mod} />
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-2 gap-4">
+              <h2 className="text-lg font-semibold text-foreground">Modules Overview</h2>
+              
+              <div className="flex items-center gap-2 bg-muted/50 p-1 rounded-full border border-border">
+                {(["All", "In Progress", "Completed", "Not Started"] as FilterType[]).map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => setActiveFilter(tab)}
+                    className={cn(
+                      "px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-200",
+                      activeFilter === tab
+                        ? "bg-background text-foreground shadow-sm"
+                        : "text-muted-foreground hover:text-foreground hover:bg-background/50"
+                    )}
+                  >
+                    {tab}
+                  </button>
+                ))}
+              </div>
+            </div>
+            
+            <div className="text-xs text-muted-foreground mb-4">
+              Showing {filteredModules.length} of {modules.length} modules
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 transition-opacity duration-300">
+              {filteredModules.map((mod) => (
+                <div key={mod.title} className="animate-in fade-in duration-500 fill-mode-backwards">
+                  <ProgressCard {...mod} />
+                </div>
               ))}
             </div>
           </div>
@@ -149,22 +184,21 @@ export default function DashboardPage() {
                     New
                   </span>
                 </div>
-                <ul className="space-y-4 text-sm text-muted-foreground max-h-[320px] overflow-y-auto pr-2 custom-scrollbar">
-                  {[
-                    { color: "bg-primary", text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit." },
-                    { color: "bg-accent", text: "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." },
-                    { color: "bg-warning", text: "Ut enim ad minim veniam, quis nostrud exercitation ullamco." },
-                    { color: "bg-success", text: "Duis aute irure dolor in reprehenderit in voluptate velit." },
-                    { color: "bg-primary", text: "Excepteur sint occaecat cupidatat non proident, sunt in culpa." },
-                    { color: "bg-accent", text: "Nemo enim ipsam voluptatem quia voluptas sit aspernatur." },
-                    { color: "bg-warning", text: "Neque porro quisquam est, qui dolorem ipsum quia dolor." },
-                    { color: "bg-destructive", text: "Quis autem vel eum iure reprehenderit qui in ea voluptate." }
-                  ].map((notif, idx) => (
-                    <li key={idx} className="flex items-start gap-3 group">
-                      <span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${notif.color} group-hover:scale-125 transition-transform`}></span>
-                      <span className="leading-relaxed">{notif.text}</span>
-                    </li>
-                  ))}
+                <ul className="space-y-2 text-sm max-h-[320px] overflow-y-auto pr-2 custom-scrollbar">
+                  {notifications.map((notif, idx) => {
+                    const NotifIcon = notif.icon;
+                    return (
+                      <li key={idx} className="flex items-start gap-3 p-2 rounded-lg hover:bg-muted/50 transition-colors group">
+                        <div className={cn("p-1.5 rounded-full shrink-0 group-hover:scale-110 transition-transform", notif.bg, notif.iconColor)}>
+                           <NotifIcon className="h-4 w-4" />
+                        </div>
+                        <div className="flex-1 space-y-0.5">
+                          <p className="text-foreground text-xs leading-relaxed">{notif.text}</p>
+                          <p className="text-[10px] text-muted-foreground">{notif.time}</p>
+                        </div>
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
 
