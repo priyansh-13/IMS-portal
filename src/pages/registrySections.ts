@@ -10,7 +10,7 @@ export const REGISTRY_STEPS: RegistryStep[] = [
   { name: "Contact Details", path: "/institutional-registry/contact-details" },
   { name: "Parent Organization", path: "/institutional-registry/parent-org" },
   { name: "Affiliation/Approval", path: "/institutional-registry/affiliation" },
-  { name: "Committees", path: "/institutional-registry/committees" },
+  { name: "Committee(s)", path: "/institutional-registry/committees" },
   { name: "Financial Details", path: "/institutional-registry/financial" },
   { name: "Centres / Campuses", path: "/institutional-registry/centres" },
   { name: "Student Support", path: "/institutional-registry/student-support" },

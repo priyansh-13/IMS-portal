@@ -12,7 +12,7 @@ export function ModuleBanner({
   children
 }: ModuleBannerProps) {
   return (
-    <div className="bg-primary text-primary-foreground shadow-sm">
+    <div className="bg-primary/85 text-primary-foreground shadow-sm border-b border-primary/30">
       <div className={cn("px-4 md:px-6 flex items-center min-w-0 flex-1", children ? "py-1.5" : "py-5")}>
         <div className="min-w-0">
           <h2 className={cn("font-semibold leading-tight truncate", children ? "text-sm md:text-base" : "text-base md:text-lg")}>{title}</h2>

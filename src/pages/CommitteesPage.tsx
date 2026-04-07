@@ -195,7 +195,7 @@ export default function CommitteesPage() {
       <div className="p-6 lg:p-8">
         <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
           <div className="flex items-center justify-between px-6 py-4 border-b border-border border-l-4 border-l-primary">
-            <h2 className="text-lg font-semibold text-foreground">Committees</h2>
+            <h2 className="text-lg font-semibold text-foreground">Committee(s)</h2>
             <button 
               onClick={() => navigate(-1)}
               className="px-4 py-2 bg-accent text-accent-foreground rounded-lg text-sm font-medium hover:bg-accent/90 transition-colors"

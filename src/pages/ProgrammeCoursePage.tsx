@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input";
 import { BookOpen, FileText, GraduationCap, Search, Download } from "lucide-react";
 
 import { FormStepper } from "@/components/FormStepper";
-import { SectionStatusSidebar } from "@/components/SectionStatusSidebar";
 
 const subSections = [
   { title: "Programme-Course Details", icon: BookOpen, completed: true, lastUpdated: "10:15 AM, 04 Feb 2026", link: "/programme-course/details" },
@@ -289,13 +288,6 @@ export default function ProgrammeCoursePage({ defaultView = "cards" }: { default
   const [values, setValues] = useState<FieldValueMap>({});
   const navigate = useNavigate();
 
-  const sectionProgress = subSections.map((section) => ({
-    name: section.title,
-    totalFields: 1,
-    filledFields: section.completed ? 1 : 0,
-    completionPercentage: section.completed ? 100 : 0,
-  }));
-
   useEffect(() => {
     setView(defaultView);
   }, [defaultView]);
@@ -323,34 +315,20 @@ export default function ProgrammeCoursePage({ defaultView = "cards" }: { default
       <TopLayout>
         <ModuleBanner title="Programme and Course Details" />
         <div className="p-6 lg:p-8">
-          <div className="flex flex-col lg:flex-row gap-6">
-            <div className="flex-1 min-w-0">
-              <div className="flex flex-col gap-3">
-                {subSections.map((section) => (
-                  <div
-                    key={section.title}
-                    className="cursor-pointer"
-                    onClick={() => {
-                      if (section.title === "Programme-Course Details") navigate("/programme-course/details");
-                      if (section.title === "Programme Summary") navigate("/programme-course/summary");
-                      if (section.title === "Course Curriculum") navigate("/programme-course/curriculum");
-                    }}
-                  >
-                    <StatusCard {...section} />
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="flex-none px-2 pb-6 lg:pb-0">
-              <SectionStatusSidebar
-                sections={sectionProgress}
-                sectionOrder={sectionProgress.map((s) => s.name)}
-                onSectionClick={(name) => {
-                  const target = subSections.find((s) => s.title === name);
-                  if (target?.link) navigate(target.link);
+          <div className="flex flex-col gap-3">
+            {subSections.map((section) => (
+              <div
+                key={section.title}
+                className="cursor-pointer"
+                onClick={() => {
+                  if (section.title === "Programme-Course Details") navigate("/programme-course/details");
+                  if (section.title === "Programme Summary") navigate("/programme-course/summary");
+                  if (section.title === "Course Curriculum") navigate("/programme-course/curriculum");
                 }}
-              />
-            </div>
+              >
+                <StatusCard {...section} />
+              </div>
+            ))}
           </div>
         </div>
       </TopLayout>
@@ -419,19 +397,6 @@ export default function ProgrammeCoursePage({ defaultView = "cards" }: { default
               </div>
             </div>
 
-            <div className="flex-none px-2 pb-6 lg:pb-0">
-              <SectionStatusSidebar
-                sections={sectionsWithProgress}
-                sectionOrder={sectionsWithProgress.map((s) => s.name)}
-                activeSection={sectionsWithProgress[activeTab].name}
-                onSectionClick={(name) => {
-                  const targetIndex = sectionsWithProgress.findIndex((s) => s.name === name);
-                  if (targetIndex >= 0) {
-                    setActiveTab(targetIndex);
-                  }
-                }}
-              />
-            </div>
           </div>
         </div>
 
@@ -446,7 +411,7 @@ export default function ProgrammeCoursePage({ defaultView = "cards" }: { default
       </div>
 
       {/* Download FAB */}
-      <button className="fixed bottom-6 right-6 h-12 w-12 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center hover:bg-primary/90 transition-colors z-50">
+      <button className="fixed bottom-6 right-6 h-12 w-12 rounded-full bg-primary/90 text-primary-foreground border border-primary/40 shadow-lg flex items-center justify-center hover:bg-primary transition-colors z-50">
         <Download className="h-5 w-5" />
       </button>
     </TopLayout>

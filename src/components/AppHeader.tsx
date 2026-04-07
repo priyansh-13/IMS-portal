@@ -47,27 +47,26 @@ export function AppHeader({ onMenuClick }: { onMenuClick?: () => void }) {
           </Select>
         </div>
 
-        {/* HEI ID Premium Badge */}
-        <div className="hidden md:flex px-2.5 py-1 bg-gradient-to-r from-accent/10 to-primary/5 rounded-full border border-accent/20 items-center gap-2 shadow-[0_2px_10px_rgba(0,0,0,0.02)] transition-all hover:shadow-[0_2px_15px_rgba(0,0,0,0.05)] cursor-pointer group whitespace-nowrap">
-          <div className="relative flex h-1.5 w-1.5">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-accent"></span>
+        {/* University Badge (shows university name) */}
+        <div className="hidden md:flex px-3 py-1 bg-gradient-to-r from-primary/10 via-primary/5 to-success/5 rounded-full border border-primary/20 items-center gap-2 shadow-[0_2px_10px_rgba(0,0,0,0.02)] transition-all hover:shadow-[0_2px_15px_rgba(0,0,0,0.05)] cursor-pointer group whitespace-nowrap">
+          <div className="h-6 w-6 rounded-full bg-primary/15 border border-primary/25 flex items-center justify-center text-[10px] font-bold text-primary">
+            U
           </div>
-          <p className="text-[11px] font-semibold tracking-tight flex items-center gap-1">
-            <span className="text-muted-foreground/80 font-medium">HEI ID:</span>
-            <span className="text-primary font-bold group-hover:text-accent transition-colors">HEI-U-0123</span>
-          </p>
+          <div className="text-[11px] font-semibold tracking-tight flex flex-col leading-tight">
+            <span className="text-muted-foreground/80 font-medium">University</span>
+            <span className="text-primary font-bold group-hover:text-success transition-colors">Example University</span>
+          </div>
         </div>
 
         <div className="w-[1px] h-5 bg-border/60 hidden sm:block shrink-0 mx-1" />
 
-        {/* Right side Profile */}
+        {/* Right side Profile shows HEI ID now */}
         <div className="flex items-center gap-2 shrink-0">
           <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-full bg-gradient-to-br from-primary to-primary/80 shadow-md flex items-center justify-center shrink-0 border border-primary/20">
             <User className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary-foreground" />
           </div>
           <div className="text-right hidden xl:block">
-            <p className="text-xs font-bold text-foreground leading-none mb-0.5">ONOD User</p>
+            <p className="text-xs font-bold text-foreground leading-none mb-0.5">HEI-U-0123</p>
             <p className="text-[9px] uppercase tracking-wider font-semibold text-muted-foreground leading-none">Admin</p>
           </div>
         </div>

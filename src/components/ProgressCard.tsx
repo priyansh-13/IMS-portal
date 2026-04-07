@@ -90,7 +90,7 @@ export function ProgressCard({ title, icon: Icon, progress, lastUpdated, link, c
       <div className="z-10 relative mt-auto border-t border-border pt-4">
         {lastUpdated ? (
           <div className="flex flex-col">
-            <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-medium mb-1">Last Sync</span>
+            <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-medium mb-1">Last Updated</span>
             <span className="text-xs font-semibold text-foreground">{lastUpdated}</span>
           </div>
         ) : (

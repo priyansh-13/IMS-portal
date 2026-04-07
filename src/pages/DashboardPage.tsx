@@ -82,7 +82,7 @@ export default function DashboardPage() {
         
         <div className="relative z-10 flex items-center justify-between flex-wrap gap-4">
           <div>
-            <h1 className="text-xl font-bold tracking-tight">Welcome ONOD User!</h1>
+            <h1 className="text-xl font-bold tracking-tight">Welcome, Example University!</h1>
             <p className="text-sm opacity-80 mt-1 max-w-lg">
               Centralised data exchange for Higher Educational Institutions (HEIs)
             </p>
