@@ -79,14 +79,10 @@ const menuItems: MenuItem[] = [
     ],
   },
   {
-    title: "Student Information And Mobility",
+    title: "Student Information And Mobility System",
     url: "/student-info",
     icon: Users,
     progress: 75,
-    subItems: [
-      { title: "Student Details", url: "/student-info/details", icon: Users },
-      { title: "Enrollment Info", url: "/student-info/enrollment", icon: FileText },
-    ],
   },
   {
     title: "Faculty And Human Resources Registry",
@@ -257,8 +253,6 @@ export function AppSidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: {
                   </TooltipContent>
                 )}
               </Tooltip>
-
-
             </div>
           );
         })}

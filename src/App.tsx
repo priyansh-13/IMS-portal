@@ -18,6 +18,13 @@ import RegulatoryInformationPage from "./pages/RegulatoryInformationPage";
 import ProgrammeCoursePage from "./pages/ProgrammeCoursePage";
 import ProgrammeSummaryPage from "./pages/ProgrammeSummaryPage";
 import CourseCurriculumPage from "./pages/CourseCurriculumPage";
+import StudentInfoPage from "./pages/StudentInfoPage";
+import ForeignStudentEnrolmentPage from "./pages/ForeignStudentEnrolmentPage";
+import ExaminationResultPage from "./pages/ExaminationResultPage";
+import AcademicPerformancePage from "./pages/AcademicPerformancePage";
+import ExtendedCurricularPage from "./pages/ExtendedCurricularPage";
+import StudentEmployeeWelfarePage from "./pages/StudentEmployeeWelfarePage";
+import InternshipPlacementPage from "./pages/InternshipPlacementPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -47,7 +54,14 @@ const App = () => (
           <Route path="/programme-course/summary" element={<ProgrammeSummaryPage />} />
           <Route path="/programme-course/curriculum" element={<CourseCurriculumPage />} />
           {/* Placeholder routes for other modules */}
-          <Route path="/student-info" element={<DashboardPage />} />
+          <Route path="/student-info" element={<StudentInfoPage />} />
+          <Route path="/student-info/enrolment" element={<StudentInfoPage defaultView="details" />} />
+          <Route path="/student-info/foreign-enrolment" element={<ForeignStudentEnrolmentPage />} />
+          <Route path="/student-info/examination" element={<ExaminationResultPage />} />
+          <Route path="/student-info/performance" element={<AcademicPerformancePage />} />
+          <Route path="/student-info/curricular" element={<ExtendedCurricularPage />} />
+          <Route path="/student-info/welfare" element={<StudentEmployeeWelfarePage />} />
+          <Route path="/student-info/internship" element={<InternshipPlacementPage />} />
           <Route path="/faculty-hr" element={<DashboardPage />} />
           <Route path="/infrastructure" element={<DashboardPage />} />
           <Route path="/quality-assurance" element={<DashboardPage />} />
