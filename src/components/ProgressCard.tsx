@@ -69,7 +69,9 @@ export function ProgressCard({ title, icon: Icon, progress, lastUpdated, link }:
         </div>
 
         {/* Title */}
-        <h3 className="text-[13px] font-semibold text-slate-800 leading-snug flex-1 mb-5">{title}</h3>
+        <div className="flex-1">
+          <h3 className="text-[13px] font-semibold text-slate-800 leading-snug line-clamp-2 h-[38px] mb-5">{title}</h3>
+        </div>
 
         {/* Progress section */}
         <div className="space-y-2 mt-auto">

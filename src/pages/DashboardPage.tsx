@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { TopLayout } from "@/components/TopLayout";
 import { ProgressCard } from "@/components/ProgressCard";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,7 @@ import {
   Layers, Activity,
   ChevronDown,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const modules = [
   { title: "Institutional Registry and Recognition", icon: Building2, progress: 25, lastUpdated: "02:30 PM, 04 Feb 2026", link: "/institutional-registry" },
@@ -57,12 +58,24 @@ function CircularProgress({ value, size = 88 }: { value: number; size?: number }
   );
 }
 
+type FilterType = "All" | "In Progress" | "Completed" | "Not Started";
+
 export default function DashboardPage() {
   const [mounted, setMounted] = useState(false);
+  const [activeFilter, setActiveFilter] = useState<FilterType>("All");
 
-  const completedModules = modules.filter((m) => m.progress >= 100);
-  const inProgressModules = modules.filter((m) => m.progress > 0 && m.progress < 100);
-  const notStartedModules = modules.filter((m) => m.progress <= 0);
+  const completedModules = useMemo(() => modules.filter((m) => m.progress >= 100), []);
+  const inProgressModules = useMemo(() => modules.filter((m) => m.progress > 0 && m.progress < 100), []);
+  const notStartedModules = useMemo(() => modules.filter((m) => m.progress <= 0), []);
+
+  const filteredModules = useMemo(() => {
+    switch (activeFilter) {
+      case "Completed": return completedModules;
+      case "In Progress": return inProgressModules;
+      case "Not Started": return notStartedModules;
+      default: return modules;
+    }
+  }, [activeFilter, completedModules, inProgressModules, notStartedModules]);
 
   const [showNotifications, setShowNotifications] = useState(true);
   const [showDownloads, setShowDownloads] = useState(true);
@@ -124,7 +137,7 @@ export default function DashboardPage() {
         <div className="absolute top-1/2 left-1/3 w-96 h-px opacity-[0.06]"
           style={{ background: "linear-gradient(90deg, transparent, white, transparent)" }} />
 
-        <div className="relative px-7 lg:px-10 py-7 flex items-center justify-between gap-8 flex-wrap">
+        <div className="relative px-7 lg:px-10 py-3  flex items-center justify-between gap-8 flex-wrap">
           <div className="flex-1 min-w-0">
             {/* Eyebrow chip */}
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/12 bg-white/8 text-white/65 text-[10px] uppercase tracking-[0.12em] font-semibold mb-3">
@@ -193,7 +206,7 @@ export default function DashboardPage() {
       </div>
 
       {/* ── Stat Cards Row ── */}
-      <div className="px-6 lg:px-10 pt-4 pb-1">
+      {/* <div className="px-6 lg:px-10 pt-4 pb-1">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {stats.map(({ label, value, Icon, color, bg, border, iconBg }) => (
             <div key={label}
@@ -208,7 +221,7 @@ export default function DashboardPage() {
             </div>
           ))}
         </div>
-      </div>
+      </div> */}
 
       {/* ── Main Grid ── */}
       <div className="px-6 lg:px-10 py-6">
@@ -216,19 +229,35 @@ export default function DashboardPage() {
 
           {/* Left: Module cards */}
           <div className="flex-1 min-w-0">
-            <div className="flex items-end justify-between mb-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-4 gap-4">
               <div>
                 <h2 className="text-base font-bold text-slate-800">All Modules</h2>
-                <p className="text-xs text-slate-400 mt-0.5">{modules.length} modules · Sync status: Today</p>
+                <p className="text-xs text-slate-400 mt-0.5">Showing {filteredModules.length} of {modules.length} modules</p>
               </div>
-              <button className="flex items-center gap-1 text-xs text-primary hover:text-primary/70 font-semibold transition-colors">
-                View all <ChevronRight className="h-3.5 w-3.5" />
-              </button>
+              
+              <div className="flex items-center gap-1.5 bg-slate-50 p-1 rounded-full border border-slate-200 font-medium">
+                {(["All", "In Progress", "Completed", "Not Started"] as FilterType[]).map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => setActiveFilter(tab)}
+                    className={cn(
+                      "px-3.5 py-1.5 rounded-full text-[11px] transition-all duration-200",
+                      activeFilter === tab
+                        ? "bg-white text-primary font-bold shadow-[0_2px_8px_rgba(0,0,0,0.06)] border-slate-200/50"
+                        : "text-slate-500 hover:text-slate-800 hover:bg-slate-100 border-transparent"
+                    )}
+                  >
+                    {tab}
+                  </button>
+                ))}
+              </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-              {modules.map((mod) => (
-                <ProgressCard key={mod.title} {...mod} />
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 transition-opacity duration-300">
+              {filteredModules.map((mod) => (
+                <div key={mod.title} className="animate-in fade-in duration-500 fill-mode-backwards h-full">
+                  <ProgressCard {...mod} />
+                </div>
               ))}
             </div>
           </div>
