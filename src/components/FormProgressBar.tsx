@@ -16,21 +16,23 @@ interface FormProgressBarProps {
 
 export function FormProgressBar({ sections, overallPercentage, activeSection }: FormProgressBarProps) {
   return (
-    <div className="sticky top-0 z-10 bg-card border-b border-border px-6 py-4 shadow-sm">
-      <div className="flex items-center justify-between mb-2">
-        <span className="text-sm font-semibold text-foreground">
-          Form Progress
+    <div className="sticky top-0 z-10 bg-card/95 backdrop-blur-sm border-b border-border px-4 py-2.5 shadow-sm">
+      {/* Compact top row: label + bar + percentage */}
+      <div className="flex items-center gap-3 mb-2">
+        <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider shrink-0">
+          Overall Progress
         </span>
-        <span className="text-sm font-bold text-accent">{overallPercentage}% Complete</span>
+        <div className="flex-1 bg-muted rounded-full h-1.5 overflow-hidden">
+          <div
+            className="h-full rounded-full bg-gradient-to-r from-primary to-accent transition-all duration-700 ease-out shadow-[0_0_8px_rgba(var(--accent-rgb),0.3)]"
+            style={{ width: `${Math.max(overallPercentage, 1)}%` }}
+          />
+        </div>
+        <span className="text-[11px] font-bold text-white shrink-0">{overallPercentage}%</span>
       </div>
-      <div className="w-full bg-muted rounded-full h-3 overflow-hidden">
-        <div
-          className="h-full rounded-full bg-gradient-to-r from-accent to-success transition-all duration-700 ease-out"
-          style={{ width: `${Math.max(overallPercentage, 2)}%` }}
-        />
-      </div>
-      {/* Section markers */}
-      <div className="flex gap-3 mt-3 flex-wrap">
+
+      {/* Section pills — smaller and more compact */}
+      <div className="flex gap-1.5 flex-wrap">
         {sections.map((section) => {
           const isComplete = section.completionPercentage >= 100;
           const isInProgress = section.completionPercentage > 0 && !isComplete;
@@ -39,24 +41,23 @@ export function FormProgressBar({ sections, overallPercentage, activeSection }: 
             <div
               key={section.name}
               className={cn(
-                "flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full border transition-colors",
-                isActive && "ring-2 ring-accent/30",
+                "flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border transition-colors",
+                isActive && "ring-1 ring-primary/30 ring-offset-1",
                 isComplete
-                  ? "border-success/30 bg-success/5 text-success"
+                  ? "border-[hsl(142,35%,48%)]/25 bg-[hsl(142,35%,48%)]/6 text-[hsl(142,35%,36%)]"
                   : isInProgress
-                  ? "border-accent/30 bg-accent/5 text-accent"
-                  : "border-border bg-muted/50 text-muted-foreground"
+                  ? "border-primary/20 bg-primary/5 text-primary"
+                  : "border-border bg-muted/60 text-muted-foreground"
               )}
             >
               {isComplete ? (
-                <CheckCircle2 className="h-3 w-3" />
+                <CheckCircle2 className="h-2.5 w-2.5" />
               ) : isInProgress ? (
-                <Clock className="h-3 w-3" />
+                <Clock className="h-2.5 w-2.5" />
               ) : (
-                <Circle className="h-3 w-3" />
+                <Circle className="h-2.5 w-2.5" />
               )}
               <span className="font-medium">{section.name}</span>
-              <span className="text-[10px] opacity-70">{section.completionPercentage}%</span>
             </div>
           );
         })}

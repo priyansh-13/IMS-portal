@@ -30,8 +30,8 @@ export function PendingFieldsPanel({ pendingFields, onFieldClick }: PendingField
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          "fixed right-4 bottom-4 z-30 flex items-center gap-2 px-4 py-2.5 rounded-full shadow-lg transition-all duration-300",
-          "bg-warning text-warning-foreground hover:shadow-xl hover:scale-105"
+          "fixed right-4 bottom-4 z-30 flex items-center gap-2 px-4 py-2.5 rounded-full shadow-lg transition-all duration-300 border",
+          "bg-blue-50 text-blue-700 border-blue-200 hover:shadow-xl hover:-translate-y-1"
         )}
       >
         <AlertTriangle className="h-4 w-4" />
@@ -41,9 +41,9 @@ export function PendingFieldsPanel({ pendingFields, onFieldClick }: PendingField
       {/* Panel */}
       {isOpen && (
         <div className="fixed right-4 bottom-16 z-30 w-80 bg-card rounded-xl shadow-2xl border border-border overflow-hidden animate-scale-in">
-          <div className="flex items-center justify-between px-4 py-3 bg-warning/10 border-b border-border">
+          <div className="flex items-center justify-between px-4 py-3 bg-blue-50/50 border-b border-border">
             <div className="flex items-center gap-2">
-              <AlertTriangle className="h-4 w-4 text-warning" />
+              <AlertTriangle className="h-4 w-4 text-blue-600" />
               <span className="text-sm font-semibold text-foreground">Pending Fields</span>
             </div>
             <button onClick={() => setIsOpen(false)} className="p-1 rounded hover:bg-muted transition-colors">
@@ -61,10 +61,10 @@ export function PendingFieldsPanel({ pendingFields, onFieldClick }: PendingField
                       onFieldClick(field.fieldId);
                       setIsOpen(false);
                     }}
-                    className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs text-foreground hover:bg-accent/5 transition-colors group"
+                    className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs text-foreground hover:bg-blue-50 transition-colors group"
                   >
                     <span>{field.fieldName}</span>
-                    <ChevronRight className="h-3 w-3 text-muted-foreground group-hover:text-accent transition-colors" />
+                    <ChevronRight className="h-3 w-3 text-muted-foreground group-hover:text-blue-600 transition-colors" />
                   </button>
                 ))}
               </div>

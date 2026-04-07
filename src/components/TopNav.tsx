@@ -35,7 +35,7 @@ const menuItems: MenuItem[] = [
       { title: "Contact Details", url: "/institutional-registry/contact-details", icon: Phone },
       { title: "Parent Organization", url: "/institutional-registry/parent-org", icon: Users },
       { title: "Affiliation/Approval", url: "/institutional-registry/affiliation", icon: FileCheck },
-      { title: "Committees", url: "/institutional-registry/committees", icon: UsersRound },
+      { title: "Committee(s)", url: "/institutional-registry/committees", icon: UsersRound },
       { title: "Financial Details", url: "/institutional-registry/financial", icon: IndianRupee },
       { title: "Centres / Campuses", url: "/institutional-registry/centres", icon: MapPin },
       { title: "Student Support", url: "/institutional-registry/student-support", icon: HeartHandshake },
@@ -64,7 +64,7 @@ const menuItems: MenuItem[] = [
 
 function ProgressDot({ progress }: { progress?: number }) {
   if (progress === undefined) return null;
-  const color = progress >= 100 ? "bg-success" : progress >= 50 ? "bg-accent" : "bg-warning";
+  const color = progress >= 100 ? "bg-white/70" : progress >= 50 ? "bg-white/50" : "bg-white/30";
   return <span className={cn("h-1.5 w-1.5 rounded-full shrink-0", color)} />;
 }
 
@@ -153,7 +153,7 @@ export function TopNav() {
                               className={cn(
                                 "w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors",
                                 subActive
-                                  ? "bg-accent/10 text-accent font-medium"
+                                  ? "bg-primary/8 text-primary font-medium"
                                   : "text-foreground hover:bg-muted"
                               )}
                             >
@@ -244,7 +244,7 @@ export function TopNav() {
                   className={cn(
                     "flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-all duration-200",
                     subActive
-                      ? "bg-accent text-accent-foreground shadow-sm"
+                      ? "bg-primary text-primary-foreground shadow-sm"
                       : "text-muted-foreground hover:text-foreground hover:bg-muted"
                   )}
                 >

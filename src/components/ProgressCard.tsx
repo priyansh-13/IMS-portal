@@ -1,6 +1,7 @@
 import { LucideIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { ArrowUpRight } from "lucide-react";
 
 interface ProgressCardProps {
   title: string;
@@ -10,78 +11,96 @@ interface ProgressCardProps {
   link?: string;
 }
 
-function getStatusLabel(progress: number) {
-  if (progress >= 100) return { text: "Completed", className: "bg-success/10 text-success border-success/20" };
-  if (progress > 0) return { text: "In Progress", className: "bg-accent/10 text-accent border-accent/20" };
-  return { text: "Not Started", className: "bg-muted text-muted-foreground border-border" };
-}
-
-function getBorderColor(progress: number) {
-  if (progress >= 100) return "border-t-success";
-  if (progress >= 50) return "border-t-accent";
-  return "border-t-warning";
-}
-
-function getBarGradient(progress: number) {
-  if (progress >= 100) return "from-success to-success/80";
-  if (progress >= 50) return "from-accent to-accent/80";
-  return "from-warning to-warning/80";
+function getStatus(progress: number) {
+  if (progress >= 100)
+    return {
+      text: "Complete",
+      pill: "bg-emerald-50 text-emerald-700 border-emerald-200",
+      dot: "bg-emerald-500",
+      bar: "from-emerald-500 to-emerald-400",
+      top: "border-t-emerald-500",
+    };
+  if (progress > 0)
+    return {
+      text: "In Progress",
+      pill: "bg-blue-50 text-blue-700 border-blue-200",
+      dot: "bg-blue-500",
+      bar: "from-[hsl(214,85%,30%)] to-[hsl(210,80%,52%)]",
+      top: "border-t-[hsl(214,85%,30%)]",
+    };
+  return {
+    text: "Not Started",
+    pill: "bg-slate-50 text-slate-500 border-slate-200",
+    dot: "bg-slate-300",
+    bar: "from-slate-300 to-slate-200",
+    top: "border-t-slate-300",
+  };
 }
 
 export function ProgressCard({ title, icon: Icon, progress, lastUpdated, link }: ProgressCardProps) {
   const navigate = useNavigate();
-  const status = getStatusLabel(progress);
+  const status = getStatus(progress);
 
   return (
     <div
       onClick={() => link && navigate(link)}
       className={cn(
-        "bg-card rounded-xl border border-border border-t-4 p-6 cursor-pointer relative group",
-        "hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col",
-        getBorderColor(progress)
+        "group relative bg-white rounded-2xl border border-slate-200/80 border-t-[3px] overflow-hidden cursor-pointer flex flex-col",
+        "shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300",
+        status.top
       )}
     >
-      {/* Status badge */}
-      <div className="absolute top-4 right-4">
-        <span className={cn("text-[10px] font-semibold px-2.5 py-1 rounded-full border", status.className)}>
-          {status.text}
-        </span>
-      </div>
+      {/* Subtle background gradient on hover */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
 
-      {/* Icon + Title */}
-      <div className="flex items-start gap-4 mb-5">
-        <div className="p-3 rounded-xl bg-primary/5 group-hover:bg-primary/10 transition-colors duration-200 shrink-0">
-          <Icon className="h-7 w-7 text-primary" />
-        </div>
-        <h3 className="text-sm font-semibold text-foreground leading-snug pr-16 mt-1">{title}</h3>
-      </div>
-
-      {/* Progress bar */}
-      <div className="space-y-4 mt-auto">
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Progress</span>
-            <span className="text-sm font-bold text-foreground">{progress}%</span>
+      <div className="relative p-5 flex flex-col flex-1">
+        {/* Top: Icon + Status badge */}
+        <div className="flex items-start justify-between mb-4">
+          <div className="p-2.5 rounded-xl bg-primary/6 border border-primary/10 group-hover:bg-primary/10 transition-colors duration-200 shrink-0">
+            <Icon className="h-5 w-5 text-primary" />
           </div>
-          <div className="w-full bg-muted rounded-full h-2 overflow-hidden shadow-inner">
+          <span className={cn(
+            "flex items-center gap-1.5 text-[10px] font-semibold px-2.5 py-1 rounded-full border",
+            status.pill
+          )}>
+            <span className={cn("h-1.5 w-1.5 rounded-full shrink-0", status.dot)} />
+            {status.text}
+          </span>
+        </div>
+
+        {/* Title */}
+        <h3 className="text-[13px] font-semibold text-slate-800 leading-snug flex-1 mb-5">{title}</h3>
+
+        {/* Progress section */}
+        <div className="space-y-2 mt-auto">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">Completion</span>
+            <span className={cn(
+              "text-xs font-bold tabular-nums",
+              progress >= 100 ? "text-emerald-600" : progress > 0 ? "text-primary" : "text-slate-400"
+            )}>{progress}%</span>
+          </div>
+          {/* Track */}
+          <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
             <div
-              className={cn(
-                "h-full rounded-full bg-gradient-to-r transition-all duration-700 ease-out shadow-sm",
-                getBarGradient(progress)
-              )}
-              style={{ width: `${Math.max(progress, 4)}%` }}
+              className={cn("h-full rounded-full bg-gradient-to-r transition-all duration-700 ease-out", status.bar)}
+              style={{ width: `${Math.max(progress, 2)}%` }}
             />
           </div>
         </div>
 
-        {lastUpdated && (
-          <div className="pt-3 border-t border-border flex items-center justify-between gap-2 flex-wrap">
-            <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-medium">Last Sync</span>
-            <span className="text-[10px] text-accent font-bold bg-accent/5 px-2 py-0.5 rounded shadow-sm border border-accent/10">
-              {lastUpdated}
-            </span>
+        {/* Footer */}
+        <div className="flex items-center justify-between mt-4 pt-3 border-t border-slate-100">
+          {lastUpdated ? (
+            <div>
+              <p className="text-[9px] text-slate-400 uppercase tracking-widest font-medium">Last Updated</p>
+              <p className="text-[10px] text-slate-600 font-medium mt-0.5">{lastUpdated}</p>
+            </div>
+          ) : <div />}
+          <div className="flex items-center gap-1 text-[10px] font-semibold text-primary/60 group-hover:text-primary transition-colors">
+            Open <ArrowUpRight className="h-3 w-3" />
           </div>
-        )}
+        </div>
       </div>
     </div>
   );

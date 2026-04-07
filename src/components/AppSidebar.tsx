@@ -60,7 +60,7 @@ const menuItems: MenuItem[] = [
       { title: "Contact Details", url: "/institutional-registry/contact-details", icon: Phone },
       { title: "Parent Organization/Ownership", url: "/institutional-registry/parent-org", icon: Users },
       { title: "Affiliation/Approval", url: "/institutional-registry/affiliation", icon: FileCheck },
-      { title: "Committees", url: "/institutional-registry/committees", icon: UsersRound },
+      { title: "Committee(s)", url: "/institutional-registry/committees", icon: UsersRound },
       { title: "Financial Details", url: "/institutional-registry/financial", icon: IndianRupee },
       { title: "Centres / Campuses", url: "/institutional-registry/centres", icon: MapPin },
       { title: "Student Support & Institutional Activities", url: "/institutional-registry/student-support", icon: HeartHandshake },
@@ -146,16 +146,9 @@ const menuItems: MenuItem[] = [
   },
 ];
 
-function ProgressDot({ progress }: { progress?: number }) {
-  if (progress === undefined) return null;
-  const color = progress >= 100
-    ? "bg-success"
-    : progress >= 50
-    ? "bg-accent"
-    : "bg-warning";
-  return (
-    <span className={cn("h-2 w-2 rounded-full shrink-0", color)} />
-  );
+// Progress dot removed per design update
+function ProgressDot({ progress: _progress }: { progress?: number }) {
+  return null;
 }
 
 export function AppSidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: { collapsed?: boolean; onToggle?: () => void; mobileOpen?: boolean; onMobileClose?: () => void }) {

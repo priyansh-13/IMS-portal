@@ -341,7 +341,7 @@ export default function ProgrammeCoursePage({ defaultView = "cards" }: { default
                 ))}
               </div>
             </div>
-            <div className="flex-none px-2 pb-6 lg:pb-0">
+            {/* <div className="flex-none px-2 pb-6 lg:pb-0">
               <SectionStatusSidebar
                 sections={sectionProgress}
                 sectionOrder={sectionProgress.map((s) => s.name)}
@@ -350,7 +350,7 @@ export default function ProgrammeCoursePage({ defaultView = "cards" }: { default
                   if (target?.link) navigate(target.link);
                 }}
               />
-            </div>
+            </div> */}
           </div>
         </div>
       </TopLayout>
