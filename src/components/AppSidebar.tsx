@@ -189,9 +189,8 @@ export function AppSidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: {
       )}>
         {!collapsed ? (
           <>
-            <div className="flex items-center gap-2 overflow-hidden">
+            <div className="flex items-center overflow-hidden">
               <img src="/images/ONOD-logo.png" alt="ONOD" className="h-8 w-auto object-contain shrink-0" />
-              <span className="text-xl font-bold text-primary tracking-tight">ONOD</span>
             </div>
             {onToggle && (
               <button
@@ -245,7 +244,7 @@ export function AppSidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: {
                     >
                       <item.icon className={cn("h-4 w-4 shrink-0 transition-transform group-hover:scale-110", active ? "text-primary-foreground" : "text-muted-foreground")} />
                       {!collapsed && (
-                        <span className="min-w-0 flex-1 text-left text-sm font-medium leading-snug whitespace-normal break-words">
+                        <span className="min-w-0 flex-1 text-left text-[13px] font-medium leading-snug whitespace-normal break-words">
                           {item.title}
                         </span>
                       )}
@@ -273,7 +272,7 @@ export function AppSidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: {
                         key={subItem.url}
                         onClick={() => navigate(subItem.url)}
                         className={cn(
-                          "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs transition-colors",
+                          "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-[11px] transition-colors",
                           subActive
                             ? "bg-primary/10 text-primary font-bold shadow-sm"
                             : "text-muted-foreground hover:bg-muted hover:text-foreground"
