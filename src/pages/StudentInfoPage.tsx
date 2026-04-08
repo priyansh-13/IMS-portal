@@ -6,6 +6,7 @@ import { StatusCard } from "@/components/StatusCard";
 import { FormStepper } from "@/components/FormStepper";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { SectionStatusSidebar } from "@/components/SectionStatusSidebar";
 import {
   Users,
   Globe,
@@ -150,7 +151,7 @@ export default function StudentInfoPage({ defaultView = "cards" }: { defaultView
             </button>
           </div>
 
-          <div className="flex flex-col gap-6 px-6 pb-6 pt-6">
+          <div className="flex flex-col lg:flex-row gap-6 px-6 pb-6 pt-6">
             <div className="flex-1 min-w-0 space-y-6">
               
               {activeTab === 0 && (
@@ -210,9 +211,20 @@ export default function StudentInfoPage({ defaultView = "cards" }: { defaultView
                           ))}
                         </tbody>
                       </table>
-                    </div>
-                  </div>
-                </div>
+            </div>
+            <div className="flex-none px-2 pb-6 lg:pb-0 w-full lg:w-72">
+              <SectionStatusSidebar
+                sections={detailSteps}
+                sectionOrder={detailSteps.map((s) => s.name)}
+                activeSection={detailSteps[activeTab].name}
+                onSectionClick={(name) => {
+                  const targetIndex = detailSteps.findIndex((s) => s.name === name);
+                  if (targetIndex >= 0) setActiveTab(targetIndex);
+                }}
+              />
+            </div>
+          </div>
+        </div>
               )}
 
               {activeTab === 2 && (

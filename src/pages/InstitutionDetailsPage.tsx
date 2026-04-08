@@ -315,8 +315,8 @@ export default function InstitutionDetailsPage() {
           <TooltipProvider>
             <Tooltip delayDuration={200}>
               <TooltipTrigger asChild>
-                <div 
-                  className="cursor-help p-1 hover:bg-muted rounded-full shrink-0" 
+                <div
+                  className="cursor-help p-1 hover:bg-muted rounded-full shrink-0"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <Info className="h-3.5 w-3.5 text-muted-foreground/60 hover:text-accent transition-colors" />

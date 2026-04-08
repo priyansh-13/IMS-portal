@@ -3,6 +3,7 @@ import { TopLayout } from "@/components/TopLayout";
 import { ModuleBanner } from "@/components/ModuleBanner";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { SectionStatusSidebar } from "@/components/SectionStatusSidebar";
 
 function SelectField({ label, options, required = false }: { label: string; options: string[]; required?: boolean }) {
   return (
@@ -31,80 +32,95 @@ function TextField({ label, placeholder }: { label: string; placeholder?: string
 export default function ExaminationResultPage() {
   const navigate = useNavigate();
 
+  const subModules = [
+    { title: "Student Enrolment", completed: false, link: "/student-info/enrolment" },
+    { title: "Foreign Student Enrolment", completed: false, link: "/student-info/foreign-enrolment" },
+    { title: "Examination Result", completed: false, link: "/student-info/examination" },
+    { title: "Academic Performance & Research", completed: false, link: "/student-info/performance" },
+    { title: "Extended Curricular Engagements", completed: false, link: "/student-info/curricular" },
+    { title: "Student And Employee Welfare", completed: false, link: "/student-info/welfare" },
+    { title: "Internship-Placement", completed: true, link: "/student-info/internship" },
+  ];
+
+  const sidebarSections = subModules.map((s) => ({
+    name: s.title,
+    totalFields: 1,
+    filledFields: s.completed ? 1 : 0,
+    completionPercentage: s.completed ? 100 : 0,
+  }));
+
   return (
     <TopLayout>
       <ModuleBanner title="Student Information and Mobility System" />
       <div className="p-6 lg:p-8 max-w-[1400px] mx-auto">
-        <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden relative">
-          <div className="flex items-center justify-between px-6 py-4 border-b border-border border-l-4 border-l-primary">
-            <h2 className="text-lg font-semibold text-foreground">Examination Result</h2>
-            <button 
-              onClick={() => navigate("/student-info")} 
-              className="px-4 py-2 bg-accent text-accent-foreground rounded-lg text-sm font-medium hover:bg-accent/90 transition-colors"
-            >
-              Back
-            </button>
+        <div className="flex flex-col lg:flex-row gap-6">
+          <div className="flex-1 bg-card rounded-xl shadow-sm border border-border overflow-hidden relative">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-border border-l-4 border-l-primary">
+              <h2 className="text-lg font-semibold text-foreground">Examination Result</h2>
+              <button
+                onClick={() => navigate("/student-info")}
+                className="px-4 py-2 bg-accent text-accent-foreground rounded-lg text-sm font-medium hover:bg-accent/90 transition-colors"
+              >
+                Back
+              </button>
+            </div>
+
+            <div className="p-6 space-y-8">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <SelectField label="Academic Year" options={["Select Academic Year"]} required />
+                <SelectField label="Programme" options={["Select Programme"]} required />
+                <SelectField label="Course" options={["Select Course"]} />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <SelectField label="Student Type" options={["Regular", "Distance", "Online"]} />
+                <SelectField label="Exam Type" options={["Mid Term", "End Term", "Revaluation"]} />
+                <SelectField label="Result Status" options={["Published", "Pending"]} />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <TextField label="Total Students Appeared" placeholder="0" />
+                <TextField label="Total Students Passed" placeholder="0" />
+                <TextField label="Pass Percentage" placeholder="0%" />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <TextField label="Topper Name" placeholder="Enter name" />
+                <TextField label="Topper CGPA/Percentage" placeholder="0" />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <TextField label="Students with Backlogs" placeholder="0" />
+                <TextField label="Students Absent" placeholder="0" />
+                <TextField label="Students Withheld" placeholder="0" />
+              </div>
+
+              <div className="space-y-4">
+                <h3 className="text-base font-semibold text-foreground">Result Upload</h3>
+                <div className="rounded-lg border border-dashed border-border p-4 bg-muted/40">
+                  <p className="text-sm text-muted-foreground">
+                    Drag & drop PDF/CSV or <span className="text-accent font-semibold cursor-pointer">browse</span> to upload result file.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-4 pt-6">
+                <Button className="bg-accent hover:bg-accent/90 text-white min-w-[120px]">Save</Button>
+                <Button className="bg-accent hover:bg-accent/90 text-white min-w-[120px]">Reset</Button>
+              </div>
+            </div>
           </div>
 
-          <div className="p-6 space-y-8">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              <SelectField label="Faculty/School" options={["Select"]} />
-              <SelectField label="Department" options={["Select"]} />
-              <SelectField label="Discipline" options={["Select"]} />
-              <SelectField label="Academic Year" options={["Select Academic Year"]} required />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              <SelectField label="Examination Result Type" options={["Select Examination Result Type"]} required />
-            </div>
-
-            <div className="space-y-4 pt-4">
-              <h3 className="text-sm font-semibold text-foreground">Category-wise Pass-out in final year</h3>
-              <div className="overflow-x-auto rounded-lg border border-border">
-                <table className="w-full text-sm border-collapse">
-                  <thead className="bg-[#002B5B] text-white text-center">
-                    <tr>
-                      <th className="px-2 py-2 border-r border-white/20 border-b border-white/20 font-medium w-48" rowSpan={2}>Category</th>
-                      <th className="px-2 py-2 border-r border-white/20 border-b border-white/20 font-medium" colSpan={3}>Students Admitted</th>
-                      <th className="px-2 py-2 border-r border-white/20 border-b border-white/20 font-medium" colSpan={3}>Students Appeared</th>
-                      <th className="px-2 py-2 border-b border-white/20 font-medium" colSpan={3}>Total Pass-Out</th>
-                    </tr>
-                    <tr>
-                      {Array.from({ length: 3 }).flatMap((_, i) => [
-                        <th key={`m-${i}`} className="px-2 py-1.5 font-medium border-r border-white/20 border-b border-white/20">M</th>,
-                        <th key={`f-${i}`} className="px-2 py-1.5 font-medium border-r border-white/20 border-b border-white/20">F</th>,
-                        <th key={`tg-${i}`} className="px-2 py-1.5 font-medium border-r border-white/20 border-b border-white/20">TG</th>
-                      ])}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {["General", "SC", "ST", "OBC"].map((cat) => (
-                      <tr key={cat} className="border-b border-border">
-                        <td className="px-4 py-3 text-sm font-medium border-r border-border text-center text-muted-foreground">{cat}</td>
-                        {Array.from({ length: 9 }).map((_, i) => (
-                          <td key={i} className="p-2 border-r border-border">
-                            <Input className="h-9 text-sm text-center focus-visible:ring-1 bg-transparent border-border/80 rounded-md" />
-                          </td>
-                        ))}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <div className="space-y-4 pt-6 border-t border-border">
-              <h3 className="text-sm font-semibold text-foreground">Passout Summary</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <TextField label="Total Passout Students" />
-                <TextField label="Total Passed(including backlog students)" />
-              </div>
-            </div>
-
-            <div className="flex justify-end gap-4 pt-8 pb-4">
-              <Button className="bg-accent hover:bg-accent/90 text-white min-w-[100px]">Save</Button>
-              <Button className="bg-accent hover:bg-accent/90 text-white min-w-[100px]">Reset</Button>
-            </div>
+          <div className="flex-none w-full lg:w-72">
+            <SectionStatusSidebar
+              sections={sidebarSections}
+              sectionOrder={sidebarSections.map((s) => s.name)}
+              activeSection="Examination Result"
+              onSectionClick={(name) => {
+                const target = subModules.find((s) => s.title === name);
+                if (target?.link) navigate(target.link);
+              }}
+            />
           </div>
         </div>
 

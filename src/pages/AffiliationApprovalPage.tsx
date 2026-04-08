@@ -229,17 +229,8 @@ export default function AffiliationApprovalPage() {
                     </span>
                   )}
                 </div>
-                <div className="flex flex-col xl:flex-row items-start xl:items-end justify-between gap-4 md:gap-6">
-                  <div className="w-full xl:w-2/5">
-                    {renderInputField(fields, updateField, "affiliation-university", "Name of Affiliating University / Board")}
-                  </div>
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-                    <span className="text-sm font-semibold text-foreground">Programme-wise Affiliation / Approval Status</span>
-                    <div className="flex items-center gap-2">
-                       <button className="rounded-full bg-blue-500 px-5 py-2 text-sm font-semibold text-white hover:bg-blue-600 transition-colors">View</button>
-                       <button className="rounded-full bg-blue-900 px-5 py-2 text-sm font-semibold text-white hover:bg-blue-950 transition-colors">Manage Programmes</button>
-                    </div>
-                  </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {renderInputField(fields, updateField, "affiliation-university", "Name of Affiliating University / Board")}
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

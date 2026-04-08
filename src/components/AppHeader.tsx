@@ -2,6 +2,10 @@ import { useState } from "react";
 import { User, Menu, CalendarDays, Search } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { NotificationDropdown } from "./NotificationDropdown";
+import { DownloadDropdown } from "./DownloadDropdown";
+import { LanguageSelector } from "./LanguageSelector";
+import { AccessibilityTools } from "./AccessibilityTools";
 
 export function AppHeader({ onMenuClick }: { onMenuClick?: () => void }) {
   const [year, setYear] = useState("2025-2026");
@@ -56,6 +60,16 @@ export function AppHeader({ onMenuClick }: { onMenuClick?: () => void }) {
             <span className="text-muted-foreground/80 font-medium">University</span>
             <span className="text-primary font-bold group-hover:text-success transition-colors">Example University</span>
           </div>
+        </div>
+
+        <div className="flex items-center gap-1 sm:gap-2">
+          <DownloadDropdown />
+          <NotificationDropdown />
+        </div>
+
+        <div className="flex items-center gap-0.5 ml-1 border-l pl-2 border-border/60">
+          <LanguageSelector />
+          <AccessibilityTools />
         </div>
 
         <div className="w-[1px] h-5 bg-border/60 hidden sm:block shrink-0 mx-1" />

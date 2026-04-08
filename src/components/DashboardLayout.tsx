@@ -8,20 +8,29 @@ interface DashboardLayoutProps {
   children: ReactNode;
 }
 
+const MAIN_PATHS = ["/dashboard", "/institutional-registry", "/programme-course", "/student-info"];
+
+const shouldCollapseForPath = (pathname: string) => MAIN_PATHS.includes(pathname);
+
 export function DashboardLayout({ children }: DashboardLayoutProps) {
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => shouldCollapseForPath(location.pathname));
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     setMobileMenuOpen(false);
+
+    // Automatically collapse sidebar for specific main paths, expand for others.
+    // Use a guarded update to avoid redundant state writes on route transitions.
+    const shouldCollapse = shouldCollapseForPath(location.pathname);
+    setSidebarCollapsed((prev) => (prev === shouldCollapse ? prev : shouldCollapse));
   }, [location.pathname]);
 
   return (
     <div className="h-screen flex w-full overflow-hidden bg-background relative">
       {/* Mobile overlay */}
       {mobileMenuOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/50 z-40 lg:hidden"
           onClick={() => setMobileMenuOpen(false)}
         />

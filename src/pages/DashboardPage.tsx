@@ -1,7 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { TopLayout } from "@/components/TopLayout";
 import { ProgressCard } from "@/components/ProgressCard";
-import { Button } from "@/components/ui/button";
 import {
   Building2,
   BookOpen,
@@ -12,13 +11,6 @@ import {
   CreditCard,
   Lightbulb,
   FlaskConical,
-  Download,
-  ChevronLeft,
-  ChevronRight,
-  Info,
-  AlertTriangle,
-  CheckCircle,
-  Bell,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -39,8 +31,6 @@ const overallProgress = Math.round(modules.reduce((sum, m) => sum + m.progress, 
 type FilterType = "All" | "In Progress" | "Completed" | "Not Started";
 
 export default function DashboardPage() {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [isDesktop, setIsDesktop] = useState(() => window.matchMedia("(min-width: 1024px)").matches);
   const [activeFilter, setActiveFilter] = useState<FilterType>("All");
 
   const completedModules = useMemo(() => modules.filter((m) => m.progress >= 100), []);
@@ -55,22 +45,6 @@ export default function DashboardPage() {
       default: return modules;
     }
   }, [activeFilter, completedModules, inProgressModules, notStartedModules]);
-
-  useEffect(() => {
-    const handler = () => setIsDesktop(window.matchMedia("(min-width: 1024px)").matches);
-    handler();
-    window.addEventListener("resize", handler);
-    return () => window.removeEventListener("resize", handler);
-  }, []);
-
-  const notifications = [
-    { icon: CheckCircle, iconColor: "text-success", bg: "bg-success/10", text: "New report generated for Student Mobility.", time: "2h ago" },
-    { icon: AlertTriangle, iconColor: "text-warning", bg: "bg-warning/10", text: "Missing data in Infrastructure registry.", time: "5h ago" },
-    { icon: Info, iconColor: "text-primary", bg: "bg-primary/10", text: "System maintenance scheduled for upcoming weekend.", time: "1d ago" },
-    { icon: Bell, iconColor: "text-accent", bg: "bg-accent/10", text: "Module 'Research & Outcome' requires review.", time: "2d ago" },
-    { icon: CheckCircle, iconColor: "text-success", bg: "bg-success/10", text: "Faculty HR data synchronization successful.", time: "3d ago" },
-    { icon: Info, iconColor: "text-primary", bg: "bg-primary/10", text: "NAAC accreditation forms are now available.", time: "4d ago" },
-  ];
 
   return (
     <TopLayout>
@@ -118,27 +92,7 @@ export default function DashboardPage() {
       </div>
 
       <div className="p-4 lg:p-6 relative">
-        {isDesktop && (
-          <button
-            onClick={() => setSidebarOpen((v) => !v)}
-            className="hidden lg:flex items-center gap-1 text-xs px-3 py-1.5 bg-card border border-border rounded-md shadow-sm text-foreground absolute right-5 -top-4"
-          >
-            {sidebarOpen ? (
-              <>
-                <ChevronRight className="h-3.5 w-3.5" />
-                Collapse
-              </>
-            ) : (
-              <>
-                <ChevronLeft className="h-3.5 w-3.5" />
-                Updates & Info
-              </>
-            )}
-          </button>
-        )}
-
-        <div className="flex flex-col lg:flex-row gap-6">
-          {/* Left: modules, take maximum space */}
+        <div className="flex flex-col gap-6">
           <div className="flex-1 min-w-0">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-2 gap-4">
               <h2 className="text-lg font-semibold text-foreground">Modules Overview</h2>
@@ -173,49 +127,6 @@ export default function DashboardPage() {
               ))}
             </div>
           </div>
-
-          {/* Right: notifications + downloads - Sticky on desktop */}
-          {(!isDesktop || sidebarOpen) && (
-            <div className="w-full lg:w-64 xl:w-72 shrink-0 space-y-3 sticky top-6 self-start z-10">
-              <div className="bg-card border border-border rounded-xl shadow-sm p-3">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-sm font-semibold text-foreground">Notifications</h3>
-                  <span className="text-[11px] px-2 py-0.5 rounded-full bg-primary/10 text-primary font-semibold">
-                    New
-                  </span>
-                </div>
-                <ul className="space-y-2 text-sm max-h-[320px] overflow-y-auto pr-2 custom-scrollbar">
-                  {notifications.map((notif, idx) => {
-                    const NotifIcon = notif.icon;
-                    return (
-                      <li key={idx} className="flex items-start gap-3 p-2 rounded-lg hover:bg-muted/50 transition-colors group">
-                        <div className={cn("p-1.5 rounded-full shrink-0 group-hover:scale-110 transition-transform", notif.bg, notif.iconColor)}>
-                           <NotifIcon className="h-4 w-4" />
-                        </div>
-                        <div className="flex-1 space-y-0.5">
-                          <p className="text-foreground text-xs leading-relaxed">{notif.text}</p>
-                          <p className="text-[10px] text-muted-foreground">{notif.time}</p>
-                        </div>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-
-              <div className="bg-card border border-border rounded-xl shadow-sm p-3">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-sm font-semibold text-foreground">Downloads</h3>
-                </div>
-                <p className="text-sm text-muted-foreground mb-3">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                </p>
-                <Button className="w-full justify-center gap-2 bg-primary text-primary-foreground hover:bg-primary/95 transition-colors">
-                  <Download className="h-4 w-4" />
-                  Download
-                </Button>
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </TopLayout>

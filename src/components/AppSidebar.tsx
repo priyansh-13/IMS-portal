@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo } from "react";
 import {
   Home,
   Building2,
@@ -18,12 +18,11 @@ import {
   IndianRupee,
   MapPin,
   HeartHandshake,
-  ShieldCheck,
   FileText,
   GraduationCap,
   LucideIcon,
+  Menu,
 } from "lucide-react";
-import { NavLink } from "@/components/NavLink";
 import { useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import {
@@ -63,10 +62,9 @@ const menuItems: MenuItem[] = [
       { title: "Financial Details", url: "/institutional-registry/financial", icon: IndianRupee },
       { title: "Centres / Campuses", url: "/institutional-registry/centres", icon: MapPin },
       { title: "Student Support & Institutional Activities", url: "/institutional-registry/student-support", icon: HeartHandshake },
-     
     ],
   },
-{
+  {
     title: "Programme And Course Details",
     url: "/programme-course",
     icon: BookOpen,
@@ -82,6 +80,15 @@ const menuItems: MenuItem[] = [
     url: "/student-info",
     icon: Users,
     progress: 75,
+    subItems: [
+      { title: "Student Enrolment", url: "/student-info/enrolment", icon: Users },
+      { title: "Foreign Student Enrolment", url: "/student-info/foreign-enrolment", icon: MapPin },
+      { title: "Examination Result", url: "/student-info/examination", icon: FileText },
+      { title: "Academic Performance & Research", url: "/student-info/performance", icon: GraduationCap },
+      { title: "Extended Curricular Engagements", url: "/student-info/curricular", icon: Award },
+      { title: "Student And Employee Welfare", url: "/student-info/welfare", icon: HeartHandshake },
+      { title: "Internship-Placement", url: "/student-info/internship", icon: Building2 },
+    ],
   },
   {
     title: "Faculty And Human Resources Registry",
@@ -149,114 +156,154 @@ export function AppSidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: {
     location.pathname === item.url ||
     (item.url !== "/dashboard" && location.pathname.startsWith(item.url));
 
+  // Determine which items to show
+  const activeModule = menuItems.find(item => item.url !== "/dashboard" && location.pathname.startsWith(item.url));
+
+  const itemsToShow = useMemo(() => {
+    // If we're on dashboard, show everything
+    if (location.pathname === "/dashboard" || !activeModule) {
+      return menuItems;
+    }
+    // If we're in a module, only show Dashboard and the active module
+    return menuItems.filter(item => item.url === "/dashboard" || item.url === activeModule.url);
+  }, [activeModule?.url]); // Only re-calculate if the active module itself changes
+
   useEffect(() => {
-    // keep mobile menu closed on route change
     onMobileClose?.();
   }, [location.pathname]);
 
   return (
     <aside
       className={cn(
-        "h-screen bg-card border-r border-border flex flex-col shrink-0 transition-transform duration-300 z-50",
-        // Desktop
+        "h-screen bg-card border-r border-border flex flex-col shrink-0 transition-[width] duration-200 z-50",
         "lg:sticky lg:top-0 lg:translate-x-0",
-        collapsed ? "lg:w-16" : "lg:w-72",
-        // Mobile
+        collapsed ? "lg:w-14" : "lg:w-64",
         "fixed inset-y-0 left-0 w-72",
         mobileOpen ? "translate-x-0" : "-translate-x-full"
       )}
     >
-      {/* Logo */}
-      <div className="p-4 border-b border-border flex items-center justify-between">
-        <div className="flex items-center gap-2 overflow-hidden">
-          <img src="/images/ONOD-logo.png" alt="ONOD" className={cn("h-8 w-auto object-contain shrink-0", collapsed && "h-6")} />
-          {!collapsed && (
-            <div className="animate-fade-in sr-only">
-              <h1 className="text-xl font-bold text-primary tracking-tight">ONOD</h1>
+      {/* Top Section / Toggle Button */}
+      <div className={cn(
+        "p-4 border-b border-border flex items-center",
+        collapsed ? "justify-center" : "justify-between"
+      )}>
+        {!collapsed ? (
+          <>
+            <div className="flex items-center gap-2 overflow-hidden">
+              <img src="/images/ONOD-logo.png" alt="ONOD" className="h-8 w-auto object-contain shrink-0" />
+              <span className="text-xl font-bold text-primary tracking-tight">ONOD</span>
             </div>
-          )}
-        </div>
-        <div className="flex items-center">
-          {onToggle && (
-            <button
-              onClick={onToggle}
-              className="hidden lg:block p-1 rounded-md hover:bg-muted transition-colors text-muted-foreground"
-              aria-label="Toggle sidebar"
-            >
-              {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-            </button>
-          )}
-          {onMobileClose && (
-            <button
-              onClick={onMobileClose}
-              className="lg:hidden p-1 rounded-md hover:bg-muted transition-colors text-muted-foreground"
-              aria-label="Close sidebar"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </button>
-          )}
-        </div>
+            {onToggle && (
+              <button
+                onClick={onToggle}
+                className="p-1.5 rounded-lg hover:bg-muted transition-colors text-muted-foreground"
+                aria-label="Collapse sidebar"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </button>
+            )}
+          </>
+        ) : (
+          <button
+            onClick={onToggle}
+            className="h-9 w-9 flex items-center justify-center rounded-xl bg-primary/10 text-primary border border-primary/20 hover:bg-primary hover:text-primary-foreground transition-colors shadow-sm"
+            aria-label="Expand sidebar"
+          >
+            <Menu className="h-5 w-5" />
+          </button>
+        )}
+
+        {onMobileClose && (
+          <button
+            onClick={onMobileClose}
+            className="lg:hidden p-1 rounded-md hover:bg-muted transition-colors text-muted-foreground"
+            aria-label="Close sidebar"
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </button>
+        )}
       </div>
 
-      {/* Menu */}
-      <nav className="flex-1 py-2 overflow-y-auto scrollbar-thin">
-        {menuItems.map((item) => {
+      {/* Menu Area */}
+      <nav className="flex-1 py-4 overflow-y-auto scrollbar-thin">
+        {itemsToShow.map((item) => {
           const active = isActive(item);
 
           return (
-            <div key={item.url} className="mx-2 my-0.5">
-              {/* Main menu item */}
-              <Tooltip delayDuration={0}>
-                <TooltipTrigger asChild>
-                  <button
-                    onClick={() => {
-                      navigate(item.url);
-                    }}
-                    className={cn(
-                      "w-full flex items-start gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-200 group",
-                      active
-                        ? "bg-primary text-primary-foreground shadow-sm"
-                        : "text-foreground hover:bg-muted"
-                    )}
-                  >
-                    <item.icon className="h-4 w-4 shrink-0 mt-0.5" />
-                    {!collapsed && (
-                      <>
-                        <span className="leading-snug flex-1 text-left whitespace-normal break-words">{item.title}</span>
-                      </>
-                    )}
-                  </button>
-                </TooltipTrigger>
-                {collapsed && (
-                  <TooltipContent 
-                    side="right" 
-                    className="bg-primary text-primary-foreground border-primary font-medium shadow-lg px-4 py-2"
-                    sideOffset={10}
-                  >
-                    {item.title}
-                  </TooltipContent>
-                )}
-              </Tooltip>
+            <div key={item.url} className="px-2 mb-1">
+              <TooltipProvider>
+                <Tooltip delayDuration={0}>
+                  <TooltipTrigger asChild>
+                    <button
+                      onClick={() => navigate(item.url)}
+                      className={cn(
+                        "w-full flex items-center gap-3 px-3 py-2 rounded-xl transition-colors duration-200 group relative",
+                        active
+                          ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
+                          : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                      )}
+                    >
+                      <item.icon className={cn("h-4 w-4 shrink-0 transition-transform group-hover:scale-110", active ? "text-primary-foreground" : "text-muted-foreground")} />
+                      {!collapsed && (
+                        <span className="min-w-0 flex-1 text-left text-sm font-medium leading-snug whitespace-normal break-words">
+                          {item.title}
+                        </span>
+                      )}
+                    </button>
+                  </TooltipTrigger>
+                  {collapsed && (
+                    <TooltipContent
+                      side="right"
+                      className="bg-primary text-primary-foreground border-primary font-medium shadow-xl px-3 py-1.5 text-xs z-[60]"
+                      sideOffset={12}
+                    >
+                      {item.title}
+                    </TooltipContent>
+                  )}
+                </Tooltip>
+              </TooltipProvider>
+
+              {/* Sub Items - Show when expanded and active */}
+              {!collapsed && active && item.subItems && (
+                <div className="mt-1 ml-6 pl-2 space-y-1 border-l border-primary/20">
+                  {item.subItems.map((subItem) => {
+                    const subActive = location.pathname === subItem.url;
+                    return (
+                      <button
+                        key={subItem.url}
+                        onClick={() => navigate(subItem.url)}
+                        className={cn(
+                          "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs transition-colors",
+                          subActive
+                            ? "bg-primary/10 text-primary font-bold shadow-sm"
+                            : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                        )}
+                      >
+                        <subItem.icon className="h-3.5 w-3.5 shrink-0" />
+                        <span className="min-w-0 flex-1 text-left leading-snug whitespace-normal break-words">
+                          {subItem.title}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           );
         })}
       </nav>
 
-      {/* Government Bodies Logos */}
+      {/* Footer for Expanded State */}
       {!collapsed && (
-        <div className="bodiesico-sidebar">
-          <img src="/images/UGC_India_Logo.png" alt="UGC" className="dbmenu-icon" />
-          <img src="/images/AICTE.png" alt="AICTE" className="dbmenu-icon" />
-          <img src="/images/NCTE.png" alt="NCTE" className="dbmenu-icon" />
-          <img src="/images/NAAC.png" alt="NAAC" className="dbmenu-icon" />
-          <img src="/images/NIRF.png" alt="NIRF" className="dbmenu-icon" />
-        </div>
-      )}
-
-      {/* Footer */}
-      {!collapsed && (
-        <div className="p-3 border-t border-border">
-          <p className="text-[10px] text-muted-foreground text-center">© 2026 ONOD Platform</p>
+        <div className="p-4 border-t border-border space-y-4">
+          <div className="grid grid-cols-5 gap-2 px-1">
+            <img src="/images/UGC_India_Logo.png" alt="UGC" className="h-6 w-auto grayscale hover:grayscale-0 transition-all opacity-70 hover:opacity-100" />
+            <img src="/images/AICTE.png" alt="AICTE" className="h-6 w-auto grayscale hover:grayscale-0 transition-all opacity-70 hover:opacity-100" />
+            <img src="/images/NCTE.png" alt="NCTE" className="h-6 w-auto grayscale hover:grayscale-0 transition-all opacity-70 hover:opacity-100" />
+            <img src="/images/NAAC.png" alt="NAAC" className="h-6 w-auto grayscale hover:grayscale-0 transition-all opacity-70 hover:opacity-100" />
+            <img src="/images/NIRF.png" alt="NIRF" className="h-6 w-auto grayscale hover:grayscale-0 transition-all opacity-70 hover:opacity-100" />
+          </div>
+          <p className="text-[10px] text-muted-foreground text-center font-medium">© 2026 ONOD Platform</p>
         </div>
       )}
     </aside>

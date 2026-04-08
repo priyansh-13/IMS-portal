@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { BookOpen, FileText, GraduationCap, Search, Download } from "lucide-react";
 
 import { FormStepper } from "@/components/FormStepper";
+import { SectionStatusSidebar } from "@/components/SectionStatusSidebar";
 
 const subSections = [
   { title: "Programme-Course Details", icon: BookOpen, completed: true, lastUpdated: "10:15 AM, 04 Feb 2026", link: "/programme-course/details" },
@@ -396,7 +397,19 @@ export default function ProgrammeCoursePage({ defaultView = "cards" }: { default
                 </button>
               </div>
             </div>
-
+            <div className="flex-none px-2 pb-6 lg:pb-0 w-full lg:w-72">
+              <SectionStatusSidebar
+                sections={sectionsWithProgress}
+                sectionOrder={sectionsWithProgress.map((s) => s.name)}
+                activeSection={sectionsWithProgress[activeTab].name}
+                onSectionClick={(name) => {
+                  const targetIndex = sectionsWithProgress.findIndex((s) => s.name === name);
+                  if (targetIndex >= 0) {
+                    setActiveTab(targetIndex);
+                  }
+                }}
+              />
+            </div>
           </div>
         </div>
 
