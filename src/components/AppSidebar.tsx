@@ -21,6 +21,7 @@ import {
   ShieldCheck,
   FileText,
   GraduationCap,
+  Library,
   LucideIcon,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
@@ -60,7 +61,7 @@ const menuItems: MenuItem[] = [
       { title: "Contact Details", url: "/institutional-registry/contact-details", icon: Phone },
       { title: "Parent Organization/Ownership", url: "/institutional-registry/parent-org", icon: Users },
       { title: "Affiliation/Approval", url: "/institutional-registry/affiliation", icon: FileCheck },
-      { title: "Committees", url: "/institutional-registry/committees", icon: UsersRound },
+      { title: "Committee(s)", url: "/institutional-registry/committees", icon: UsersRound },
       { title: "Financial Details", url: "/institutional-registry/financial", icon: IndianRupee },
       { title: "Centres / Campuses", url: "/institutional-registry/centres", icon: MapPin },
       { title: "Student Support & Institutional Activities", url: "/institutional-registry/student-support", icon: HeartHandshake },
@@ -177,42 +178,53 @@ export function AppSidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: {
         "h-screen bg-card border-r border-border flex flex-col shrink-0 transition-transform duration-300 z-50",
         // Desktop
         "lg:sticky lg:top-0 lg:translate-x-0",
-        collapsed ? "lg:w-16" : "lg:w-72",
+        collapsed ? "lg:w-16" : "lg:w-64",
         // Mobile
-        "fixed inset-y-0 left-0 w-72",
+        "fixed inset-y-0 left-0 w-64",
         mobileOpen ? "translate-x-0" : "-translate-x-full"
       )}
     >
-      {/* Logo */}
-      <div className="p-4 border-b border-border flex items-center justify-between">
-        <div className="flex items-center gap-2 overflow-hidden">
-          <img src="/images/ONOD-logo.png" alt="ONOD" className={cn("h-8 w-auto object-contain shrink-0", collapsed && "h-6")} />
+      {/* Logo Section */}
+      <div className={cn(
+        "h-14 border-b border-border flex items-center transition-all duration-300",
+        collapsed ? "px-2 justify-center" : "px-4 justify-between"
+      )}>
+        <button
+          onClick={onToggle}
+          className={cn(
+            "flex items-center transition-all active:scale-95 group w-full",
+            collapsed ? "justify-center" : "justify-between hover:opacity-80"
+          )}
+          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+        >
+          {collapsed ? (
+            <div className="flex items-center justify-center w-10 h-10 bg-primary/5 rounded-xl border border-primary/10 group-hover:bg-primary/10 group-hover:border-primary/20 transition-all shadow-sm">
+              <Library className="h-5 w-5 text-primary" />
+            </div>
+          ) : (
+            <>
+              <img src="/images/ONOD-logo.png" alt="ONOD" className="h-8 w-auto object-contain shrink-0" />
+              <div className="p-1 rounded-md hover:bg-muted/50 transition-colors">
+                <ChevronLeft className="h-4 w-4 text-muted-foreground transition-transform group-hover:-translate-x-0.5" />
+              </div>
+            </>
+          )}
+        </button>
           {!collapsed && (
             <div className="animate-fade-in sr-only">
               <h1 className="text-xl font-bold text-primary tracking-tight">ONOD</h1>
             </div>
           )}
-        </div>
-        <div className="flex items-center">
-          {onToggle && (
-            <button
-              onClick={onToggle}
-              className="hidden lg:block p-1 rounded-md hover:bg-muted transition-colors text-muted-foreground"
-              aria-label="Toggle sidebar"
-            >
-              {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-            </button>
-          )}
-          {onMobileClose && (
-            <button
-              onClick={onMobileClose}
-              className="lg:hidden p-1 rounded-md hover:bg-muted transition-colors text-muted-foreground"
-              aria-label="Close sidebar"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </button>
-          )}
-        </div>
+        
+        {onMobileClose && (
+          <button
+            onClick={onMobileClose}
+            className="lg:hidden p-1 rounded-md hover:bg-muted transition-colors text-muted-foreground"
+            aria-label="Close sidebar"
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </button>
+        )}
       </div>
 
       {/* Menu */}

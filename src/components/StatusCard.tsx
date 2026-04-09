@@ -32,7 +32,7 @@ export function StatusCard({ title, icon: Icon, completed, lastUpdated, link }: 
 
       {lastUpdated && (
         <div className="hidden md:flex items-center gap-2 shrink-0 pr-4 lg:pr-6 border-r border-border/60">
-          <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-medium">Sync:</span>
+          <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-medium">Last Updated:</span>
           <span className="text-[10px] text-accent font-bold bg-accent/5 px-2 py-0.5 rounded border border-accent/10">
             {lastUpdated}
           </span>

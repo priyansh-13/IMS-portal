@@ -11,6 +11,18 @@ import { Info,  CheckCircle2  } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 
+const registryModules = [
+  { title: "Institution Details", completed: true, link: "/institutional-registry/institution-details" },
+  { title: "Contact Details", completed: false, link: "/institutional-registry/contact-details" },
+  { title: "Parent Organization/Ownership", completed: false, link: "/institutional-registry/parent-org" },
+  { title: "Affiliation/Approval", completed: false, link: "/institutional-registry/affiliation" },
+  { title: "Committee(s)", completed: false, link: "/institutional-registry/committees" },
+  { title: "Financial Details", completed: true, link: "/institutional-registry/financial" },
+  { title: "Centres / Campuses", completed: false, link: "/institutional-registry/centres" },
+  { title: "Student Support & Institutional Activities", completed: false, link: "/institutional-registry/student-support" },
+  { title: "Regulatory Information", completed: false, link: "/institutional-registry/regulatory" },
+];
+
 const AFFILIATION_FIELDS: FieldState[] = [
   { id: "affiliation-university", name: "Name of Affiliating University / Board", section: "Affiliation / Approval Details", value: "" },
   { id: "change-affiliating", name: "Change in Affiliating University / Board", section: "Affiliation / Approval Details", value: "" },
@@ -64,7 +76,7 @@ const renderInputField = (
           onChange={(e) => setValue(id, e.target.value)}
           placeholder={placeholder}
           className={cn(
-            "w-full rounded-xl border px-3 py-2 text-sm transition-all duration-200 outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent",
+            "w-full rounded-lg border px-3 py-1.5 text-sm transition-all duration-200 outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent",
             filled ? "border-success/50 bg-success/5" : "border-border bg-muted/20"
           )}
         />
@@ -107,7 +119,7 @@ const renderSelectField = (
           value={fieldVal}
           onChange={(e) => setValue(id, e.target.value)}
           className={cn(
-            "w-full rounded-xl border bg-white px-3 py-2 text-sm transition-all duration-200 outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent appearance-none",
+            "w-full rounded-lg border bg-white px-3 py-1.5 text-sm transition-all duration-200 outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent appearance-none",
             filled ? "border-success/50 bg-success/5" : "border-border bg-muted/20"
           )}
         >
@@ -198,9 +210,9 @@ export default function AffiliationApprovalPage() {
           size="sm"
         />
       </ModuleBanner>
-      <div className="p-6 lg:p-8">
+      <div className="p-4 lg:p-6">
         <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
-          <div className="flex items-center justify-between px-6 py-4 border-b border-border border-l-4 border-l-primary">
+          <div className="flex items-center justify-between px-5 py-3 border-b border-border border-l-4 border-l-primary">
             <h2 className="text-lg font-semibold text-foreground">Affiliation / Approval</h2>
             <button 
               onClick={() => navigate(-1)}
@@ -210,7 +222,7 @@ export default function AffiliationApprovalPage() {
             </button>
           </div>
 
-          <div className="flex flex-col lg:flex-row gap-6 px-6 pb-6 pt-6">
+          <div className="flex flex-col lg:flex-row gap-5 px-5 pb-5 pt-5">
             <div className="flex-1 min-w-0 space-y-6">
               {activeSubStep === 0 && (
               <section id="section-affiliation" className="space-y-4 rounded-2xl border border-border/70 bg-muted/40 p-5">
@@ -229,17 +241,8 @@ export default function AffiliationApprovalPage() {
                     </span>
                   )}
                 </div>
-                <div className="flex flex-col xl:flex-row items-start xl:items-end justify-between gap-4 md:gap-6">
-                  <div className="w-full xl:w-2/5">
-                    {renderInputField(fields, updateField, "affiliation-university", "Name of Affiliating University / Board")}
-                  </div>
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-                    <span className="text-sm font-semibold text-foreground">Programme-wise Affiliation / Approval Status</span>
-                    <div className="flex items-center gap-2">
-                       <button className="rounded-full bg-blue-500 px-5 py-2 text-sm font-semibold text-white hover:bg-blue-600 transition-colors">View</button>
-                       <button className="rounded-full bg-blue-900 px-5 py-2 text-sm font-semibold text-white hover:bg-blue-950 transition-colors">Manage Programmes</button>
-                    </div>
-                  </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {renderInputField(fields, updateField, "affiliation-university", "Name of Affiliating University / Board")}
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -297,14 +300,17 @@ export default function AffiliationApprovalPage() {
 
             <div className="flex-none px-2 pb-6 lg:pb-0">
               <SectionStatusSidebar
-                sections={sections}
-                sectionOrder={SECTION_ORDER}
-                activeSection={currentSectionName}
+                sections={registryModules.map(m => ({
+                  name: m.title,
+                  totalFields: 1,
+                  filledFields: m.completed ? 1 : 0,
+                  completionPercentage: m.completed ? 100 : 0
+                }))}
+                sectionOrder={registryModules.map(m => m.title)}
+                activeSection="Affiliation/Approval"
                 onSectionClick={(name) => {
-                  const targetIndex = SECTION_ORDER.indexOf(name);
-                  if (targetIndex >= 0) {
-                    setActiveSubStep(targetIndex);
-                  }
+                  const target = registryModules.find(m => m.title === name);
+                  if (target?.link) navigate(target.link);
                 }}
               />
             </div>

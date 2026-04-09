@@ -35,7 +35,7 @@ const menuItems: MenuItem[] = [
       { title: "Contact Details", url: "/institutional-registry/contact-details", icon: Phone },
       { title: "Parent Organization", url: "/institutional-registry/parent-org", icon: Users },
       { title: "Affiliation/Approval", url: "/institutional-registry/affiliation", icon: FileCheck },
-      { title: "Committees", url: "/institutional-registry/committees", icon: UsersRound },
+      { title: "Committee(s)", url: "/institutional-registry/committees", icon: UsersRound },
       { title: "Financial Details", url: "/institutional-registry/financial", icon: IndianRupee },
       { title: "Centres / Campuses", url: "/institutional-registry/centres", icon: MapPin },
       { title: "Student Support", url: "/institutional-registry/student-support", icon: HeartHandshake },

@@ -11,6 +11,18 @@ import { Info,  CheckCircle2  } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 
+const registryModules = [
+  { title: "Institution Details", completed: true, link: "/institutional-registry/institution-details" },
+  { title: "Contact Details", completed: false, link: "/institutional-registry/contact-details" },
+  { title: "Parent Organization/Ownership", completed: false, link: "/institutional-registry/parent-org" },
+  { title: "Affiliation/Approval", completed: false, link: "/institutional-registry/affiliation" },
+  { title: "Committee(s)", completed: false, link: "/institutional-registry/committees" },
+  { title: "Financial Details", completed: true, link: "/institutional-registry/financial" },
+  { title: "Centres / Campuses", completed: false, link: "/institutional-registry/centres" },
+  { title: "Student Support & Institutional Activities", completed: false, link: "/institutional-registry/student-support" },
+  { title: "Regulatory Information", completed: false, link: "/institutional-registry/regulatory" },
+];
+
 const FINANCIAL_FIELDS: FieldState[] = [
   // Bank Account Details
   { id: "account-holder", name: "Account Holder Name", section: "Bank Account Details", value: "" },
@@ -138,7 +150,7 @@ const renderInputField = (
           onChange={(e) => setValue(id, e.target.value)}
           placeholder={placeholder}
           className={cn(
-            "w-full rounded-xl border px-3 py-2 text-sm transition-all duration-200 outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent",
+            "w-full rounded-lg border px-3 py-1.5 text-sm transition-all duration-200 outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent",
             filled ? "border-success/50 bg-success/5" : "border-border bg-muted/20"
           )}
         />
@@ -224,7 +236,7 @@ const renderSelectField = (
           value={fieldVal}
           onChange={(e) => setValue(id, e.target.value)}
           className={cn(
-            "w-full rounded-xl border bg-white px-3 py-2 text-sm transition-all duration-200 outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent appearance-none",
+            "w-full rounded-lg border bg-white px-3 py-1.5 text-sm transition-all duration-200 outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent appearance-none",
             filled ? "border-success/50 bg-success/5" : "border-border bg-muted/20"
           )}
         >
@@ -275,9 +287,9 @@ export default function FinancialDetailsPage() {
           size="sm"
         />
       </ModuleBanner>
-      <div className="p-6 lg:p-8">
+      <div className="p-4 lg:p-6">
         <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
-          <div className="flex items-center justify-between px-6 py-4 border-b border-border border-l-4 border-l-primary">
+          <div className="flex items-center justify-between px-5 py-3 border-b border-border border-l-4 border-l-primary">
             <h2 className="text-lg font-semibold text-foreground">Financial Details</h2>
             <button 
               onClick={() => navigate(-1)}
@@ -287,7 +299,7 @@ export default function FinancialDetailsPage() {
             </button>
           </div>
 
-          <div className="flex flex-col lg:flex-row gap-6 px-6 pb-6 pt-6">
+          <div className="flex flex-col lg:flex-row gap-5 px-5 pb-5 pt-5">
             <div className="flex-1 min-w-0 space-y-6">
               {activeSubStep === 0 && (
               <section id="section-bank-account" className="rounded-2xl border border-border/70 bg-muted/40 p-5 space-y-4">
@@ -521,14 +533,17 @@ export default function FinancialDetailsPage() {
 
             <div className="flex-none px-2 pb-6 lg:pb-0">
               <SectionStatusSidebar
-                sections={sections}
-                sectionOrder={SECTION_ORDER}
-                activeSection={currentSectionName}
+                sections={registryModules.map(m => ({
+                  name: m.title,
+                  totalFields: 1,
+                  filledFields: m.completed ? 1 : 0,
+                  completionPercentage: m.completed ? 100 : 0
+                }))}
+                sectionOrder={registryModules.map(m => m.title)}
+                activeSection="Financial Details"
                 onSectionClick={(name) => {
-                  const targetIndex = SECTION_ORDER.indexOf(name);
-                  if (targetIndex >= 0) {
-                    setActiveSubStep(targetIndex);
-                  }
+                  const target = registryModules.find(m => m.title === name);
+                  if (target?.link) navigate(target.link);
                 }}
               />
             </div>

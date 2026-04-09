@@ -7,6 +7,12 @@ import { SectionStatusSidebar } from "@/components/SectionStatusSidebar";
 import { useFormProgress, FieldState } from "@/hooks/useFormProgress";
 import { cn } from "@/lib/utils";
 
+const programmeModules = [
+  { title: "Programme-Course Details", completed: true, link: "/programme-course/details" },
+  { title: "Programme Summary", completed: false, link: "/programme-course/summary" },
+  { title: "Course Curriculum", completed: false, link: "/programme-course/curriculum" },
+];
+
 const SUMMARY_FIELDS: FieldState[] = [
   { id: "courses-22-23", name: "Courses 2022-23", section: "Programme Summary", value: "0" },
   { id: "skill-22-23", name: "Skill-Based 2022-23", section: "Programme Summary", value: "8" },
@@ -138,12 +144,17 @@ export default function ProgrammeSummaryPage() {
 
             <div className="flex-none px-2 pb-6 lg:pb-0">
               <SectionStatusSidebar
-                sections={sections}
-                sectionOrder={SECTION_ORDER}
-                activeSection={currentSectionName}
+                sections={programmeModules.map(m => ({
+                  name: m.title,
+                  totalFields: 1,
+                  filledFields: m.completed ? 1 : 0,
+                  completionPercentage: m.completed ? 100 : 0
+                }))}
+                sectionOrder={programmeModules.map(m => m.title)}
+                activeSection="Programme Summary"
                 onSectionClick={(name) => {
-                  const targetIndex = SECTION_ORDER.indexOf(name);
-                  if (targetIndex >= 0) setActiveSubStep(targetIndex);
+                  const target = programmeModules.find(m => m.title === name);
+                  if (target?.link) navigate(target.link);
                 }}
               />
             </div>

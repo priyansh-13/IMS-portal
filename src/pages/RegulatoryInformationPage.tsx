@@ -11,6 +11,18 @@ import { Info,  CheckCircle2  } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 
+const registryModules = [
+  { title: "Institution Details", completed: true, link: "/institutional-registry/institution-details" },
+  { title: "Contact Details", completed: false, link: "/institutional-registry/contact-details" },
+  { title: "Parent Organization/Ownership", completed: false, link: "/institutional-registry/parent-org" },
+  { title: "Affiliation/Approval", completed: false, link: "/institutional-registry/affiliation" },
+  { title: "Committee(s)", completed: false, link: "/institutional-registry/committees" },
+  { title: "Financial Details", completed: true, link: "/institutional-registry/financial" },
+  { title: "Centres / Campuses", completed: false, link: "/institutional-registry/centres" },
+  { title: "Student Support & Institutional Activities", completed: false, link: "/institutional-registry/student-support" },
+  { title: "Regulatory Information", completed: false, link: "/institutional-registry/regulatory" },
+];
+
 const REGULATORY_FIELDS: FieldState[] = [
   // Regulatory Information
   { id: "nba-accreditation", name: "NBA Accreditation Valid", section: "Regulatory Information", value: "" },
@@ -327,14 +339,17 @@ export default function RegulatoryInformationPage() {
 
             <div className="flex-none px-2 pb-6 lg:pb-0">
               <SectionStatusSidebar
-                sections={sections}
-                sectionOrder={SECTION_ORDER}
-                activeSection={currentSectionName}
+                sections={registryModules.map(m => ({
+                  name: m.title,
+                  totalFields: 1,
+                  filledFields: m.completed ? 1 : 0,
+                  completionPercentage: m.completed ? 100 : 0
+                }))}
+                sectionOrder={registryModules.map(m => m.title)}
+                activeSection="Regulatory Information"
                 onSectionClick={(name) => {
-                  const targetIndex = SECTION_ORDER.indexOf(name);
-                  if (targetIndex >= 0) {
-                    setActiveSubStep(targetIndex);
-                  }
+                  const target = registryModules.find(m => m.title === name);
+                  if (target?.link) navigate(target.link);
                 }}
               />
             </div>

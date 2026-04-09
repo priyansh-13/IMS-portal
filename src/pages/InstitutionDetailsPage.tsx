@@ -15,6 +15,18 @@ import {
 } from "@/components/ui/tooltip";
 import { CheckCircle2, ArrowLeft, ArrowRight, Save, UploadCloud, FileCheck, X, Info } from "lucide-react";
 
+const moduleSections = [
+  { title: "Institution Details", completed: true, link: "/institutional-registry/institution-details" },
+  { title: "Contact Details", completed: false, link: "/institutional-registry/contact-details" },
+  { title: "Parent Organization/Ownership", completed: false, link: "/institutional-registry/parent-org" },
+  { title: "Affiliation/Approval", completed: false, link: "/institutional-registry/affiliation" },
+  { title: "Committee(s)", completed: false, link: "/institutional-registry/committees" },
+  { title: "Financial Details", completed: true, link: "/institutional-registry/financial" },
+  { title: "Centres / Campuses", completed: false, link: "/institutional-registry/centres" },
+  { title: "Student Support & Institutional Activities", completed: false, link: "/institutional-registry/student-support" },
+  { title: "Regulatory Information", completed: false, link: "/institutional-registry/regulatory" },
+];
+
 const initialFields: FieldState[] = [
   { id: "aishe-code", name: "AISHE Code", section: "General Information", value: "U-123", required: true },
   { id: "institute-name", name: "Institute Name", section: "General Information", value: "Test Institute", required: true },
@@ -247,7 +259,7 @@ export default function InstitutionDetailsPage() {
               value={value}
               onChange={(e) => updateField(id, e.target.value)}
               className={cn(
-                "w-full h-11 px-3 rounded-xl border text-sm appearance-none cursor-pointer transition-all duration-200",
+                "w-full h-9 px-3 rounded-lg border text-sm appearance-none cursor-pointer transition-all duration-200",
                 "focus:ring-2 focus:ring-accent/30 focus:border-accent outline-none",
                 filled
                   ? "border-success/50 bg-success/5"
@@ -268,7 +280,7 @@ export default function InstitutionDetailsPage() {
               readOnly={readOnly}
               placeholder={placeholder || `Enter ${label}`}
               className={cn(
-                "w-full h-11 px-4 rounded-xl border text-sm transition-all duration-200 outline-none",
+                "w-full h-9 px-3 rounded-lg border text-sm transition-all duration-200 outline-none",
                 "focus:ring-2 focus:ring-accent/30 focus:border-accent",
                 readOnly && "cursor-default bg-muted/70",
                 filled && !readOnly
@@ -298,7 +310,7 @@ export default function InstitutionDetailsPage() {
         key={id}
         onClick={() => toggleCheckbox(id)}
         className={cn(
-          "flex items-center gap-3 rounded-2xl border px-4 py-3 text-sm font-medium text-foreground transition-all duration-200",
+          "flex items-center gap-2 rounded-xl border px-3 py-2 text-[11px] font-medium text-foreground transition-all duration-200",
           checked ? "border-success/40 bg-success/5 shadow-sm" : "border-border bg-white hover:border-accent/40 hover:bg-muted/50"
         )}
       >
@@ -477,7 +489,7 @@ export default function InstitutionDetailsPage() {
       <div className="p-6 lg:p-8">
         <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
           {/* Header */}
-          <div className="flex items-center justify-between px-6 py-4 border-b border-border border-l-4 border-l-primary">
+          <div className="flex items-center justify-between px-5 py-3 border-b border-border border-l-4 border-l-primary">
             <h2 className="text-lg font-semibold text-foreground">Institute Details</h2>
             <button
               onClick={() => navigate(-1)}
@@ -489,9 +501,9 @@ export default function InstitutionDetailsPage() {
 
           <div className="flex flex-col gap-6 lg:flex-row">
             <div className="flex-1 min-w-0">
-              <div className="p-6 lg:p-8">
+              <div className="p-4 lg:p-6">
                 {/* Section header */}
-                <div className="flex items-center justify-between mb-6 pb-3 border-b border-border">
+                <div className="flex items-center justify-between mb-4 pb-2 border-b border-border">
                   <div>
                     <p className="text-xs text-muted-foreground mb-1">Step {currentStep + 1} of {SECTION_ORDER.length}</p>
                     <h3 className="text-base font-semibold text-foreground">{currentSectionName}</h3>
@@ -557,12 +569,17 @@ export default function InstitutionDetailsPage() {
             </div>
             <div className="flex-none px-2 pb-6 lg:pb-0">
               <SectionStatusSidebar
-                sections={sections}
-                sectionOrder={SECTION_ORDER}
-                activeSection={currentSectionName}
-                onSectionClick={(sectionName) => {
-                  const index = SECTION_ORDER.indexOf(sectionName);
-                  if (index !== -1) setCurrentStep(index);
+                sections={moduleSections.map(s => ({
+                  name: s.title,
+                  totalFields: 1,
+                  filledFields: s.completed ? 1 : 0,
+                  completionPercentage: s.completed ? 100 : 0
+                }))}
+                sectionOrder={moduleSections.map(s => s.title)}
+                activeSection="Institution Details"
+                onSectionClick={(name) => {
+                  const target = moduleSections.find(s => s.title === name);
+                  if (target?.link) navigate(target.link);
                 }}
               />
             </div>

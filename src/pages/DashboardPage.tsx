@@ -62,7 +62,7 @@ export default function DashboardPage() {
         
         <div className="relative z-10 flex items-center justify-between flex-wrap gap-4">
           <div>
-            <h1 className="text-xl font-bold tracking-tight">Welcome ONOD User!</h1>
+            <h1 className="text-xl font-bold tracking-tight">Welcome HEI-U-0123!</h1>
             <p className="text-sm opacity-80 mt-1 max-w-lg">
               Centralised data exchange for Higher Educational Institutions (HEIs)
             </p>
@@ -109,24 +109,6 @@ export default function DashboardPage() {
       </div>
 
       <div className="p-4 lg:p-6 relative">
-        {isDesktop && (
-          <button
-            onClick={() => setSidebarOpen((v) => !v)}
-            className="hidden lg:flex items-center gap-1 text-xs px-3 py-1.5 bg-card border border-border rounded-md shadow-sm text-foreground absolute right-5 -top-4"
-          >
-            {sidebarOpen ? (
-              <>
-                <ChevronRight className="h-3.5 w-3.5" />
-                Collapse
-              </>
-            ) : (
-              <>
-                <ChevronLeft className="h-3.5 w-3.5" />
-                Updates & Info
-              </>
-            )}
-          </button>
-        )}
 
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Left: modules, take maximum space */}
@@ -140,48 +122,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Right: notifications + downloads - Sticky on desktop */}
-          {(!isDesktop || sidebarOpen) && (
-            <div className="w-full lg:w-64 xl:w-72 shrink-0 space-y-3 sticky top-6 self-start z-10">
-              <div className="bg-card border border-border rounded-xl shadow-sm p-3">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-sm font-semibold text-foreground">Notifications</h3>
-                  <span className="text-[11px] px-2 py-0.5 rounded-full bg-primary/10 text-primary font-semibold">
-                    New
-                  </span>
-                </div>
-                <ul className="space-y-4 text-sm text-muted-foreground max-h-[320px] overflow-y-auto pr-2 custom-scrollbar">
-                  {[
-                    { color: "bg-primary", text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit." },
-                    { color: "bg-accent", text: "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." },
-                    { color: "bg-warning", text: "Ut enim ad minim veniam, quis nostrud exercitation ullamco." },
-                    { color: "bg-success", text: "Duis aute irure dolor in reprehenderit in voluptate velit." },
-                    { color: "bg-primary", text: "Excepteur sint occaecat cupidatat non proident, sunt in culpa." },
-                    { color: "bg-accent", text: "Nemo enim ipsam voluptatem quia voluptas sit aspernatur." },
-                    { color: "bg-warning", text: "Neque porro quisquam est, qui dolorem ipsum quia dolor." },
-                    { color: "bg-destructive", text: "Quis autem vel eum iure reprehenderit qui in ea voluptate." }
-                  ].map((notif, idx) => (
-                    <li key={idx} className="flex items-start gap-3 group">
-                      <span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${notif.color} group-hover:scale-125 transition-transform`}></span>
-                      <span className="leading-relaxed">{notif.text}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="bg-card border border-border rounded-xl shadow-sm p-3">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-sm font-semibold text-foreground">Downloads</h3>
-                </div>
-                <p className="text-sm text-muted-foreground mb-3">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                </p>
-                <Button className="w-full justify-center gap-2 bg-primary text-primary-foreground hover:bg-primary/95 transition-colors">
-                  <Download className="h-4 w-4" />
-                  Download
-                </Button>
-              </div>
-            </div>
-          )}
+          {/* Right sidebar removed as it moved to header */}
         </div>
       </div>
     </TopLayout>

@@ -97,7 +97,7 @@ export function SectionStatusSidebar({ sections, sectionOrder = [], activeSectio
       <div className="flex items-center justify-between px-3 py-3 border-b border-border">
         <div className="space-y-0.5">
           <p className="text-[10px] uppercase tracking-[0.35em] text-muted-foreground">Sections</p>
-          <p className="text-sm font-semibold text-foreground">Completion status</p>
+          <p className="text-sm font-semibold text-foreground">Module Sections</p>
         </div>
         <button
           type="button"

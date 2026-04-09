@@ -323,33 +323,21 @@ export default function ProgrammeCoursePage({ defaultView = "cards" }: { default
       <TopLayout>
         <ModuleBanner title="Programme and Course Details" />
         <div className="p-6 lg:p-8">
-          <div className="flex flex-col lg:flex-row gap-6">
-            <div className="flex-1 min-w-0">
-              <div className="flex flex-col gap-3">
-                {subSections.map((section) => (
-                  <div
-                    key={section.title}
-                    className="cursor-pointer"
-                    onClick={() => {
-                      if (section.title === "Programme-Course Details") navigate("/programme-course/details");
-                      if (section.title === "Programme Summary") navigate("/programme-course/summary");
-                      if (section.title === "Course Curriculum") navigate("/programme-course/curriculum");
-                    }}
-                  >
-                    <StatusCard {...section} />
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="flex-none px-2 pb-6 lg:pb-0">
-              <SectionStatusSidebar
-                sections={sectionProgress}
-                sectionOrder={sectionProgress.map((s) => s.name)}
-                onSectionClick={(name) => {
-                  const target = subSections.find((s) => s.title === name);
-                  if (target?.link) navigate(target.link);
-                }}
-              />
+          <div className="w-full">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {subSections.map((section) => (
+                <div
+                  key={section.title}
+                  className="cursor-pointer"
+                  onClick={() => {
+                    if (section.title === "Programme-Course Details") navigate("/programme-course/details");
+                    if (section.title === "Programme Summary") navigate("/programme-course/summary");
+                    if (section.title === "Course Curriculum") navigate("/programme-course/curriculum");
+                  }}
+                >
+                  <StatusCard {...section} />
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -421,14 +409,17 @@ export default function ProgrammeCoursePage({ defaultView = "cards" }: { default
 
             <div className="flex-none px-2 pb-6 lg:pb-0">
               <SectionStatusSidebar
-                sections={sectionsWithProgress}
-                sectionOrder={sectionsWithProgress.map((s) => s.name)}
-                activeSection={sectionsWithProgress[activeTab].name}
+                sections={subSections.map(s => ({
+                  name: s.title,
+                  totalFields: 1,
+                  filledFields: s.completed ? 1 : 0,
+                  completionPercentage: s.completed ? 100 : 0
+                }))}
+                sectionOrder={subSections.map(s => s.title)}
+                activeSection="Programme-Course Details"
                 onSectionClick={(name) => {
-                  const targetIndex = sectionsWithProgress.findIndex((s) => s.name === name);
-                  if (targetIndex >= 0) {
-                    setActiveTab(targetIndex);
-                  }
+                  const target = subSections.find(s => s.title === name);
+                  if (target?.link) navigate(target.link);
                 }}
               />
             </div>

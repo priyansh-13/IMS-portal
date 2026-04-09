@@ -85,7 +85,7 @@ export function ProgressCard({ title, icon: Icon, progress, lastUpdated, link }:
 
         {lastUpdated && (
           <div className="pt-3 border-t border-border flex items-center justify-between gap-2 flex-wrap">
-            <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-medium">Last Sync</span>
+            <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-medium">Last Updated</span>
             <span className="text-[10px] text-accent font-bold bg-accent/5 px-2 py-0.5 rounded shadow-sm border border-accent/10">
               {lastUpdated}
             </span>
