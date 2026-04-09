@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import { AppSidebar } from "./AppSidebar";
 import { AppHeader } from "./AppHeader";
 import { Breadcrumbs } from "./Breadcrumbs";
+import { AppFooter } from "./AppFooter";
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -49,6 +50,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         <main className="flex-1 overflow-y-auto">
           {children}
         </main>
+        <AppFooter />
       </div>
     </div>
   );
