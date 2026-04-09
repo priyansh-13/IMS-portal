@@ -202,13 +202,13 @@ export default function AffiliationApprovalPage() {
                   <div className="w-full lg:w-1/2">
                     {renderInputField(fields, updateField, "affiliation-university", "Name of Affiliating University / Board")}
                   </div>
-                  <div className="flex items-center gap-2 pr-2">
+                  {/* <div className="flex items-center gap-2 pr-2">
                     <span className="text-[10px] font-bold text-foreground">STATUS:</span>
                     <div className="flex items-center gap-1">
                        <button className="rounded px-2 py-1 text-[9px] font-bold uppercase tracking-wider bg-accent/20 text-accent hover:bg-accent/30 transition-colors">View</button>
                        <button className="rounded px-2 py-1 text-[9px] font-bold uppercase tracking-wider bg-primary/10 text-primary hover:bg-primary/20 transition-colors">Manage</button>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
 
                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 xl:grid-cols-6 gap-x-4 gap-y-4 pt-1">

@@ -385,7 +385,7 @@ export default function ProgrammeCoursePage({ defaultView = "cards" }: { default
       <TopLayout>
         <ModuleBanner title="Programme and Course Details" />
         <div className="p-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
             {subSections.map((section) => (
               <div
                 key={section.title}

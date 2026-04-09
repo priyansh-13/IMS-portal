@@ -200,9 +200,12 @@ export function AppSidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: {
       )}
     >
       {/* Logo */}
-      <div className="p-4 border-b border-border flex items-center justify-between">
-        <div className="flex items-center gap-2 overflow-hidden">
-          <img src="/images/ONOD-logo.png" alt="ONOD" className={cn("h-8 w-auto object-contain shrink-0", collapsed && "h-6")} />
+      <div className={cn(
+        "border-b border-border flex transition-all duration-300 min-h-[64px]",
+        collapsed ? "flex-col justify-center items-center py-3 gap-2" : "flex-row items-center justify-between p-4"
+      )}>
+        <div className="flex items-center overflow-hidden">
+          <img src="/images/ONOD-logo.png" alt="ONOD" className={cn("w-auto object-contain shrink-0", collapsed ? "h-5 mt-1" : "h-8")} />
           {!collapsed && (
             <div className="animate-fade-in sr-only">
               <h1 className="text-xl font-bold text-primary tracking-tight">ONOD</h1>

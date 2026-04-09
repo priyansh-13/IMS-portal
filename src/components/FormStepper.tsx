@@ -66,10 +66,10 @@ export function FormStepper({
                   )}
                 </div>
                 
-                <div className="flex flex-col items-center gap-0">
+                <div className="flex flex-col items-center gap-0 mt-1.5">
                   <span className={cn(
-                    "text-[7px] font-black text-center uppercase tracking-normal max-w-[60px] leading-[1.1] transition-all duration-300",
-                    isCurrent ? "text-white opacity-100" : "text-white/40 group-hover:text-white/60"
+                    "text-[9px] sm:text-[10px] font-bold text-center leading-tight max-w-[80px] sm:max-w-[110px] transition-all duration-300",
+                    isCurrent ? "text-white opacity-100 drop-shadow-sm" : "text-white/50 group-hover:text-white/80"
                   )}>
                     {step.name}
                   </span>
@@ -88,9 +88,9 @@ export function FormStepper({
         </div>
 
         {/* Bottom Progress Bar */}
-        <div className="flex items-center gap-3 px-4">
-          <span className="text-[7px] font-black text-white/40 uppercase tracking-widest whitespace-nowrap">Progress</span>
-          <div className="h-0.5 w-full bg-white/5 rounded-full overflow-hidden flex-1">
+        <div className="flex items-center gap-3 px-4 pt-1">
+          <span className="text-[10px] font-bold text-white/50 uppercase tracking-widest whitespace-nowrap">Progress</span>
+          <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden flex-1">
             <div 
               className="h-full bg-gradient-to-r from-blue-400 to-emerald-400 transition-all duration-1000 ease-out relative"
               style={{ width: `${normalizedProgress}%` }}
@@ -98,7 +98,7 @@ export function FormStepper({
               <div className="absolute inset-0 bg-white/20 animate-[shimmer_2s_infinite]" />
             </div>
           </div>
-          <span className="text-[8px] font-black text-white/80 tabular-nums">{normalizedProgress}%</span>
+          <span className="text-[11px] font-bold text-white/90 tabular-nums">{normalizedProgress}%</span>
         </div>
       </div>
     </div>

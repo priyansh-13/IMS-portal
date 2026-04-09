@@ -35,8 +35,8 @@ export function StatusCard({ title, icon: Icon, completed, lastUpdated, link }: 
     <div
       onClick={() => link && navigate(link)}
       className={cn(
-        "group relative bg-white rounded-2xl border border-slate-200/80 overflow-hidden cursor-pointer flex flex-col p-5 min-h-[140px]",
-        "shadow-sm hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:-translate-y-1 hover:border-slate-300 transition-all duration-300"
+        "group relative bg-white rounded-xl border border-slate-200/80 overflow-hidden cursor-pointer flex items-center p-3.5 sm:p-4 min-h-[84px] gap-4",
+        "shadow-sm hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:-translate-y-0.5 hover:border-slate-300 transition-all duration-300"
       )}
     >
       {/* Decorative top right corner blur glow */}
@@ -46,14 +46,26 @@ export function StatusCard({ title, icon: Icon, completed, lastUpdated, link }: 
         "group-hover:opacity-20"
       )} />
 
-      {/* Top Section */}
-      <div className="relative flex items-start justify-between mb-4">
-        <div className={cn(
-          "p-2.5 rounded-[12px] border transition-colors duration-300 shadow-sm",
-          status.iconBg
-        )}>
-          <Icon className={cn("h-5 w-5 transition-transform duration-300 group-hover:scale-110", status.iconColor)} />
-        </div>
+      {/* Icon Section */}
+      <div className={cn(
+        "relative p-2.5 rounded-[12px] border transition-colors duration-300 shadow-sm shrink-0",
+        status.iconBg
+      )}>
+        <Icon className={cn("h-5 w-5 transition-transform duration-300 group-hover:scale-110", status.iconColor)} />
+      </div>
+
+      {/* Content Section */}
+      <div className="relative flex-1 min-w-0 flex flex-col justify-center">
+        <h3 className="text-[13px] sm:text-[14px] font-bold text-slate-800 leading-snug group-hover:text-primary transition-colors truncate pr-2">
+          {title}
+        </h3>
+        <p className="text-[11px] text-slate-500 font-medium mt-1 truncate">
+          Last Updated: <span className="font-semibold text-slate-600">{lastUpdated || "Pending"}</span>
+        </p>
+      </div>
+
+      {/* Action Section */}
+      <div className="relative flex flex-col items-end justify-center shrink-0 gap-2 pl-3 border-l border-slate-100">
         <span className={cn(
           "flex items-center gap-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full border shadow-[0_1px_2px_rgba(0,0,0,0.02)] transition-colors",
           status.pill
@@ -61,22 +73,7 @@ export function StatusCard({ title, icon: Icon, completed, lastUpdated, link }: 
           <span className={cn("h-1.5 w-1.5 rounded-full shrink-0", status.dot)} />
           {status.text}
         </span>
-      </div>
-
-      {/* Middle Content */}
-      <div className="flex-1 pb-4">
-        <h3 className="relative text-[14px] font-bold text-slate-800 leading-snug group-hover:text-primary transition-colors line-clamp-2 pr-2">
-          {title}
-        </h3>
-      </div>
-
-      {/* Footer */}
-      <div className="relative mt-auto flex items-end justify-between border-t border-slate-100 pt-3">
-        <div>
-          <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider mb-0.5">Last Updated</p>
-          <p className="text-xs text-slate-600 font-semibold">{lastUpdated || "Pending"}</p>
-        </div>
-        <div className="flex items-center gap-1 text-[10px] font-bold text-slate-300 group-hover:text-primary transition-colors">
+        <div className="flex items-center gap-1 text-[10px] font-bold text-slate-300 group-hover:text-primary transition-colors mr-0.5">
           OPEN <ArrowUpRight className="h-3.5 w-3.5" />
         </div>
       </div>

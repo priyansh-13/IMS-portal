@@ -6,7 +6,7 @@ import { PendingFieldsPanel } from "@/components/PendingFieldsPanel";
 import { useFormProgress, FieldState } from "@/hooks/useFormProgress";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { CheckCircle2, ArrowLeft, ArrowRight, Save, UploadCloud, FileCheck, X } from "lucide-react";
+import { CheckCircle2, ArrowLeft, ArrowRight, Save, UploadCloud, FileCheck, X, Info } from "lucide-react";
 
 const initialFields: FieldState[] = [
   { id: "aishe-code", name: "AISHE Code", section: "General Information", value: "U-123", required: true },
@@ -121,10 +121,13 @@ export default function InstitutionDetailsPage() {
       const isRequired = initialFields.find(f => f.id === id)?.required;
       return (
         <div id={id} className="animate-fade-in flex flex-col gap-1.5">
+        <div className="flex items-center gap-1.5">
           <label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
             {label}
             {isRequired && <span className="text-red-500 ml-0.5">*</span>}
           </label>
+          <Info className="h-3 w-3 text-slate-300 hover:text-accent transition-colors cursor-help" />
+        </div>
           <div className="flex items-center gap-4 py-0.5">
             {(radioOptions || ["Yes", "No"]).map((opt) => (
               <label key={opt} className="flex items-center gap-2 cursor-pointer group">
@@ -148,10 +151,13 @@ export default function InstitutionDetailsPage() {
       const isRequired = initialFields.find(f => f.id === id)?.required;
       return (
         <div className="animate-fade-in flex flex-col gap-1">
-          <label className="text-[12px] font-semibold text-foreground">
-            {label}
-            {isRequired && <span className="text-red-500 ml-1 font-bold">*</span>}
-          </label>
+          <div className="flex items-center gap-1.5">
+            <label className="text-[12px] font-semibold text-foreground">
+              {label}
+              {isRequired && <span className="text-red-500 ml-1 font-bold">*</span>}
+            </label>
+            <Info className="h-3.5 w-3.5 text-slate-300 hover:text-accent transition-colors cursor-help" />
+          </div>
           <div className={cn(
             "flex flex-col gap-2 p-2.5 rounded-lg border border-dashed transition-all duration-200",
             filled ? "border-success/50 bg-success/5" : "border-border bg-muted/10 hover:bg-muted/50"
@@ -204,10 +210,13 @@ export default function InstitutionDetailsPage() {
     const isRequired = initialFields.find(f => f.id === id)?.required;
     return (
       <div className="animate-fade-in flex flex-col gap-1.5">
-        <label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
-          {label}
-          {isRequired && <span className="text-red-500 ml-0.5">*</span>}
-        </label>
+        <div className="flex items-center gap-1.5">
+          <label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+            {label}
+            {isRequired && <span className="text-red-500 ml-0.5">*</span>}
+          </label>
+          <Info className="h-3 w-3 text-slate-300 hover:text-accent transition-colors cursor-help" />
+        </div>
         <div className="relative">
           {type === "select" ? (
             <select

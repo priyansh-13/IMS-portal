@@ -26,7 +26,7 @@ export default function InstitutionalRegistryPage() {
       <ModuleBanner title="Institutional Registry and Recognition Module" />
       <div className="p-6 lg:p-8">
         <div className="mx-auto max-w-7xl">
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
             {sections.map((section) => (
               <StatusCard key={section.title} {...section} />
             ))}
