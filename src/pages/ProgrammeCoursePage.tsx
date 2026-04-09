@@ -324,19 +324,9 @@ export default function ProgrammeCoursePage({ defaultView = "cards" }: { default
         <ModuleBanner title="Programme and Course Details" />
         <div className="p-6 lg:p-8">
           <div className="w-full">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {subSections.map((section) => (
-                <div
-                  key={section.title}
-                  className="cursor-pointer"
-                  onClick={() => {
-                    if (section.title === "Programme-Course Details") navigate("/programme-course/details");
-                    if (section.title === "Programme Summary") navigate("/programme-course/summary");
-                    if (section.title === "Course Curriculum") navigate("/programme-course/curriculum");
-                  }}
-                >
-                  <StatusCard {...section} />
-                </div>
+                <StatusCard key={section.title} {...section} />
               ))}
             </div>
           </div>

@@ -1,4 +1,4 @@
-import { LucideIcon, CheckCircle2, Circle, ChevronRight } from "lucide-react";
+import { LucideIcon, ArrowUpRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
@@ -17,41 +17,60 @@ export function StatusCard({ title, icon: Icon, completed, lastUpdated, link }: 
     <div
       onClick={() => link && navigate(link)}
       className={cn(
-        "bg-card rounded-xl shadow-sm border border-border px-4 lg:px-5 py-3 lg:py-4 cursor-pointer flex items-center gap-3 lg:gap-4",
-        "hover:bg-muted/30 hover:border-primary/20 hover:shadow-md hover:translate-x-1 transition-all duration-300 group",
-        completed ? "border-l-[5px] lg:border-l-[6px] border-l-success" : "border-l-[5px] lg:border-l-[6px] border-l-warning"
+        "group relative bg-card rounded-2xl border border-border/50 border-t-[5px] p-6 flex flex-col gap-6 cursor-pointer overflow-hidden",
+        "transition-all duration-300 hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-1 hover:border-primary/20",
+        completed ? "border-t-success" : "border-t-accent"
       )}
     >
-      <div className="p-2.5 rounded-lg bg-primary/5 group-hover:bg-primary/10 transition-colors shrink-0 hidden sm:block">
-        <Icon className="h-5 w-5 text-primary group-hover:scale-110 transition-transform" />
-      </div>
+      {/* Background Accent Gradient */}
+      <div className={cn(
+        "absolute -top-12 -right-12 w-48 h-48 rounded-full blur-3xl opacity-5 transition-opacity group-hover:opacity-10",
+        completed ? "bg-success" : "bg-accent"
+      )} />
 
-      <div className="flex-1 min-w-0">
-        <h3 className="text-sm lg:text-base font-semibold text-foreground truncate">{title}</h3>
-      </div>
-
-      {lastUpdated && (
-        <div className="hidden md:flex items-center gap-2 shrink-0 pr-4 lg:pr-6 border-r border-border/60">
-          <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-medium">Last Updated:</span>
-          <span className="text-[10px] text-accent font-bold bg-accent/5 px-2 py-0.5 rounded border border-accent/10">
-            {lastUpdated}
-          </span>
+      {/* Top Header: Icon & Status */}
+      <div className="flex items-start justify-between relative z-10">
+        <div className={cn(
+          "p-3 rounded-xl transition-all shadow-sm",
+          completed ? "bg-success/5 text-success border border-success/10" : "bg-muted/50 text-foreground/70"
+        )}>
+          <Icon className="h-6 w-6 group-hover:scale-110 transition-transform" />
         </div>
-      )}
 
-      <div className="flex items-center gap-3 shrink-0 pl-2 lg:pl-6">
-        {completed ? (
-          <div className="flex items-center gap-1.5 bg-success/10 px-2.5 py-1 rounded-full border border-success/20">
-            <CheckCircle2 className="h-4 w-4 text-success" />
-            <span className="text-[10px] font-bold text-success uppercase tracking-wider hidden sm:block">Completed</span>
+        <div className={cn(
+          "flex items-center gap-2 px-3 py-1.5 rounded-full border text-[10px] font-bold tracking-tight uppercase transition-colors",
+          completed 
+            ? "bg-success/10 border-success/20 text-success" 
+            : "bg-accent/10 border-accent/20 text-accent"
+        )}>
+          <span className={cn("w-1.5 h-1.5 rounded-full", completed ? "bg-success" : "bg-accent animate-pulse")} />
+          {completed ? "Completed" : "In Progress"}
+        </div>
+      </div>
+
+      {/* Title */}
+      <div className="relative z-10 min-h-[3rem] flex items-center">
+        <h3 className="text-base font-bold text-foreground leading-tight group-hover:text-primary transition-colors">
+          {title}
+        </h3>
+      </div>
+
+      {/* Footer: Last Updated & Open Link */}
+      <div className="mt-auto flex items-end justify-between relative z-10 border-t border-border/50 pt-4">
+        <div className="space-y-1.5">
+          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Last Updated</p>
+          <div className={cn(
+            "px-2.5 py-1 rounded text-[10px] font-bold tracking-tight border",
+            completed ? "bg-success/5 border-success/10 text-success" : "bg-accent/5 border-accent/10 text-accent"
+          )}>
+            {lastUpdated || "Not available"}
           </div>
-        ) : (
-          <div className="flex items-center gap-1.5 bg-warning/10 px-2.5 py-1 rounded-full border border-warning/20">
-            <Circle className="h-4 w-4 text-warning" />
-            <span className="text-[10px] font-bold text-warning uppercase tracking-wider hidden sm:block">Pending</span>
-          </div>
-        )}
-        <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors hidden sm:block" />
+        </div>
+
+        <div className="flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground/40 group-hover:text-primary transition-all uppercase tracking-widest bg-muted/30 px-3 py-1.5 rounded-full">
+          <span>Open</span>
+          <ArrowUpRight className="h-4 w-4" />
+        </div>
       </div>
     </div>
   );
