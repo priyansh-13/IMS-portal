@@ -3,7 +3,6 @@ import { TopLayout } from "@/components/TopLayout";
 import { ModuleBanner } from "@/components/ModuleBanner";
 import { FormStepper } from "@/components/FormStepper";
 import { PendingFieldsPanel } from "@/components/PendingFieldsPanel";
-import { SectionStatusSidebar } from "@/components/SectionStatusSidebar";
 import { useFormProgress, FieldState } from "@/hooks/useFormProgress";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -119,10 +118,14 @@ export default function InstitutionDetailsPage() {
     const value = getFieldValue(id);
 
     if (type === "radio") {
+      const isRequired = initialFields.find(f => f.id === id)?.required;
       return (
-        <div id={id} className="animate-fade-in">
-          <label className="text-sm font-medium text-foreground mb-2 block">{label}</label>
-          <div className="flex items-center gap-4">
+        <div id={id} className="animate-fade-in flex flex-col gap-1.5">
+          <label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+            {label}
+            {isRequired && <span className="text-red-500 ml-0.5">*</span>}
+          </label>
+          <div className="flex items-center gap-4 py-0.5">
             {(radioOptions || ["Yes", "No"]).map((opt) => (
               <label key={opt} className="flex items-center gap-2 cursor-pointer group">
                 <input
@@ -133,7 +136,7 @@ export default function InstitutionDetailsPage() {
                   onChange={(e) => updateField(id, e.target.value)}
                   className="w-4 h-4 accent-accent"
                 />
-                <span className="text-sm text-foreground group-hover:text-accent transition-colors">{opt}</span>
+                <span className="text-[12px] text-foreground group-hover:text-accent transition-colors">{opt}</span>
               </label>
             ))}
           </div>
@@ -142,15 +145,19 @@ export default function InstitutionDetailsPage() {
     }
 
     if (type === "file") {
+      const isRequired = initialFields.find(f => f.id === id)?.required;
       return (
-        <div className="animate-fade-in">
-          <label className="text-sm font-medium text-foreground mb-2 block">{label}</label>
+        <div className="animate-fade-in flex flex-col gap-1">
+          <label className="text-[12px] font-semibold text-foreground">
+            {label}
+            {isRequired && <span className="text-red-500 ml-1 font-bold">*</span>}
+          </label>
           <div className={cn(
-            "flex flex-col gap-3 p-4 rounded-xl border border-dashed transition-all duration-200",
-            filled ? "border-success/50 bg-success/5" : "border-border bg-muted/20 hover:bg-muted/50"
+            "flex flex-col gap-2 p-2.5 rounded-lg border border-dashed transition-all duration-200",
+            filled ? "border-success/50 bg-success/5" : "border-border bg-muted/10 hover:bg-muted/50"
           )}>
             {value ? (
-              <div className="flex items-center justify-between gap-3 text-sm text-foreground bg-background p-3 rounded-lg border border-border shadow-sm">
+              <div className="flex items-center justify-between gap-2 text-[12px] text-foreground bg-background p-2 rounded-lg border border-border shadow-sm">
                 <div className="flex items-center gap-3 overflow-hidden">
                   <FileCheck className="h-5 w-5 text-success shrink-0" />
                   <span className="truncate max-w-[200px] font-medium">{value}</span>
@@ -165,10 +172,10 @@ export default function InstitutionDetailsPage() {
                 </button>
               </div>
             ) : (
-              <div className="flex flex-col sm:flex-row items-center gap-4">
-                <label className="flex items-center justify-center gap-2 px-4 py-2.5 bg-primary text-primary-foreground rounded-lg text-sm font-semibold hover:bg-primary/90 transition-all duration-200 shadow-sm cursor-pointer whitespace-nowrap">
-                  <UploadCloud className="h-4 w-4" />
-                  Choose File
+              <div className="flex flex-col sm:flex-row items-center gap-3">
+                <label className="flex items-center justify-center gap-2 px-3 py-1.5 bg-primary text-primary-foreground rounded-lg text-[12px] font-bold hover:bg-primary/90 transition-all duration-200 shadow-sm cursor-pointer whitespace-nowrap">
+                  <UploadCloud className="h-3.5 w-3.5" />
+                  Upload
                   <input
                     id={id}
                     type="file"
@@ -182,10 +189,9 @@ export default function InstitutionDetailsPage() {
                     className="sr-only"
                   />
                 </label>
-                <div className="text-center sm:text-left">
-                  <p className="text-xs text-muted-foreground leading-relaxed">
-                    Max size: 5MB<br />
-                    Supported formats: {accept ? accept.toUpperCase().replace(/\./g, '') : "PDF, DOC, DOCX"}
+                <div className="text-left">
+                  <p className="text-[10px] text-muted-foreground leading-tight italic">
+                    Max size: 5MB | {accept ? accept.toUpperCase().replace(/\./g, '') : "PDF, DOC, DOCX"}
                   </p>
                 </div>
               </div>
@@ -195,9 +201,13 @@ export default function InstitutionDetailsPage() {
       );
     }
 
+    const isRequired = initialFields.find(f => f.id === id)?.required;
     return (
-      <div className="animate-fade-in">
-        <label className="text-sm font-medium text-foreground mb-2 block">{label}</label>
+      <div className="animate-fade-in flex flex-col gap-1.5">
+        <label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+          {label}
+          {isRequired && <span className="text-red-500 ml-0.5">*</span>}
+        </label>
         <div className="relative">
           {type === "select" ? (
             <select
@@ -205,11 +215,11 @@ export default function InstitutionDetailsPage() {
               value={value}
               onChange={(e) => updateField(id, e.target.value)}
               className={cn(
-                "w-full h-11 px-3 rounded-xl border text-sm appearance-none cursor-pointer transition-all duration-200",
+                "w-full h-9 px-2.5 rounded border text-[12px] appearance-none cursor-pointer transition-all duration-200",
                 "focus:ring-2 focus:ring-accent/30 focus:border-accent outline-none",
                 filled
                   ? "border-success/50 bg-success/5"
-                  : "border-border bg-muted/50"
+                  : "border-border bg-white"
               )}
             >
               <option value="">{placeholder || `Select ${label}`}</option>
@@ -226,17 +236,17 @@ export default function InstitutionDetailsPage() {
               readOnly={readOnly}
               placeholder={placeholder || `Enter ${label}`}
               className={cn(
-                "w-full h-11 px-4 rounded-xl border text-sm transition-all duration-200 outline-none",
+                "w-full h-9 px-2.5 rounded border text-[12px] transition-all duration-200 outline-none",
                 "focus:ring-2 focus:ring-accent/30 focus:border-accent",
-                readOnly && "cursor-default bg-muted/70",
+                readOnly && "cursor-default bg-muted/60",
                 filled && !readOnly
                   ? "border-success/50 bg-success/5"
-                  : "border-border bg-muted/50"
+                  : "border-border bg-white"
               )}
             />
           )}
           {filled && (
-            <CheckCircle2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-success pointer-events-none" />
+            <CheckCircle2 className="absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-success pointer-events-none" />
           )}
         </div>
       </div>
@@ -256,19 +266,19 @@ export default function InstitutionDetailsPage() {
         key={id}
         onClick={() => toggleCheckbox(id)}
         className={cn(
-          "flex items-center gap-3 rounded-2xl border px-4 py-3 text-sm font-medium text-foreground transition-all duration-200",
-          checked ? "border-success/40 bg-success/5 shadow-sm" : "border-border bg-white hover:border-accent/40 hover:bg-muted/50"
+          "flex items-center gap-2.5 rounded border px-3 py-2.5 text-[11px] font-medium text-foreground transition-all duration-200 text-left",
+          checked ? "border-success/50 bg-success/5 shadow-sm" : "border-border bg-white hover:border-accent/40 hover:bg-muted/20"
         )}
       >
         <span
           className={cn(
-            "flex h-5 w-5 items-center justify-center rounded border text-xs transition-colors duration-200",
+            "flex h-4 w-4 shrink-0 items-center justify-center rounded border text-[10px] transition-colors duration-200",
             checked ? "border-success bg-success text-success-foreground" : "border-border bg-card text-muted-foreground"
           )}
         >
-          {checked ? <CheckCircle2 className="h-3 w-3" /> : <span className="text-xs font-semibold">✓</span>}
+          {checked ? <CheckCircle2 className="h-2.5 w-2.5" /> : <span className="font-semibold">✓</span>}
         </span>
-        <span className="text-xs text-muted-foreground">{label}</span>
+        <span className="text-[11px] text-foreground line-clamp-2 leading-tight">{label}</span>
       </button>
     );
   };
@@ -277,113 +287,81 @@ export default function InstitutionDetailsPage() {
     switch (currentSectionName) {
       case "General Information":
         return (
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-              {renderField("aishe-code", "AISHE Code", { readOnly: true })}
-              {renderField("institute-name", "Institute Name", { readOnly: true })}
-              {renderField("country", "Country", { type: "select", selectOptions: ["India"] })}
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {renderField("state", "State", { type: "select", selectOptions: ["Gujarat", "Maharashtra", "Rajasthan"] })}
-              {renderField("district", "District", { type: "select", selectOptions: ["Ahmedabad", "Surat", "Vadodara"] })}
-              {renderField("sub-district", "Sub-District", { type: "select" })}
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {renderField("street", "Street")}
-              {renderField("city", "City")}
-              {renderField("pin-code", "Pin Code")}
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {renderField("year-establishment", "Year of Establishment", { readOnly: true })}
-              {renderField("location", "Location of University / University Level Institution", { type: "select", selectOptions: ["Main Campus", "University Level Institution"] })}
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {renderField("address-1", "Address Line 1")}
-              {renderField("address-2", "Address Line 2")}
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-              {renderField("urban-local-body", "Urban Local Body", { placeholder: "Municipality / Corporation" })}
-              {renderField("longitude", "Longitude (in degree)", { placeholder: "e.g. 72.5714" })}
-              {renderField("latitude", "Latitude (in degree)", { placeholder: "e.g. 23.0225" })}
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-              {renderField("total-area", "Total Area (in acre)", { placeholder: "Enter Total Area" })}
-              {renderField("constructed-area", "Total Constructed Area (sq. m)", { placeholder: "Enter Constructed Area" })}
-              {renderField("website", "Website", { placeholder: "https://example.com" })}
-            </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-x-4 gap-y-4">
+            {renderField("aishe-code", "AISHE Code", { readOnly: true })}
+            {renderField("institute-name", "Institute Name", { readOnly: true })}
+            {renderField("country", "Country", { type: "select", selectOptions: ["India"] })}
+            {renderField("state", "State", { type: "select", selectOptions: ["Gujarat", "Maharashtra", "Rajasthan"] })}
+            {renderField("district", "District", { type: "select", selectOptions: ["Ahmedabad", "Surat", "Vadodara"] })}
+            {renderField("sub-district", "Sub-District", { type: "select" })}
+            {renderField("street", "Street")}
+            {renderField("city", "City")}
+            {renderField("pin-code", "Pin Code")}
+            {renderField("year-establishment", "Establishment Year", { readOnly: true })}
+            {renderField("location", "Location of University", { type: "select", selectOptions: ["Main Campus", "University Level Institution"] })}
+            {renderField("address-1", "Address Line 1")}
+            {renderField("address-2", "Address Line 2")}
+            {renderField("urban-local-body", "Urban Local Body")}
+            {renderField("longitude", "Longitude (deg)")}
+            {renderField("latitude", "Latitude (deg)")}
+            {renderField("website", "Website")}
+            {renderField("total-area", "Total Area (acre)")}
+            {renderField("constructed-area", "Constructed Area (sq. m)")}
           </div>
         );
       case "Status & Classification":
         return (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {renderField("status-prior", "Status Prior to Establishment", { type: "select", selectOptions: ["Autonomous College", "Affiliated College", "Constituent College"] })}
-            {renderField("year-declared", "Year Declared University/INI (Institute of National Importance)")}
-            {renderField("type-institution", "Type of Institution", { type: "select", selectOptions: ["State Open University", "Central University", "Private University"] })}
-            {renderField("tier-institute", "Tier of Institute", { type: "select" })}
-            {renderField("category", "Category (Men/Women/Coed)", { type: "select", selectOptions: ["Coed", "Men", "Women"] })}
-            {renderField("institution-specifically", "Institution Specifically for (Minority / Women / PwD)", { type: "select", selectOptions: ["General", "Minority", "Women", "PwD"] })}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 gap-y-4">
+            {renderField("status-prior", "Prior Status", { type: "select", selectOptions: ["Autonomous College", "Affiliated College", "Constituent College"] })}
+            {renderField("year-declared", "Year Declared")}
+            {renderField("type-institution", "Type", { type: "select", selectOptions: ["State Open University", "Central University", "Private University"] })}
+            {renderField("tier-institute", "Tier", { type: "select" })}
+            {renderField("category", "Category", { type: "select", selectOptions: ["Coed", "Men", "Women"] })}
+            {renderField("institution-specifically", "Specifically for", { type: "select", selectOptions: ["General", "Minority", "Women", "PwD"] })}
           </div>
         );
       case "Affiliation & Recognition":
         return (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {renderField("affiliating-university", "Is Affiliating University?", { type: "select", selectOptions: ["Yes", "No"] })}
-            {renderField("affiliating-type", "Affiliating Univ. Type")}
-            {renderField("statutory-body", "Statutory Body Recognition Name")}
-            {renderField("ownership-type", "Ownership Type & Management", { type: "select" })}
-            {renderField("year-aicte", "Year of 1st AICTE Approval")}
-            {renderField("graded-autonomy", "Whether Graded Autonomy", { type: "radio" })}
-            {renderField("deemed-status", "Deemed / Autonomous Status", { type: "select" })}
-            {renderField("institute-eminence", "Institute of Eminence", { type: "radio" })}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 gap-y-4">
+            {renderField("affiliating-university", "Is Affiliating?", { type: "select", selectOptions: ["Yes", "No"] })}
+            {renderField("affiliating-type", "Univ. Type")}
+            {renderField("statutory-body", "Statutory Recognition")}
+            {renderField("ownership-type", "Ownership", { type: "select" })}
+            {renderField("year-aicte", "1st AICTE Year")}
+            {renderField("graded-autonomy", "Graded Autonomy", { type: "radio" })}
+            {renderField("deemed-status", "Deemed/Auto Status", { type: "select" })}
+            {renderField("institute-eminence", "Eminence", { type: "radio" })}
           </div>
         );
       case "Minority Details":
         return (
-          <div className="space-y-5">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {renderField("minority-institution", "Minority Institution", { type: "radio", radioOptions: ["Yes", "No"] })}
-              {renderField("minority-type", "Minority Type", { type: "select", selectOptions: ["Muslim", "Christian", "Sikh", "Buddhist", "Parsi", "Jain", "Others"] })}
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {renderField("certificate-issued-date", "Certificate Issued Date", { type: "date" })}
-              {renderField("certificate-valid-till", "Certificate Valid Till", { type: "date" })}
-            </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-4">
+            {renderField("minority-institution", "Minority", { type: "radio", radioOptions: ["Yes", "No"] })}
+            {renderField("minority-type", "Type", { type: "select", selectOptions: ["Muslim", "Christian", "Sikh", "Buddhist", "Parsi", "Jain", "Others"] })}
+            {renderField("certificate-issued-date", "Issued Date", { type: "date" })}
+            {renderField("certificate-valid-till", "Valid Till", { type: "date" })}
           </div>
         );
       case "Campus & Approval Details":
         return (
-          <div className="space-y-5">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {renderField("constituent-campus", "Constituent / Off-Campus", { type: "radio", radioOptions: ["Yes", "No"] })}
-              {renderField("constituent-count", "Number of Constituent / Off-Campus")}
-              {renderField("regional-centre-exists", "Regional Centre Exists", { type: "radio", radioOptions: ["Yes", "No"] })}
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {renderField("regional-centre-count", "Number of Regional Centre")}
-              {renderField("odl-exists", "ODL Centres Exists", { type: "radio", radioOptions: ["Yes", "No"] })}
-              {renderField("odl-count", "Number of ODL Centre")}
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {renderField("online-exists", "Online Centres Exists", { type: "radio", radioOptions: ["Yes", "No"] })}
-              {renderField("online-count", "Number of Online Centre")}
-              {renderField("new-approval-last-year", "Is your Institution newly Approved Last Year (LoA) & Failed to Admit Students?", { type: "radio", radioOptions: ["Yes", "No"] })}
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {renderField("approval-letter", "Approval / Recognition Letters", { type: "file" })}
-            </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-x-4 gap-y-4">
+            {renderField("constituent-campus", "Off-Campus", { type: "radio", radioOptions: ["Yes", "No"] })}
+            {renderField("constituent-count", "Count")}
+            {renderField("regional-centre-exists", "Regional Centre", { type: "radio", radioOptions: ["Yes", "No"] })}
+            {renderField("regional-centre-count", "Count")}
+            {renderField("odl-exists", "ODL Centre", { type: "radio", radioOptions: ["Yes", "No"] })}
+            {renderField("odl-count", "Count")}
+            {renderField("online-exists", "Online Centre", { type: "radio", radioOptions: ["Yes", "No"] })}
+            {renderField("online-count", "Count")}
+            {renderField("new-approval-last-year", "Newly Approved?", { type: "radio", radioOptions: ["Yes", "No"] })}
+            {renderField("approval-letter", "Approval Letter", { type: "file" })}
           </div>
         );
       case "Academic Profile":
         return (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
             {renderCheckboxOption("disc-general", "General (Multi-Disciplinary)")}
-            {renderCheckboxOption("disc-engineering", "Engineering / Technology / Architecture / Design")}
+            {renderCheckboxOption("disc-engineering", "Engineering / Technology / Architecture")}
             {renderCheckboxOption("disc-arts", "Arts / Humanities / Social Sciences")}
             {renderCheckboxOption("disc-languages", "Indian and Foreign Languages")}
             {renderCheckboxOption("disc-it", "IT & Computer Application")}
@@ -415,37 +393,34 @@ export default function InstitutionDetailsPage() {
         />
       </ModuleBanner>
 
-      <div className="p-6 lg:p-8">
-        <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
+      <div className="p-3 lg:p-4 pb-24">
+        <div className="bg-card rounded-lg shadow-sm border border-border overflow-hidden">
           {/* Header */}
-          <div className="flex items-center justify-between px-6 py-4 border-b border-border border-l-4 border-l-primary">
-            <h2 className="text-lg font-semibold text-foreground">Institute Details</h2>
+          <div className="flex items-center justify-between px-4 py-2.5 border-b border-border border-l-4 border-l-primary bg-muted/5">
+            <h2 className="text-sm font-bold text-foreground">Institute Details</h2>
             <button
               onClick={() => navigate(-1)}
-              className="px-4 py-2 bg-accent text-accent-foreground rounded-lg text-sm font-medium hover:bg-accent/90 transition-colors"
+              className="px-3 py-1.5 bg-accent/10 text-accent font-bold hover:bg-accent/20 rounded text-[11px] uppercase tracking-wider transition-colors"
             >
               Back
             </button>
           </div>
 
-          <div className="flex flex-col gap-6 lg:flex-row">
-            <div className="flex-1 min-w-0">
-              <div className="p-6 lg:p-8">
+          <div className="flex flex-col">
+            <div className="flex-1 min-w-0 w-full">
+              <div className="p-4 lg:p-5">
                 {/* Section header */}
-                <div className="flex items-center justify-between mb-6 pb-3 border-b border-border">
+                <div className="flex items-center justify-between mb-4 pb-2.5 border-b border-border/40">
                   <div>
-                    <p className="text-xs text-muted-foreground mb-1">Step {currentStep + 1} of {SECTION_ORDER.length}</p>
-                    <h3 className="text-base font-semibold text-foreground">{currentSectionName}</h3>
+                    <h3 className="text-[11px] font-black text-primary uppercase tracking-widest">{currentSectionName}</h3>
                   </div>
                   {currentSection && (
                     <span
                       className={cn(
-                        "text-xs font-semibold px-3 py-1.5 rounded-full",
+                        "text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider",
                         currentSection.completionPercentage >= 100
                           ? "bg-success/10 text-success"
-                          : currentSection.completionPercentage > 0
-                            ? "bg-accent/10 text-accent"
-                            : "bg-muted text-muted-foreground"
+                          : "bg-accent/10 text-accent"
                       )}
                     >
                       {currentSection.completionPercentage}% Complete
@@ -453,60 +428,56 @@ export default function InstitutionDetailsPage() {
                   )}
                 </div>
 
-                {renderStepContent()}
-
-                {/* Navigation buttons */}
-                <div className="flex items-center justify-between mt-8 pt-6 border-t border-border">
-                  <button
-                    onClick={() => setCurrentStep((s) => Math.max(0, s - 1))}
-                    disabled={isFirstStep}
-                    className={cn(
-                      "flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200",
-                      isFirstStep
-                        ? "bg-muted text-muted-foreground cursor-not-allowed"
-                        : "bg-muted text-foreground hover:bg-muted/80 hover:shadow-sm"
-                    )}
-                  >
-                    <ArrowLeft className="h-4 w-4" />
-                    Back
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      if (isLastStep) {
-                        navigate("/institutional-registry");
-                      } else {
-                        setCurrentStep((s) => Math.min(SECTION_ORDER.length - 1, s + 1));
-                      }
-                    }}
-                    className="flex items-center gap-2 px-6 py-2.5 bg-accent text-accent-foreground rounded-xl text-sm font-semibold hover:bg-accent/90 transition-all duration-200 hover:shadow-md"
-                  >
-                    {isLastStep ? (
-                      <>
-                        <Save className="h-4 w-4" />
-                        Save & Submit
-                      </>
-                    ) : (
-                      <>
-                        Save & Continue
-                        <ArrowRight className="h-4 w-4" />
-                      </>
-                    )}
-                  </button>
+                <div className="mb-4">
+                  {renderStepContent()}
                 </div>
               </div>
             </div>
-            <div className="flex-none px-2 pb-6 lg:pb-0">
-              <SectionStatusSidebar
-                sections={sections}
-                sectionOrder={SECTION_ORDER}
-                activeSection={currentSectionName}
-                onSectionClick={(sectionName) => {
-                  const index = SECTION_ORDER.indexOf(sectionName);
-                  if (index !== -1) setCurrentStep(index);
-                }}
-              />
-            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Sticky Navigation Footer */}
+      <div className="fixed bottom-0 right-0 left-0 bg-white/95 backdrop-blur-sm border-t border-border py-3 z-40 transition-all duration-300"
+           style={{ left: "var(--sidebar-width, 256px)" }}>
+        <div className="max-w-7xl mx-auto flex items-center justify-between px-6">
+          <button
+            onClick={() => setCurrentStep((s) => Math.max(0, s - 1))}
+            disabled={isFirstStep}
+            className={cn(
+              "flex items-center gap-2 px-5 py-2 rounded text-[11px] font-bold uppercase tracking-wider transition-all duration-200",
+              isFirstStep
+                ? "bg-muted text-muted-foreground cursor-not-allowed opacity-60"
+                : "bg-muted text-foreground hover:bg-muted/80 shadow-sm"
+            )}
+          >
+            <ArrowLeft className="h-3.5 w-3.5" />
+            Previous
+          </button>
+
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => {
+                if (isLastStep) {
+                  navigate("/institutional-registry");
+                } else {
+                  setCurrentStep((s) => Math.min(SECTION_ORDER.length - 1, s + 1));
+                }
+              }}
+              className="flex items-center gap-2 px-8 py-2 bg-accent text-accent-foreground rounded text-[11px] font-black uppercase tracking-widest hover:bg-accent/90 transition-all duration-200 shadow-md hover:shadow-lg active:scale-[0.98]"
+            >
+              {isLastStep ? (
+                <>
+                  <Save className="h-3.5 w-3.5" />
+                  Save & Submit
+                </>
+              ) : (
+                <>
+                  Save & Continue
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </>
+              )}
+            </button>
           </div>
         </div>
       </div>

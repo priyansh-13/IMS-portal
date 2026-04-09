@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { TopLayout } from "@/components/TopLayout";
 import { ModuleBanner } from "@/components/ModuleBanner";
 import { Input } from "@/components/ui/input";
-import { Save } from "lucide-react";
+import { Save, CheckCircle2 } from "lucide-react";
 import { FormStepper } from "@/components/FormStepper";
 
 export default function CourseCurriculumPage() {
@@ -38,20 +38,20 @@ export default function CourseCurriculumPage() {
   };
   
   const RadioField = ({ label, value, name, onChange }: any) => (
-    <div className="flex items-center gap-1.5 min-w-[60px] cursor-pointer" onClick={() => onChange(label)}>
-      <div className={`h-4 w-4 rounded-full border border-accent flex items-center justify-center ${value === label ? "bg-accent" : "bg-card"}`}>
+    <div className="flex items-center gap-1 min-w-[50px] cursor-pointer group" onClick={() => onChange(label)}>
+      <div className={`h-3.5 w-3.5 rounded-full border border-accent flex items-center justify-center transition-all ${value === label ? "bg-accent shadow-sm" : "bg-white"}`}>
         {value === label && <div className="h-1.5 w-1.5 rounded-full bg-accent-foreground" />}
       </div>
-      <span className="text-sm font-medium">{label}</span>
+      <span className="text-[12px] font-semibold group-hover:text-accent transition-colors">{label}</span>
     </div>
   );
 
   const CheckboxField = ({ label, checked, onChange }: any) => (
-    <div className="flex items-center gap-2 cursor-pointer" onClick={() => onChange(!checked)}>
-      <div className={`h-4 w-4 rounded border border-accent flex items-center justify-center transition-colors ${checked ? "bg-accent" : "bg-card"}`}>
-        {checked && <Save className="h-3 w-3 text-accent-foreground" />}
+    <div className="flex items-center gap-2 cursor-pointer group p-2 rounded-lg border border-border hover:bg-accent/5 transition-all" onClick={() => onChange(!checked)}>
+      <div className={`h-3.5 w-3.5 rounded border border-accent flex items-center justify-center transition-all ${checked ? "bg-accent shadow-sm" : "bg-white"}`}>
+        {checked && <div className="h-2 w-2 bg-accent-foreground rounded-[1px]" />}
       </div>
-      <span className="text-sm font-medium">{label}</span>
+      <span className="text-[12px] font-semibold group-hover:text-accent transition-colors">{label}</span>
     </div>
   );
 
@@ -69,25 +69,27 @@ export default function CourseCurriculumPage() {
           size="sm"
         />
       </ModuleBanner>
-      <div className="p-6 lg:p-8">
-        <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
-          <div className="flex items-center justify-between px-6 py-4 border-b border-border border-l-4 border-l-primary bg-card">
-            <h2 className="text-lg font-semibold text-foreground">{localSteps[activeStep].name}</h2>
+      <div className="p-2 lg:p-3 pb-20">
+        <div className="bg-card rounded-lg shadow-sm border border-border overflow-hidden">
+          <div className="flex items-center justify-between px-4 py-2 border-b border-border border-l-4 border-l-primary bg-muted/5 relative">
+            <h2 className="text-sm font-bold text-foreground uppercase tracking-tight">{localSteps[activeStep].name}</h2>
             <button 
               onClick={() => navigate("/programme-course")} 
-              className="px-4 py-2 bg-accent text-accent-foreground rounded-lg text-sm font-medium hover:bg-accent/90 transition-colors"
+              className="px-3 py-1.5 bg-accent/10 text-accent font-bold hover:bg-accent/20 rounded text-[11px] uppercase tracking-wider transition-colors"
             >
               Back
             </button>
           </div>
 
-          <div className="p-6 space-y-8 pt-6 min-h-[400px]">
+          <div className="p-3 lg:p-4 min-h-[300px]">
+            <div className="flex flex-col h-full">
+              <div className="flex-1">
             {activeStep === 0 && (
-              <div className="space-y-8 animate-in fade-in duration-500">
+              <div className="space-y-4 animate-in fade-in duration-500">
                 <div className="max-w-md">
-                  <label className="text-xs font-semibold text-accent mb-1.5 block">Select Course *</label>
+                  <label className="text-[12px] font-bold text-foreground mb-1 block uppercase tracking-wider">Select Course <span className="text-red-500">*</span></label>
                   <select 
-                    className="w-full h-10 px-3 rounded-lg border border-border bg-background text-sm focus:ring-2 focus:ring-ring transition-colors"
+                    className="w-full h-8 px-2 rounded-lg border border-border bg-white text-[12px] focus:ring-2 focus:ring-accent/30 outline-none transition-colors appearance-none"
                     value={values.course}
                     onChange={(e) => setValue("course", e.target.value)}
                   >
@@ -97,12 +99,14 @@ export default function CourseCurriculumPage() {
                   </select>
                 </div>
 
-                <section className="space-y-4">
-                  <h3 className="text-base font-semibold text-foreground border-b border-border pb-2">Outcome-Based Curriculum</h3>
-                  <div className="space-y-2">
-                    <p className="text-sm font-medium text-foreground">Is the Curriculum framework aligned with Outcome Based Education (OBE)?</p>
-                    <p className="text-[10px] text-muted-foreground opacity-70">(Defining POs, COs, and PEOs / PSOs)</p>
-                    <div className="flex gap-4 pt-1">
+                <section className="space-y-2 rounded-lg border border-border/70 bg-muted/40 p-3">
+                  <div className="flex items-center justify-between pb-1.5 border-b border-border/30">
+                    <h3 className="text-[12px] font-bold text-foreground uppercase tracking-tight">Outcome-Based Curriculum</h3>
+                  </div>
+                  <div className="space-y-2 pt-1">
+                    <p className="text-[12px] font-semibold text-foreground">Is the Curriculum framework aligned with Outcome Based Education (OBE)? <span className="text-red-500">*</span></p>
+                    <p className="text-[10px] text-muted-foreground font-medium italic">(POs, COs, PEOs / PSOs)</p>
+                    <div className="flex gap-6 pt-1">
                       <RadioField label="Yes" value={values.outcomeBased} onChange={(v: string) => setValue("outcomeBased", v)} />
                       <RadioField label="No" value={values.outcomeBased} onChange={(v: string) => setValue("outcomeBased", v)} />
                     </div>
@@ -112,18 +116,20 @@ export default function CourseCurriculumPage() {
             )}
 
             {activeStep === 1 && (
-              <section className="space-y-6 animate-in slide-in-from-right-4 duration-500">
-                <h3 className="text-base font-semibold text-foreground border-b border-border pb-2">Stakeholder Participation for Curriculum</h3>
-                <div className="space-y-3">
-                  <p className="text-sm font-medium text-foreground">Select all that apply</p>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {["Students", "Teachers", "Employers", "Industry", "Alumni", "Feedback from affiliated colleges"].map((item) => (
-                      <div key={item} className="flex items-center gap-2 cursor-pointer p-3 rounded-xl border border-border hover:bg-accent/5 transition-colors" onClick={() => toggleStakeholder(item)}>
-                        <div className={`h-4 w-4 rounded border border-accent flex items-center justify-center transition-colors ${values.stakeholders.includes(item) ? "bg-accent" : "border-accent/40"}`}>
-                          {values.stakeholders.includes(item) && <div className="h-2 w-2 bg-accent-foreground rounded-[1px]" />}
-                        </div>
-                        <span className="text-sm font-medium">{item}</span>
-                      </div>
+              <section className="space-y-3 animate-in slide-in-from-right-4 duration-500 rounded-lg border border-border/70 bg-muted/40 p-3">
+                <div className="flex items-center justify-between pb-1.5 border-b border-border/30">
+                  <h3 className="text-[12px] font-bold text-foreground uppercase tracking-tight">Stakeholder Participation</h3>
+                </div>
+                <div className="space-y-2 pt-1">
+                  <p className="text-[12px] font-semibold text-foreground">Select all that apply <span className="text-red-500">*</span></p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                    {["Students", "Teachers", "Employers", "Industry", "Alumni", "Affiliated Colleges"].map((item) => (
+                      <CheckboxField
+                        key={item}
+                        label={item}
+                        checked={values.stakeholders.includes(item)}
+                        onChange={() => toggleStakeholder(item)}
+                      />
                     ))}
                   </div>
                 </div>
@@ -131,93 +137,116 @@ export default function CourseCurriculumPage() {
             )}
 
             {activeStep === 2 && (
-              <section className="space-y-6 animate-in slide-in-from-right-4 duration-500">
-                <h3 className="text-base font-semibold text-foreground border-b border-border pb-2">Curriculum Flexibility</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
-                  <div className="space-y-3">
-                    <p className="text-sm font-medium text-foreground">Choice Based Credit System (CBCS)</p>
-                    <div className="flex gap-4 pt-1">
+              <section className="space-y-4 animate-in slide-in-from-right-4 duration-500 rounded-lg border border-border/70 bg-muted/40 p-3">
+                <div className="flex items-center justify-between pb-1.5 border-b border-border/30">
+                  <h3 className="text-[12px] font-bold text-foreground uppercase tracking-tight">Curriculum Flexibility</h3>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pt-1">
+                  <div className="space-y-2">
+                    <p className="text-[11px] font-bold text-foreground uppercase tracking-wider">CBCS</p>
+                    <div className="flex gap-4">
                       <RadioField label="Yes" value={values.cbcs} onChange={(v: string) => setValue("cbcs", v)} />
                       <RadioField label="No" value={values.cbcs} onChange={(v: string) => setValue("cbcs", v)} />
                     </div>
                   </div>
-                  <div className="space-y-3">
-                    <p className="text-sm font-medium text-foreground">Major / Minor Options</p>
-                    <div className="flex gap-4 pt-1">
+                  <div className="space-y-2">
+                    <p className="text-[11px] font-bold text-foreground uppercase tracking-wider">Major / Minor</p>
+                    <div className="flex gap-4">
                       <RadioField label="Yes" value={values.majorMinor} onChange={(v: string) => setValue("majorMinor", v)} />
                       <RadioField label="No" value={values.majorMinor} onChange={(v: string) => setValue("majorMinor", v)} />
                     </div>
                   </div>
-                  <div className="space-y-3">
-                    <p className="text-sm font-medium text-foreground">Use of Bharatiya Bhashas in Learning & Teaching</p>
-                    <div className="flex gap-4 pt-1">
+                  <div className="space-y-2 lg:col-span-1">
+                    <p className="text-[11px] font-bold text-foreground uppercase tracking-wider">Bharatiya Bhashas</p>
+                    <div className="flex gap-4">
                       <RadioField label="Yes" value={values.bharatiyaBhashas} onChange={(v: string) => setValue("bharatiyaBhashas", v)} />
                       <RadioField label="No" value={values.bharatiyaBhashas} onChange={(v: string) => setValue("bharatiyaBhashas", v)} />
                     </div>
                   </div>
-                  <div className="space-y-3">
-                    <p className="text-sm font-medium text-foreground">Open Electives</p>
-                    <div className="flex gap-4 pt-1">
+                  <div className="space-y-2">
+                    <p className="text-[11px] font-bold text-foreground uppercase tracking-wider">Open Electives</p>
+                    <div className="flex gap-4">
                       <RadioField label="Yes" value={values.openElectives} onChange={(v: string) => setValue("openElectives", v)} />
                       <RadioField label="No" value={values.openElectives} onChange={(v: string) => setValue("openElectives", v)} />
                     </div>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8 mt-4">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-foreground block">Number of Non-Credit (Value-Added) Courses</label>
-                    <p className="text-[10px] text-muted-foreground opacity-70">Offered in Last 3 Years</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-bold text-foreground uppercase tracking-wider block">Non-Credit Courses <span className="text-red-500">*</span></label>
+                    <p className="text-[9px] text-muted-foreground font-medium">(Offered in Last 3 Years)</p>
                     <Input 
                       value={values.nonCredit} 
                       onChange={(e) => setValue("nonCredit", e.target.value)}
-                      className="bg-background max-w-sm"
+                      className="h-8 text-[12px] bg-white border border-border focus:ring-2 focus:ring-accent/30"
+                      placeholder="0"
                     />
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-foreground block">Number of Courses Introduced / Revised</label>
-                    <p className="text-[10px] text-muted-foreground opacity-70">Across All Programmes in Last 3 Years</p>
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-bold text-foreground uppercase tracking-wider block">Revised Courses <span className="text-red-500">*</span></label>
+                    <p className="text-[9px] text-muted-foreground font-medium">(Across All Programmes in Last 3 Years)</p>
                     <Input 
                       value={values.introducedRevised} 
                       onChange={(e) => setValue("introducedRevised", e.target.value)}
-                      className="bg-background max-w-sm"
+                      className="h-8 text-[12px] bg-white border border-border focus:ring-2 focus:ring-accent/30"
+                      placeholder="0"
                     />
                   </div>
                 </div>
               </section>
             )}
 
-            <div className="flex justify-between items-center pt-8 border-t border-border mt-8">
-              <button 
-                onClick={() => {
-                  if (activeStep > 0) setActiveStep(activeStep - 1);
-                  else navigate("/programme-course");
-                }}
-                className="px-6 py-2.5 border border-border rounded-lg text-sm font-semibold hover:bg-muted transition-all"
-              >
-                {activeStep === 0 ? "Back to Dashboard" : "Previous"}
-              </button>
-              <button 
-                onClick={() => {
-                  if (activeStep < localSteps.length - 1) setActiveStep(activeStep + 1);
-                  else navigate("/programme-course");
-                }}
-                className="flex items-center gap-2 px-8 py-2.5 bg-accent text-accent-foreground rounded-lg text-sm font-semibold shadow-sm hover:bg-accent/90 transition-all active:scale-[0.98]"
-              >
-                {isLastStep ? "Complete" : "Save & Continue"}
-              </button>
+              </div>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Footer */}
-        <div className="flex items-center justify-between mt-12 text-xs text-muted-foreground">
-          <div className="flex gap-4">
-            <span className="hover:text-foreground cursor-pointer transition-colors">Privacy Policy</span>
-            <span className="hover:text-foreground cursor-pointer transition-colors">Terms of Use</span>
-          </div>
-          <span>Copyright © 2026 One Nation One Data</span>
+      {/* Sticky Navigation Footer */}
+      <div className="fixed bottom-0 right-0 left-0 bg-white/80 backdrop-blur-md border-t border-border p-2 z-40 transition-all duration-300"
+           style={{ left: "var(--sidebar-width, 256px)" }}>
+        <div className="max-w-7xl mx-auto flex items-center justify-between px-4">
+          <button
+            onClick={() => {
+              if (activeStep > 0) setActiveStep(activeStep - 1);
+              else navigate("/programme-course");
+            }}
+            className="flex items-center gap-2 px-5 py-2 rounded text-[11px] font-bold uppercase tracking-wider bg-muted text-foreground hover:bg-muted/80 shadow-sm transition-all duration-200"
+          >
+            ← {activeStep === 0 ? "Back to Dashboard" : "Previous Section"}
+          </button>
+
+          <button
+            onClick={() => {
+              if (activeStep < localSteps.length - 1) setActiveStep(activeStep + 1);
+              else navigate("/programme-course");
+            }}
+            className="flex items-center gap-2 px-8 py-2 bg-accent text-accent-foreground rounded text-[11px] font-black uppercase tracking-widest hover:bg-accent/90 transition-all duration-200 shadow-md hover:shadow-lg active:scale-[0.98]"
+          >
+            {isLastStep ? (
+              <>
+                <CheckCircle2 className="h-3.5 w-3.5" />
+                Finish & Save
+              </>
+            ) : (
+              <>
+                Save & Continue
+                <span className="ml-1">→</span>
+              </>
+            )}
+          </button>
         </div>
+      </div>
+
+      {/* Footer */}
+      <div className="flex items-center justify-between mt-12 text-xs text-muted-foreground px-4">
+        <div className="flex gap-4">
+          <span className="hover:text-foreground cursor-pointer transition-colors">Privacy Policy</span>
+          <span className="hover:text-foreground cursor-pointer transition-colors">Terms of Use</span>
+        </div>
+        <span>Copyright © 2026 One Nation One Data</span>
       </div>
     </TopLayout>
   );

@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { TopLayout } from "@/components/TopLayout";
 import { ModuleBanner } from "@/components/ModuleBanner";
 import { FormStepper } from "@/components/FormStepper";
-import { SectionStatusSidebar } from "@/components/SectionStatusSidebar";
 import { useFormProgress, FieldState } from "@/hooks/useFormProgress";
 import { PendingFieldsPanel } from "@/components/PendingFieldsPanel";
 import { cn } from "@/lib/utils";
@@ -82,8 +81,11 @@ const renderInputField = (
   const filled = fieldVal.trim().length > 0;
   
   return (
-    <div className="flex flex-col gap-2">
-      <label htmlFor={id} className="text-sm font-medium text-foreground">{label}</label>
+    <div className="flex flex-col gap-1">
+      <label htmlFor={id} className="text-[12px] font-semibold text-foreground">
+        {label}
+        <span className="text-red-500 ml-1 font-bold">*</span>
+      </label>
       <div className="relative">
         <input
           id={id}
@@ -92,12 +94,12 @@ const renderInputField = (
           onChange={(e) => setValue(id, e.target.value)}
           placeholder={placeholder}
           className={cn(
-            "w-full rounded-xl border px-3 py-2 text-sm transition-all duration-200 outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent",
+            "w-full h-8 rounded-lg border px-2 text-[12px] transition-all duration-200 outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent",
             filled ? "border-success/50 bg-success/5" : "border-border bg-muted/20"
           )}
         />
         {filled && (
-          <CheckCircle2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-success" />
+          <CheckCircle2 className="absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-success" />
         )}
       </div>
     </div>
@@ -114,20 +116,23 @@ const renderRadioGroup = (
   const fieldVal = fields.find((f) => f.id === id)?.value || "";
 
   return (
-    <div className="flex flex-col gap-2">
-      <p className="text-sm font-medium text-foreground">{label}</p>
-      <div className="flex gap-4">
+    <div className="flex flex-col gap-1">
+      <p className="text-[12px] font-semibold text-foreground">
+        {label}
+        <span className="text-red-500 ml-1 font-bold">*</span>
+      </p>
+      <div className="flex gap-3">
         {options.map((opt) => (
-          <label key={opt} className="flex items-center gap-2 text-sm text-foreground cursor-pointer">
+          <label key={opt} className="flex items-center gap-1.5 text-[12px] text-foreground cursor-pointer group">
             <input
               type="radio"
               name={id}
               value={opt}
               checked={fieldVal === opt}
               onChange={(e) => setValue(id, e.target.value)}
-              className="accent-accent"
+              className="w-3.5 h-3.5 accent-accent"
             />
-            {opt}
+            <span className="group-hover:text-accent transition-colors">{opt}</span>
           </label>
         ))}
       </div>
@@ -166,38 +171,37 @@ export default function CommitteesPage() {
           size="sm"
         />
       </ModuleBanner>
-      <div className="p-6 lg:p-8">
-        <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
-          <div className="flex items-center justify-between px-6 py-4 border-b border-border border-l-4 border-l-primary">
-            <h2 className="text-lg font-semibold text-foreground">Committees</h2>
+      <div className="p-2 lg:p-3 pb-20">
+        <div className="bg-card rounded-lg shadow-sm border border-border overflow-hidden">
+          <div className="flex items-center justify-between px-4 py-2 border-b border-border border-l-4 border-l-primary bg-muted/5">
+            <h2 className="text-sm font-bold text-foreground">Committees</h2>
             <button 
               onClick={() => navigate(-1)}
-              className="px-4 py-2 bg-accent text-accent-foreground rounded-lg text-sm font-medium hover:bg-accent/90 transition-colors"
+              className="px-3 py-1.5 bg-accent/10 text-accent font-bold hover:bg-accent/20 rounded text-[11px] uppercase tracking-wider transition-colors"
             >
               Back
             </button>
           </div>
 
-          <div className="flex flex-col lg:flex-row gap-6 px-6 pb-6 pt-6">
-            <div className="flex-1 min-w-0 space-y-6">
+          <div className="flex flex-col">
+            <div className="flex-1 min-w-0 w-full">
+              <div className="p-3 lg:p-4 space-y-3">
               {activeSubStep === 0 && (
-              <section id="section-general" className="space-y-4 rounded-2xl border border-border/70 bg-muted/40 p-5">
-                <div className="flex items-center justify-between mb-4 pb-2 border-b border-border/30">
-                  <h3 className="text-base font-semibold text-foreground">General Committees</h3>
+               <section id="section-general" className="space-y-2 rounded-lg border border-border/70 bg-muted/40 p-3">
+                <div className="flex items-center justify-between pb-1.5 border-b border-border/30">
+                  <h3 className="text-[12px] font-bold text-foreground uppercase tracking-tight">General Committees</h3>
                   {currentSection && (
                     <span className={cn(
-                      "text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider",
+                      "text-[8px] font-black px-1.5 py-0.5 rounded-full uppercase tracking-wider",
                       currentSection.completionPercentage >= 100 
                         ? "bg-success/10 text-success" 
-                        : currentSection.completionPercentage > 0
-                        ? "bg-accent/10 text-accent"
-                        : "bg-muted text-muted-foreground"
+                        : "bg-accent/10 text-accent"
                     )}>
                       {currentSection.completionPercentage}% Complete
                     </span>
                   )}
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
                   {renderRadioGroup(fields, updateField, "icc-exists", "Internal Complaints Committee (ICC) Exists")}
                   {renderRadioGroup(fields, updateField, "equal-opportunity", "Equal Opportunity Cell Exists")}
                   {renderRadioGroup(fields, updateField, "vigilance-cell", "Vigilance Cell Exists")}
@@ -206,23 +210,21 @@ export default function CommitteesPage() {
               )}
 
               {activeSubStep === 1 && (
-              <section id="section-ombudsman" className="rounded-2xl border border-border/70 bg-muted/40 p-5 space-y-4">
-                <div className="flex items-center justify-between mb-4 pb-2 border-b border-border/30">
-                  <h3 className="text-base font-semibold text-foreground">Ombudsman / Grievance Redressal Committee</h3>
+               <section id="section-ombudsman" className="rounded-lg border border-border/70 bg-muted/40 p-3 space-y-2">
+                <div className="flex items-center justify-between pb-1.5 border-b border-border/30">
+                  <h3 className="text-[12px] font-bold text-foreground uppercase tracking-tight">Ombudsman / Grievance Redressal Committee</h3>
                   {currentSection && (
                     <span className={cn(
-                      "text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider",
+                      "text-[8px] font-black px-1.5 py-0.5 rounded-full uppercase tracking-wider",
                       currentSection.completionPercentage >= 100 
                         ? "bg-success/10 text-success" 
-                        : currentSection.completionPercentage > 0
-                        ? "bg-accent/10 text-accent"
-                        : "bg-muted text-muted-foreground"
+                        : "bg-accent/10 text-accent"
                     )}>
                       {currentSection.completionPercentage}% Complete
                     </span>
                   )}
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
                   {renderRadioGroup(fields, updateField, "grievance-exists", "Grievance Committee Exists")}
                   {renderRadioGroup(fields, updateField, "ombudsman-appointed", "Ombudsman Appointed")}
                   {renderInputField(fields, updateField, "ombudsman-date", "Date of Appointment", "dd-mm-yyyy", "date")}
@@ -231,130 +233,122 @@ export default function CommitteesPage() {
                   {renderInputField(fields, updateField, "ombudsman-email", "Email Address", undefined, "email")}
                   {renderRadioGroup(fields, updateField, "online-grievance", "Online Grievance Redressal Mechanism")}
                 </div>
-                <div className="flex items-center gap-3 mt-2">
-                  <span className="text-sm font-semibold text-foreground">Committee Members</span>
+                <div className="flex items-center gap-3 mt-1 px-1">
+                  <span className="text-[11px] font-bold text-foreground uppercase tracking-tight">Members:</span>
                   <div className="flex gap-2">
-                    <button className="rounded-full bg-blue-500 px-4 py-2 text-xs font-semibold text-white hover:bg-blue-600 transition-colors">View</button>
-                    <button className="rounded-full bg-blue-900 px-4 py-2 text-xs font-semibold text-white hover:bg-blue-950 transition-colors">Manage Members</button>
+                    <button className="rounded px-3 py-1 text-[10px] font-bold uppercase tracking-wider bg-accent/20 text-accent hover:bg-accent/30 transition-colors">View</button>
+                    <button className="rounded px-3 py-1 text-[10px] font-bold uppercase tracking-wider bg-primary/10 text-primary hover:bg-primary/20 transition-colors">Manage</button>
                   </div>
                 </div>
               </section>
               )}
 
               {activeSubStep === 2 && (
-              <section id="section-ragging" className="rounded-2xl border border-border/70 bg-muted/40 p-5 space-y-4">
-                <div className="flex items-center justify-between mb-4 pb-2 border-b border-border/30">
-                  <h3 className="text-base font-semibold text-foreground">Anti-Ragging Cell / Committee</h3>
+               <section id="section-ragging" className="rounded-lg border border-border/70 bg-muted/40 p-3 space-y-2">
+                <div className="flex items-center justify-between pb-1.5 border-b border-border/30">
+                  <h3 className="text-[12px] font-bold text-foreground uppercase tracking-tight">Anti-Ragging Cell / Committee</h3>
                   {currentSection && (
                     <span className={cn(
-                      "text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider",
+                      "text-[8px] font-black px-1.5 py-0.5 rounded-full uppercase tracking-wider",
                       currentSection.completionPercentage >= 100 
                         ? "bg-success/10 text-success" 
-                        : currentSection.completionPercentage > 0
-                        ? "bg-accent/10 text-accent"
-                        : "bg-muted text-muted-foreground"
+                        : "bg-accent/10 text-accent"
                     )}>
                       {currentSection.completionPercentage}% Complete
                     </span>
                   )}
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
                   {renderRadioGroup(fields, updateField, "anti-ragging-exists", "Anti-Ragging Committee Exists")}
                   {renderInputField(fields, updateField, "anti-ragging-date", "Date of Constitution", "dd-mm-yyyy", "date")}
                   {renderInputField(fields, updateField, "anti-ragging-type", "Type of Committee")}
                   {renderRadioGroup(fields, updateField, "ragging-squad", "Anti-Ragging Squad Exists")}
                 </div>
-                <div className="flex items-center gap-3 mt-2">
-                  <span className="text-sm font-semibold text-foreground">Committee Members</span>
+                <div className="flex items-center gap-3 mt-1 px-1">
+                  <span className="text-[11px] font-bold text-foreground uppercase tracking-tight">Members:</span>
                   <div className="flex gap-2">
-                    <button className="rounded-full bg-blue-500 px-4 py-2 text-xs font-semibold text-white hover:bg-blue-600 transition-colors">View</button>
-                    <button className="rounded-full bg-blue-900 px-4 py-2 text-xs font-semibold text-white hover:bg-blue-950 transition-colors">Manage Members</button>
+                    <button className="rounded px-3 py-1 text-[10px] font-bold uppercase tracking-wider bg-accent/20 text-accent hover:bg-accent/30 transition-colors">View</button>
+                    <button className="rounded px-3 py-1 text-[10px] font-bold uppercase tracking-wider bg-primary/10 text-primary hover:bg-primary/20 transition-colors">Manage</button>
                   </div>
                 </div>
               </section>
               )}
 
               {activeSubStep === 3 && (
-              <section id="section-ic" className="rounded-2xl border border-border/70 bg-muted/40 p-5 space-y-4">
-                <div className="flex items-center justify-between mb-4 pb-2 border-b border-border/30">
-                  <h3 className="text-base font-semibold text-foreground">Internal Committee (IC)</h3>
+               <section id="section-ic" className="rounded-lg border border-border/70 bg-muted/40 p-3 space-y-2">
+                <div className="flex items-center justify-between pb-1.5 border-b border-border/30">
+                  <h3 className="text-[12px] font-bold text-foreground uppercase tracking-tight">Internal Committee (IC)</h3>
                   {currentSection && (
                     <span className={cn(
-                      "text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider",
+                      "text-[8px] font-black px-1.5 py-0.5 rounded-full uppercase tracking-wider",
                       currentSection.completionPercentage >= 100 
                         ? "bg-success/10 text-success" 
-                        : currentSection.completionPercentage > 0
-                        ? "bg-accent/10 text-accent"
-                        : "bg-muted text-muted-foreground"
+                        : "bg-accent/10 text-accent"
                     )}>
                       {currentSection.completionPercentage}% Complete
                     </span>
                   )}
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
                   {renderRadioGroup(fields, updateField, "ic-exists", "Committee Exists")}
                   {renderInputField(fields, updateField, "ic-type", "Type of Committee")}
                   {renderInputField(fields, updateField, "ic-date", "Date of Appointment", "dd-mm-yyyy", "date")}
                 </div>
-                <div className="flex items-center gap-3 mt-2">
-                  <span className="text-sm font-semibold text-foreground">Committee Members</span>
+                <div className="flex items-center gap-3 mt-1 px-1">
+                  <span className="text-[11px] font-bold text-foreground uppercase tracking-tight">Members:</span>
                   <div className="flex gap-2">
-                    <button className="rounded-full bg-blue-500 px-4 py-2 text-xs font-semibold text-white hover:bg-blue-600 transition-colors">View</button>
-                    <button className="rounded-full bg-blue-900 px-4 py-2 text-xs font-semibold text-white hover:bg-blue-950 transition-colors">Manage Members</button>
+                    <button className="rounded px-3 py-1 text-[10px] font-bold uppercase tracking-wider bg-accent/20 text-accent hover:bg-accent/30 transition-colors">View</button>
+                    <button className="rounded px-3 py-1 text-[10px] font-bold uppercase tracking-wider bg-primary/10 text-primary hover:bg-primary/20 transition-colors">Manage</button>
                   </div>
                 </div>
               </section>
               )}
 
               {activeSubStep === 4 && (
-              <section id="section-scst" className="rounded-2xl border border-border/70 bg-muted/40 p-5 space-y-4">
-                <div className="flex items-center justify-between mb-4 pb-2 border-b border-border/30">
-                  <h3 className="text-base font-semibold text-foreground">SC / ST Committee</h3>
+               <section id="section-scst" className="rounded-lg border border-border/70 bg-muted/40 p-3 space-y-2">
+                <div className="flex items-center justify-between pb-1.5 border-b border-border/30">
+                  <h3 className="text-[12px] font-bold text-foreground uppercase tracking-tight">SC / ST Committee</h3>
                   {currentSection && (
                     <span className={cn(
-                      "text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider",
+                      "text-[8px] font-black px-1.5 py-0.5 rounded-full uppercase tracking-wider",
                       currentSection.completionPercentage >= 100 
                         ? "bg-success/10 text-success" 
-                        : currentSection.completionPercentage > 0
-                        ? "bg-accent/10 text-accent"
-                        : "bg-muted text-muted-foreground"
+                        : "bg-accent/10 text-accent"
                     )}>
                       {currentSection.completionPercentage}% Complete
                     </span>
                   )}
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
                   {renderRadioGroup(fields, updateField, "scst-exists", "Committee Exists")}
                   {renderInputField(fields, updateField, "scst-date", "Date of Constitution", "dd-mm-yyyy", "date")}
                 </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-sm font-semibold text-foreground">Committee Members</span>
+                 <div className="flex items-center gap-3 mt-1 px-1">
+                  <span className="text-[11px] font-bold text-foreground uppercase tracking-tight">Members:</span>
                   <div className="flex gap-2">
-                    <button className="rounded-full bg-blue-500 px-4 py-2 text-xs font-semibold text-white">View</button>
-                    <button className="rounded-full bg-blue-900 px-4 py-2 text-xs font-semibold text-white">Manage Members</button>
+                    <button className="rounded px-3 py-1 text-[10px] font-bold uppercase tracking-wider bg-accent/20 text-accent hover:bg-accent/30 transition-colors">View</button>
+                    <button className="rounded px-3 py-1 text-[10px] font-bold uppercase tracking-wider bg-primary/10 text-primary hover:bg-primary/20 transition-colors">Manage</button>
                   </div>
                 </div>
               </section>
               )}
 
               {activeSubStep === 5 && (
-              <section id="section-counselor" className="rounded-2xl border border-border/70 bg-muted/40 p-5 space-y-4">
-                <div className="flex items-center justify-between mb-4 pb-2 border-b border-border/30">
-                  <h3 className="text-base font-semibold text-foreground">Student Counselor</h3>
+               <section id="section-counselor" className="rounded-lg border border-border/70 bg-muted/40 p-3 space-y-2">
+                <div className="flex items-center justify-between pb-1.5 border-b border-border/30">
+                  <h3 className="text-[12px] font-bold text-foreground uppercase tracking-tight">Student Counselor</h3>
                   {currentSection && (
                     <span className={cn(
-                      "text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider",
+                      "text-[8px] font-black px-1.5 py-0.5 rounded-full uppercase tracking-wider",
                       currentSection.completionPercentage >= 100 
                         ? "bg-success/10 text-success" 
-                        : currentSection.completionPercentage > 0
-                        ? "bg-accent/10 text-accent"
-                        : "bg-muted text-muted-foreground"
+                        : "bg-accent/10 text-accent"
                     )}>
                       {currentSection.completionPercentage}% Complete
                     </span>
                   )}
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-3">
                   {renderRadioGroup(fields, updateField, "student-counselor", "Student Counselor Appointed")}
                   {renderInputField(fields, updateField, "counselor-date", "Date of Appointment", "dd-mm-yyyy", "date")}
                   {renderInputField(fields, updateField, "counselor-name", "Counselor Name")}
@@ -365,23 +359,21 @@ export default function CommitteesPage() {
               )}
 
               {activeSubStep === 6 && (
-              <section id="section-iqac" className="rounded-2xl border border-border/70 bg-muted/40 p-5 space-y-4">
-                <div className="flex items-center justify-between mb-4 pb-2 border-b border-border/30">
-                  <h3 className="text-base font-semibold text-foreground">Internal Quality Assurance Cell (IQAC / IQAS / CIQA)</h3>
+               <section id="section-iqac" className="rounded-lg border border-border/70 bg-muted/40 p-3 space-y-2">
+                <div className="flex items-center justify-between pb-1.5 border-b border-border/30">
+                  <h3 className="text-[12px] font-bold text-foreground uppercase tracking-tight">Internal Quality Assurance Cell (IQAC / IQAS / CIQA)</h3>
                   {currentSection && (
                     <span className={cn(
-                      "text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider",
+                      "text-[8px] font-black px-1.5 py-0.5 rounded-full uppercase tracking-wider",
                       currentSection.completionPercentage >= 100 
                         ? "bg-success/10 text-success" 
-                        : currentSection.completionPercentage > 0
-                        ? "bg-accent/10 text-accent"
-                        : "bg-muted text-muted-foreground"
+                        : "bg-accent/10 text-accent"
                     )}>
                       {currentSection.completionPercentage}% Complete
                     </span>
                   )}
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-3">
                   {renderRadioGroup(fields, updateField, "iqac-established", "IQAC Established")}
                   {renderInputField(fields, updateField, "iqac-date", "Date of Establishment", "dd-mm-yyyy", "date")}
                   {renderInputField(fields, updateField, "iqac-contact", "Contact Email", undefined, "email")}
@@ -395,50 +387,54 @@ export default function CommitteesPage() {
               </section>
               )}
 
-              <div className="flex flex-col sm:flex-row justify-between items-center gap-3 pt-2">
-                <button
-                  className="flex items-center gap-2 px-5 py-3 rounded-full border border-border text-sm font-semibold text-foreground hover:bg-muted transition-colors"
-                  onClick={() => {
-                    if (activeSubStep > 0) {
-                      setActiveSubStep((prev) => Math.max(prev - 1, 0));
-                    } else {
-                      navigate(-1);
-                    }
-                  }}
-                >
-                  ← Back
-                </button>
-                <button
-                  className="flex items-center gap-2 px-6 py-3 rounded-full bg-accent text-accent-foreground text-sm font-semibold shadow-sm shadow-accent/40"
-                  onClick={() => {
-                    if (!isLastStep) {
-                      setActiveSubStep((s) => Math.min(SECTION_ORDER.length - 1, s + 1));
-                    } else {
-                      navigate("/institutional-registry");
-                    }
-                  }}
-                >
-                  {isLastStep ? "Save" : "Save & Continue"}
-                </button>
               </div>
-            </div>
-
-            <div className="flex-none px-2 pb-6 lg:pb-0">
-              <SectionStatusSidebar
-                sections={sections}
-                sectionOrder={SECTION_ORDER}
-                activeSection={currentSectionName}
-                onSectionClick={(name) => {
-                  const targetIndex = SECTION_ORDER.indexOf(name);
-                  if (targetIndex >= 0) {
-                    setActiveSubStep(targetIndex);
-                  }
-                }}
-              />
             </div>
           </div>
         </div>
       </div>
+
+      {/* Sticky Navigation Footer */}
+      <div className="fixed bottom-0 right-0 left-0 bg-white/80 backdrop-blur-md border-t border-border p-2 z-40 transition-all duration-300"
+           style={{ left: "var(--sidebar-width, 256px)" }}>
+        <div className="max-w-7xl mx-auto flex items-center justify-between px-4">
+          <button
+            onClick={() => {
+              if (activeSubStep > 0) {
+                setActiveSubStep((prev) => Math.max(prev - 1, 0));
+              } else {
+                navigate(-1);
+              }
+            }}
+            className="flex items-center gap-2 px-5 py-2 rounded text-[11px] font-bold uppercase tracking-wider bg-muted text-foreground hover:bg-muted/80 shadow-sm transition-all duration-200"
+          >
+            ← Previous
+          </button>
+
+          <button
+            onClick={() => {
+              if (!isLastStep) {
+                setActiveSubStep((s) => Math.min(SECTION_ORDER.length - 1, s + 1));
+              } else {
+                navigate("/institutional-registry");
+              }
+            }}
+            className="flex items-center gap-2 px-8 py-2 bg-accent text-accent-foreground rounded text-[11px] font-black uppercase tracking-widest hover:bg-accent/90 transition-all duration-200 shadow-md hover:shadow-lg active:scale-[0.98]"
+          >
+            {isLastStep ? (
+              <>
+                <CheckCircle2 className="h-3.5 w-3.5" />
+                Save & Submit
+              </>
+            ) : (
+              <>
+                Save & Continue
+                <span className="ml-1">→</span>
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+
       <PendingFieldsPanel
         pendingFields={pendingFields}
         onFieldClick={scrollToField}

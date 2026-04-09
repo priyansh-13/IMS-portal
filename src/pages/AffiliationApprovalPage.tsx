@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { TopLayout } from "@/components/TopLayout";
 import { ModuleBanner } from "@/components/ModuleBanner";
 import { FormStepper } from "@/components/FormStepper";
-import { SectionStatusSidebar } from "@/components/SectionStatusSidebar";
 import { useFormProgress, FieldState } from "@/hooks/useFormProgress";
 import { PendingFieldsPanel } from "@/components/PendingFieldsPanel";
 import { cn } from "@/lib/utils";
@@ -40,8 +39,11 @@ const renderInputField = (
   const filled = fieldVal.trim().length > 0;
   
   return (
-    <div className="flex flex-col gap-2">
-      <label htmlFor={id} className="text-sm font-medium text-foreground">{label}</label>
+    <div className="flex flex-col gap-1.5">
+      <label htmlFor={id} className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+        {label}
+        <span className="text-red-500 ml-0.5">*</span>
+      </label>
       <div className="relative">
         <input
           id={id}
@@ -50,12 +52,12 @@ const renderInputField = (
           onChange={(e) => setValue(id, e.target.value)}
           placeholder={placeholder}
           className={cn(
-            "w-full rounded-xl border px-3 py-2 text-sm transition-all duration-200 outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent",
-            filled ? "border-success/50 bg-success/5" : "border-border bg-muted/20"
+            "w-full h-9 rounded border px-2.5 text-[12px] transition-all duration-200 outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent",
+            filled ? "border-success/50 bg-success/5" : "border-border bg-white"
           )}
         />
         {filled && (
-          <CheckCircle2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-success" />
+          <CheckCircle2 className="absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-success" />
         )}
       </div>
     </div>
@@ -73,16 +75,19 @@ const renderSelectField = (
   const filled = fieldVal.trim().length > 0;
 
   return (
-    <div className="flex flex-col gap-2">
-      <label htmlFor={id} className="text-sm font-medium text-foreground">{label}</label>
+    <div className="flex flex-col gap-1.5">
+      <label htmlFor={id} className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+        {label}
+        <span className="text-red-500 ml-0.5">*</span>
+      </label>
       <div className="relative">
         <select
           id={id}
           value={fieldVal}
           onChange={(e) => setValue(id, e.target.value)}
           className={cn(
-            "w-full rounded-xl border bg-white px-3 py-2 text-sm transition-all duration-200 outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent appearance-none",
-            filled ? "border-success/50 bg-success/5" : "border-border bg-muted/20"
+            "w-full h-9 rounded border bg-white px-2.5 text-[12px] transition-all duration-200 outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent appearance-none",
+            filled ? "border-success/50 bg-success/5" : "border-border bg-white"
           )}
         >
           <option value="">Select</option>
@@ -91,7 +96,7 @@ const renderSelectField = (
           ))}
         </select>
         {filled && (
-          <CheckCircle2 className="absolute right-8 top-1/2 -translate-y-1/2 h-4 w-4 text-success" />
+          <CheckCircle2 className="absolute right-6 top-1/2 -translate-y-1/2 h-4 w-4 text-success" />
         )}
       </div>
     </div>
@@ -108,20 +113,23 @@ const renderRadioGroup = (
   const fieldVal = fields.find((f) => f.id === id)?.value || "";
 
   return (
-    <div className="flex flex-col gap-2">
-      <p className="text-sm font-medium text-foreground">{label}</p>
-      <div className="flex gap-4">
+    <div className="flex flex-col gap-1.5">
+      <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+        {label}
+        <span className="text-red-500 ml-0.5">*</span>
+      </p>
+      <div className="flex gap-4 py-0.5">
         {options.map((opt) => (
-          <label key={opt} className="flex items-center gap-2 text-sm text-foreground cursor-pointer">
+          <label key={opt} className="flex items-center gap-2 text-[12px] text-foreground cursor-pointer group">
             <input
               type="radio"
               name={id}
               value={opt}
               checked={fieldVal === opt}
               onChange={(e) => setValue(id, e.target.value)}
-              className="accent-accent"
+              className="w-4 h-4 accent-accent"
             />
-            {opt}
+            <span className="group-hover:text-accent transition-colors">{opt}</span>
           </label>
         ))}
       </div>
@@ -160,117 +168,110 @@ export default function AffiliationApprovalPage() {
           size="sm"
         />
       </ModuleBanner>
-      <div className="p-6 lg:p-8">
-        <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
-          <div className="flex items-center justify-between px-6 py-4 border-b border-border border-l-4 border-l-primary">
-            <h2 className="text-lg font-semibold text-foreground">Affiliation / Approval</h2>
+      <div className="p-3 lg:p-4 pb-24">
+        <div className="bg-card rounded-lg shadow-sm border border-border overflow-hidden">
+          <div className="flex items-center justify-between px-4 py-2.5 border-b border-border border-l-4 border-l-primary bg-muted/5">
+            <h2 className="text-sm font-bold text-foreground">Affiliation / Approval</h2>
             <button 
               onClick={() => navigate(-1)}
-              className="px-4 py-2 bg-accent text-accent-foreground rounded-lg text-sm font-medium hover:bg-accent/90 transition-colors"
+              className="px-3 py-1.5 bg-accent/10 text-accent font-bold hover:bg-accent/20 rounded text-[11px] uppercase tracking-wider transition-colors"
             >
               Back
             </button>
           </div>
 
-          <div className="flex flex-col lg:flex-row gap-6 px-6 pb-6 pt-6">
-            <div className="flex-1 min-w-0 space-y-6">
-              {activeSubStep === 0 && (
-              <section id="section-affiliation" className="space-y-4 rounded-2xl border border-border/70 bg-muted/40 p-5">
-                <div className="flex items-center justify-between mb-4 pb-2 border-b border-border/30">
-                  <h3 className="text-base font-semibold text-foreground">Affiliation / Approval Details</h3>
-                  {currentSection && (
-                    <span className={cn(
-                      "text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider",
-                      currentSection.completionPercentage >= 100 
-                        ? "bg-success/10 text-success" 
-                        : currentSection.completionPercentage > 0
-                        ? "bg-accent/10 text-accent"
-                        : "bg-muted text-muted-foreground"
-                    )}>
-                      {currentSection.completionPercentage}% Complete
-                    </span>
-                  )}
-                </div>
-                <div className="flex flex-col xl:flex-row items-start xl:items-end justify-between gap-4 md:gap-6">
-                  <div className="w-full xl:w-2/5">
+          <div className="flex flex-col">
+            <div className="flex-1 min-w-0 w-full">
+              <div className="p-4 lg:p-5 space-y-4">
+               {activeSubStep === 0 && (
+                <section id="section-affiliation" className="space-y-3 rounded border border-border/60 bg-white p-4">
+                  <div className="flex items-center justify-between pb-2 border-b border-border/30">
+                    <h3 className="text-[11px] font-black text-primary uppercase tracking-widest">Affiliation / Approval Details</h3>
+                    {currentSection && (
+                      <span className={cn(
+                        "text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider",
+                        currentSection.completionPercentage >= 100 
+                          ? "bg-success/10 text-success" 
+                          : "bg-accent/10 text-accent"
+                      )}>
+                        {currentSection.completionPercentage}% Complete
+                      </span>
+                    )}
+                  </div>
+                 <div className="flex flex-col lg:flex-row items-start lg:items-end justify-between gap-3 bg-white p-2 border border-border/60 rounded-lg shadow-sm">
+                  <div className="w-full lg:w-1/2">
                     {renderInputField(fields, updateField, "affiliation-university", "Name of Affiliating University / Board")}
                   </div>
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-                    <span className="text-sm font-semibold text-foreground">Programme-wise Affiliation / Approval Status</span>
-                    <div className="flex items-center gap-2">
-                       <button className="rounded-full bg-blue-500 px-5 py-2 text-sm font-semibold text-white hover:bg-blue-600 transition-colors">View</button>
-                       <button className="rounded-full bg-blue-900 px-5 py-2 text-sm font-semibold text-white hover:bg-blue-950 transition-colors">Manage Programmes</button>
+                  <div className="flex items-center gap-2 pr-2">
+                    <span className="text-[10px] font-bold text-foreground">STATUS:</span>
+                    <div className="flex items-center gap-1">
+                       <button className="rounded px-2 py-1 text-[9px] font-bold uppercase tracking-wider bg-accent/20 text-accent hover:bg-accent/30 transition-colors">View</button>
+                       <button className="rounded px-2 py-1 text-[9px] font-bold uppercase tracking-wider bg-primary/10 text-primary hover:bg-primary/20 transition-colors">Manage</button>
                     </div>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {renderRadioGroup(fields, updateField, "change-affiliating", "Change in Affiliating University / Board")}
-                  {renderInputField(fields, updateField, "previous-university", "Previous University / Board")}
-                  {renderInputField(fields, updateField, "effective-year", "Effective From Year", "dd-mm-yyyy", "date")}
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {renderRadioGroup(fields, updateField, "odl-affiliation", "Affiliation for ODL / Online / Distance Mode")}
-                  {renderRadioGroup(fields, updateField, "offcampus-affiliation", "Affiliation for Off-Campus / Constituent College")}
-                  {renderRadioGroup(fields, updateField, "integrated-affiliation", "Affiliation for Integrated / Twinning / Collaborative Programme")}
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {renderRadioGroup(fields, updateField, "research-affiliation", "Affiliation for Research / PhD Programme")}
-                  {renderSelectField(fields, updateField, "statutory-body", "Recognition by Statutory Body", ["UGC", "AICTE", "NAAC"])}
-                  {renderRadioGroup(fields, updateField, "nri-approval", "Approval for NRI / OCI / Foreign Student Quota")}
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {renderRadioGroup(fields, updateField, "state-govt", "State Government Recommendation / NOC")}
-                  {renderRadioGroup(fields, updateField, "university-rec", "University / Board Recommendation")}
+                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 xl:grid-cols-6 gap-x-4 gap-y-4 pt-1">
+                  {renderRadioGroup(fields, updateField, "change-affiliating", "Change in Affiliating Univ")}
+                  {renderInputField(fields, updateField, "previous-university", "Previous Univ / Board")}
+                  {renderInputField(fields, updateField, "effective-year", "Effective From", "dd-mm-yyyy", "date")}
+                  {renderRadioGroup(fields, updateField, "odl-affiliation", "ODL Mode")}
+                  {renderRadioGroup(fields, updateField, "offcampus-affiliation", "Off-Campus / Constituent")}
+                  {renderRadioGroup(fields, updateField, "integrated-affiliation", "Integrated / Collaborative")}
+                  {renderRadioGroup(fields, updateField, "research-affiliation", "Research / PhD")}
+                  {renderSelectField(fields, updateField, "statutory-body", "Recognition Body", ["UGC", "AICTE", "NAAC"])}
+                  {renderRadioGroup(fields, updateField, "nri-approval", "NRI / Foreign Quota")}
+                  {renderRadioGroup(fields, updateField, "state-govt", "State Govt NOC")}
+                  {renderRadioGroup(fields, updateField, "university-rec", "University Rec")}
                 </div>
               </section>
               )}
 
-              <div className="flex flex-col sm:flex-row justify-between items-center gap-3 pt-2">
-                <button
-                  className="flex items-center gap-2 px-5 py-3 rounded-full border border-border text-sm font-semibold text-foreground hover:bg-muted transition-colors"
-                  onClick={() => {
-                    if (activeSubStep > 0) {
-                      setActiveSubStep((prev) => Math.max(prev - 1, 0));
-                    } else {
-                      navigate(-1);
-                    }
-                  }}
-                >
-                  ← Back
-                </button>
-                <button
-                  className="flex items-center gap-2 px-6 py-3 rounded-full bg-accent text-accent-foreground text-sm font-semibold shadow-sm shadow-accent/40"
-                  onClick={() => {
-                    if (!isLastStep) {
-                      setActiveSubStep((s) => Math.min(SECTION_ORDER.length - 1, s + 1));
-                    } else {
-                      navigate("/institutional-registry");
-                    }
-                  }}
-                >
-                  {isLastStep ? "Save" : "Save & Continue"}
-                </button>
               </div>
             </div>
-
-            <div className="flex-none px-2 pb-6 lg:pb-0">
-              <SectionStatusSidebar
-                sections={sections}
-                sectionOrder={SECTION_ORDER}
-                activeSection={currentSectionName}
-                onSectionClick={(name) => {
-                  const targetIndex = SECTION_ORDER.indexOf(name);
-                  if (targetIndex >= 0) {
-                    setActiveSubStep(targetIndex);
-                  }
-                }}
-              />
-            </div>
           </div>
+        </div>
+      </div>
+
+      {/* Sticky Navigation Footer */}
+      <div className="fixed bottom-0 right-0 left-0 bg-white/95 backdrop-blur-sm border-t border-border py-3 z-40 transition-all duration-300"
+           style={{ left: "var(--sidebar-width, 256px)" }}>
+        <div className="max-w-7xl mx-auto flex items-center justify-between px-6">
+          <button
+            onClick={() => {
+              if (activeSubStep > 0) {
+                setActiveSubStep((prev) => Math.max(prev - 1, 0));
+              } else {
+                navigate(-1);
+              }
+            }}
+            className="flex items-center gap-2 px-5 py-2 rounded text-[11px] font-bold uppercase tracking-wider bg-muted text-foreground hover:bg-muted/80 shadow-sm transition-all duration-200"
+          >
+            ← Previous
+          </button>
+
+          <button
+            onClick={() => {
+              if (!isLastStep) {
+                setActiveSubStep((s) => Math.min(SECTION_ORDER.length - 1, s + 1));
+              } else {
+                navigate("/institutional-registry");
+              }
+            }}
+            className="flex items-center gap-2 px-8 py-2 bg-accent text-accent-foreground rounded text-[11px] font-black uppercase tracking-widest hover:bg-accent/90 transition-all duration-200 shadow-md hover:shadow-lg active:scale-[0.98]"
+          >
+            {isLastStep ? (
+              <>
+                <CheckCircle2 className="h-3.5 w-3.5" />
+                Save & Submit
+              </>
+            ) : (
+              <>
+                Save & Continue
+                <span className="ml-1">→</span>
+              </>
+            )}
+          </button>
         </div>
       </div>
       <PendingFieldsPanel

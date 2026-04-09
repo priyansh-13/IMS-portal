@@ -9,16 +9,22 @@ interface DashboardLayoutProps {
 }
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
     setMobileMenuOpen(false);
+    setSidebarCollapsed(true);
   }, [location.pathname]);
 
   return (
-    <div className="h-screen flex w-full overflow-hidden bg-background relative">
+    <div 
+      className="h-screen flex w-full overflow-hidden bg-background relative"
+      style={{ 
+        ["--sidebar-width" as any]: sidebarCollapsed ? "64px" : "256px" 
+      }}
+    >
       {/* Mobile overlay */}
       {mobileMenuOpen && (
         <div 

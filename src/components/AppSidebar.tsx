@@ -12,6 +12,7 @@ import {
   FlaskConical,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
   Phone,
   FileCheck,
   UsersRound,
@@ -155,9 +156,31 @@ export function AppSidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: {
   const location = useLocation();
   const navigate = useNavigate();
 
+  const [expandedMenus, setExpandedMenus] = useState<Record<string, boolean>>(() => {
+    const initial: Record<string, boolean> = {};
+    menuItems.forEach((item) => {
+      if (item.subItems) {
+        const isActive = location.pathname === item.url || 
+                       item.subItems.some(sub => location.pathname === sub.url);
+        if (isActive) {
+          initial[item.title] = true;
+        }
+      }
+    });
+    return initial;
+  });
+
   const isActive = (item: MenuItem) =>
     location.pathname === item.url ||
     (item.url !== "/dashboard" && location.pathname.startsWith(item.url));
+
+  const toggleMenu = (title: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setExpandedMenus((prev) => ({
+      ...prev,
+      [title]: !prev[title],
+    }));
+  };
 
   useEffect(() => {
     // keep mobile menu closed on route change
@@ -170,9 +193,9 @@ export function AppSidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: {
         "h-screen bg-card border-r border-border flex flex-col shrink-0 transition-transform duration-300 z-50",
         // Desktop
         "lg:sticky lg:top-0 lg:translate-x-0",
-        collapsed ? "lg:w-16" : "lg:w-72",
+        collapsed ? "lg:w-16" : "lg:w-64",
         // Mobile
-        "fixed inset-y-0 left-0 w-72",
+        "fixed inset-y-0 left-0 w-64",
         mobileOpen ? "translate-x-0" : "-translate-x-full"
       )}
     >
@@ -219,25 +242,37 @@ export function AppSidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: {
               <Tooltip delayDuration={0}>
                 <TooltipTrigger asChild>
                   <button
-                    onClick={() => {
+                    onClick={(e) => {
+                      if (item.subItems) {
+                        toggleMenu(item.title, e);
+                      }
                       navigate(item.url);
                     }}
                     className={cn(
-                      "w-full flex items-start gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-200 group",
+                      "w-full flex items-center justify-between gap-2 px-3 py-1.5 rounded-lg text-[13px] transition-all duration-200 group relative",
                       active
                         ? "bg-primary text-primary-foreground shadow-sm"
                         : "text-foreground hover:bg-muted"
                     )}
                   >
-                    <item.icon className="h-4 w-4 shrink-0 mt-0.5" />
                     {!collapsed && (
                       <>
-                        <span className="leading-snug flex-1 text-left whitespace-normal break-words">{item.title}</span>
-                        <div className="flex items-center gap-1.5 shrink-0 mt-0.5">
-                          <ProgressDot progress={item.progress} />
+                        <span className="leading-snug flex-1 text-left whitespace-normal break-words font-medium">{item.title}</span>
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          {item.subItems && (
+                            <ChevronDown 
+                              className={cn(
+                                "h-3.5 w-3.5 transition-transform duration-200 opacity-60 group-hover:opacity-100",
+                                expandedMenus[item.title] ? "rotate-180" : "rotate-0"
+                              )} 
+                            />
+                          )}
                         </div>
                       </>
                     )}
+                    {collapsed && <item.icon className="h-4 w-4 mx-auto" />}
+
+                    {/* Active indicator removed per design feedback */}
                   </button>
                 </TooltipTrigger>
                 {collapsed && (
@@ -251,7 +286,33 @@ export function AppSidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: {
                 )}
               </Tooltip>
 
-
+              {/* Sub items */}
+              {!collapsed && item.subItems && (
+                <div className={cn(
+                  "grid-transition",
+                  expandedMenus[item.title] && "grid-transition-open"
+                )}>
+                  <div className="flex flex-col gap-0.5 mt-0.5 ml-2 pl-3 border-l border-border/40">
+                    {item.subItems.map((subItem) => {
+                      const isSubActive = location.pathname === subItem.url;
+                      return (
+                        <button
+                          key={subItem.url}
+                          onClick={() => navigate(subItem.url)}
+                          className={cn(
+                            "flex items-center gap-2 px-2 py-1.5 rounded-md text-[13px] transition-colors",
+                            isSubActive 
+                              ? "bg-primary/10 text-primary font-semibold" 
+                              : "text-foreground/70 hover:text-foreground hover:bg-muted/50"
+                          )}
+                        >
+                          <span className="flex-1 text-left leading-tight">{subItem.title}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
           );
         })}

@@ -13,6 +13,14 @@ import {
   Globe,
   Accessibility,
   LogOut,
+  Bell,
+  Download,
+  FileJson,
+  FileSpreadsheet,
+  FileText,
+  Clock,
+  CheckCircle2,
+  AlertCircle,
 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
@@ -51,9 +59,13 @@ export function AppHeader({ onMenuClick }: { onMenuClick?: () => void }) {
   const [lang, setLang] = useState<"en" | "hi">("en");
   const [accessOpen, setAccessOpen] = useState(false);
   const [userOpen, setUserOpen] = useState(false);
+  const [notifOpen, setNotifOpen] = useState(false);
+  const [downloadOpen, setDownloadOpen] = useState(false);
   const langRef = useRef<HTMLDivElement>(null);
   const accessRef = useRef<HTMLDivElement>(null);
   const userRef = useRef<HTMLDivElement>(null);
+  const notifRef = useRef<HTMLDivElement>(null);
+  const downloadRef = useRef<HTMLDivElement>(null);
 
   const years = ["2023-2024", "2024-2025", "2025-2026", "2026-2027"];
   const { fontSize, highContrast, increaseFontSize, decreaseFontSize, resetFontSize, toggleContrast } = useAccessibility();
@@ -64,13 +76,15 @@ export function AppHeader({ onMenuClick }: { onMenuClick?: () => void }) {
       if (langRef.current && !langRef.current.contains(e.target as Node)) setLangOpen(false);
       if (accessRef.current && !accessRef.current.contains(e.target as Node)) setAccessOpen(false);
       if (userRef.current && !userRef.current.contains(e.target as Node)) setUserOpen(false);
+      if (notifRef.current && !notifRef.current.contains(e.target as Node)) setNotifOpen(false);
+      if (downloadRef.current && !downloadRef.current.contains(e.target as Node)) setDownloadOpen(false);
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
   return (
-    <header className="h-14 bg-card border-b border-border flex items-center justify-between px-3 lg:px-5 shrink-0 sticky top-0 z-50 gap-2">
+    <header className="h-12 bg-card border-b border-border flex items-center justify-between px-3 lg:px-4 shrink-0 sticky top-0 z-50 gap-2">
       {/* Left: Hamburger + Year + Search */}
       <div className="flex items-center gap-2 flex-1 min-w-0">
         <button
@@ -125,9 +139,8 @@ export function AppHeader({ onMenuClick }: { onMenuClick?: () => void }) {
 
       {/* Center: HEI identifier */}
       <div className="hidden lg:flex items-center justify-center px-2 shrink-0">
-        <div className="flex items-center gap-2.5 px-3 py-1 bg-primary/5 rounded-full border border-primary/15">
-          {/* <div className="h-1.5 w-1.5 rounded-full bg-[hsl(142,35%,48%)] animate-pulse shrink-0" /> */}
-          <div className="flex items-center gap-2 text-xs">
+        <div className="flex items-center gap-2 px-2.5 py-0.5 bg-primary/5 rounded-full border border-primary/10">
+          <div className="flex items-center gap-2 text-[11px]">
             {/* <span className="text-muted-foreground font-medium">HEI Code:</span>
             <span className="text-primary font-bold tracking-wide">HEI-U-0123</span> */}
             {/* <span className="w-px h-3 bg-border" /> */}
@@ -138,7 +151,119 @@ export function AppHeader({ onMenuClick }: { onMenuClick?: () => void }) {
       </div>
 
       {/* Right: Lang + Accessibility + User */}
-      <div className="flex items-center gap-1 shrink-0">
+      <div className="flex items-center gap-1.5 shrink-0">
+        
+        {/* Download */}
+        <div ref={downloadRef} className="relative">
+          <button
+            onClick={() => { setDownloadOpen(!downloadOpen); setNotifOpen(false); setLangOpen(false); setAccessOpen(false); setUserOpen(false); }}
+            className={cn(
+              "flex items-center justify-center h-8 w-8 rounded-lg border transition-all",
+              downloadOpen
+                ? "bg-primary text-primary-foreground border-primary"
+                : "border-border text-foreground hover:bg-muted"
+            )}
+            title="Downloads"
+          >
+            <Download className="h-4 w-4" />
+          </button>
+          {downloadOpen && (
+            <div className="absolute right-0 top-full mt-1.5 w-64 bg-card rounded-xl border border-border shadow-lg z-50 overflow-hidden animate-scale-in">
+              <div className="p-2">
+                <div className="px-2 py-1.5 text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">
+                  Available Downloads
+                </div>
+                <div className="space-y-1">
+                  {[
+                    { title: "Institutional Summary", type: "PDF", size: "1.2 MB", icon: FileText, color: "text-red-500" },
+                    { title: "Financial Report Q1", type: "Excel", size: "850 KB", icon: FileSpreadsheet, color: "text-emerald-500" },
+                    { title: "Student Data Export", type: "JSON", size: "4.5 MB", icon: FileJson, color: "text-amber-500" },
+                  ].map((item, idx) => (
+                    <button
+                      key={idx}
+                      className="w-full flex items-center gap-3 px-2.5 py-2 rounded-lg hover:bg-muted transition-colors text-left group"
+                    >
+                      <div className={cn("p-1.5 rounded-md bg-muted group-hover:bg-background transition-colors", item.color)}>
+                        <item.icon className="h-4 w-4" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-semibold text-foreground truncate">{item.title}</p>
+                        <p className="text-[10px] text-muted-foreground uppercase">{item.type} • {item.size}</p>
+                      </div>
+                      <Download className="h-3 w-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </button>
+                  ))}
+                </div>
+                <div className="mt-2 pt-2 border-t border-border">
+                  <button className="w-full text-center py-1.5 text-[11px] text-primary font-bold hover:underline">
+                    View Download History
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Notifications */}
+        <div ref={notifRef} className="relative">
+          <button
+            onClick={() => { setNotifOpen(!notifOpen); setDownloadOpen(false); setLangOpen(false); setAccessOpen(false); setUserOpen(false); }}
+            className={cn(
+              "flex items-center justify-center h-8 w-8 rounded-lg border transition-all relative",
+              notifOpen
+                ? "bg-primary text-primary-foreground border-primary"
+                : "border-border text-foreground hover:bg-muted"
+            )}
+            title="Notifications"
+          >
+            <Bell className="h-4 w-4" />
+            <span className="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-destructive border border-card" />
+          </button>
+          {notifOpen && (
+            <div className="absolute right-0 top-full mt-1.5 w-80 bg-card rounded-xl border border-border shadow-lg z-50 overflow-hidden animate-scale-in">
+              <div className="flex items-center justify-between px-3 py-2.5 border-b border-border bg-muted/30">
+                <span className="text-xs font-bold text-foreground">Notifications</span>
+                <button className="text-[10px] text-primary font-bold hover:underline">Mark all as read</button>
+              </div>
+              <div className="max-h-72 overflow-y-auto custom-scrollbar">
+                {[
+                  { title: "New Policy Uploaded", desc: "Institutional Registry policy v2.4 is now live.", time: "2 mins ago", type: "info", icon: Clock },
+                  { title: "Validation Complete", desc: "Data validation for Student Info finished successfully.", time: "1 hour ago", type: "success", icon: CheckCircle2 },
+                  { title: "Action Required", desc: "Please update the financial details for 2024-25.", time: "3 hours ago", type: "error", icon: AlertCircle },
+                  { title: "System Update", desc: "Platform will undergo maintenance at 12:00 AM.", time: "5 hours ago", type: "info", icon: Clock },
+                  { title: "New Message", desc: "You have a new message from the accreditation board.", time: "1 day ago", type: "info", icon: Clock },
+                  { title: "Report Ready", desc: "The Q3 financial report is ready for download.", time: "2 days ago", type: "success", icon: CheckCircle2 },
+                ].map((notif, idx) => (
+                  <button
+                    key={idx}
+                    className="w-full flex items-start gap-3 px-3 py-3 border-b border-border/50 last:border-0 hover:bg-muted/50 transition-colors text-left"
+                  >
+                    <div className={cn(
+                      "mt-0.5 p-1.5 rounded-full shrink-0",
+                      notif.type === "info" && "bg-blue-100 text-blue-600",
+                      notif.type === "success" && "bg-emerald-100 text-emerald-600",
+                      notif.type === "error" && "bg-red-100 text-red-600"
+                    )}>
+                      <notif.icon className="h-3.5 w-3.5" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="text-xs font-semibold text-foreground">{notif.title}</p>
+                        <span className="text-[10px] text-muted-foreground whitespace-nowrap">{notif.time}</span>
+                      </div>
+                      <p className="text-[11px] text-muted-foreground leading-snug mt-0.5 line-clamp-2">{notif.desc}</p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+              <div className="p-2 bg-muted/30 text-center border-t border-border">
+                <button className="text-[11px] text-primary font-bold hover:underline">View All Notifications</button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="w-px h-5 bg-border mx-1" />
 
         {/* Language Toggle */}
         <div ref={langRef} className="relative">

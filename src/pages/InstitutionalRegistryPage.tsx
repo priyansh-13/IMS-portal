@@ -1,8 +1,6 @@
 import { TopLayout } from "@/components/TopLayout";
 import { ModuleBanner } from "@/components/ModuleBanner";
 import { StatusCard } from "@/components/StatusCard";
-import { SectionStatusSidebar } from "@/components/SectionStatusSidebar";
-import type { SectionProgress } from "@/hooks/useFormProgress";
 import { useNavigate } from "react-router-dom";
 import {
   Building2, Phone, Users, FileCheck, UsersRound,
@@ -23,37 +21,16 @@ const sections = [
 
 
 export default function InstitutionalRegistryPage() {
-  const navigate = useNavigate();
-
-  const sectionProgress: SectionProgress[] = sections.map((section) => ({
-    name: section.title,
-    totalFields: 1,
-    filledFields: section.completed ? 1 : 0,
-    completionPercentage: section.completed ? 100 : 0,
-  }));
-
   return (
     <TopLayout>
       <ModuleBanner title="Institutional Registry and Recognition Module" />
       <div className="p-6 lg:p-8">
-        <div className="flex flex-col lg:flex-row gap-6">
-          <div className="flex-1 min-w-0">
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-              {sections.map((section) => (
-                <StatusCard key={section.title} {...section} />
-              ))}
-            </div>
+        <div className="mx-auto max-w-7xl">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            {sections.map((section) => (
+              <StatusCard key={section.title} {...section} />
+            ))}
           </div>
-          {/* <div className="flex-none px-2 pb-6 lg:pb-0">
-            <SectionStatusSidebar
-              sections={sectionProgress}
-              sectionOrder={sections.map((s) => s.title)}
-              onSectionClick={(name) => {
-                const target = sections.find((s) => s.title === name);
-                if (target?.link) navigate(target.link);
-              }}
-            />
-          </div> */}
         </div>
       </div>
     </TopLayout>

@@ -87,10 +87,39 @@
 
 @layer components {
   .bodiesico-sidebar {
-    @apply flex items-center justify-around gap-1 p-2 bg-muted/30 rounded-lg border border-border/50 mx-2 mb-2;
+    @apply flex items-center justify-around gap-1 p-1.5 bg-muted/30 rounded-md border border-border/50 mx-1.5 mb-2;
   }
 
   .dbmenu-icon {
-    @apply h-6 w-auto object-contain;
+    @apply h-5 w-auto object-contain transition-all duration-300;
+  }
+
+  .grid-transition {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.3s ease-in-out;
+  }
+  
+  .grid-transition-open {
+    grid-template-rows: 1fr;
+  }
+
+  .grid-transition > div {
+    overflow: hidden;
+  }
+
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  @keyframes fade-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes scale-in {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
   }
 }

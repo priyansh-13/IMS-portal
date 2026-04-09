@@ -253,113 +253,13 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 transition-opacity duration-300">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 transition-opacity duration-300">
               {filteredModules.map((mod) => (
                 <div key={mod.title} className="animate-in fade-in duration-500 fill-mode-backwards h-full">
                   <ProgressCard {...mod} />
                 </div>
               ))}
             </div>
-          </div>
-
-          {/* Right: Sidebar panels */}
-          <div className="w-full xl:w-72 shrink-0 space-y-4 xl:sticky xl:top-6 xl:self-start">
-
-            {/* Notifications Panel */}
-            <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden transition-all duration-300">
-              <button 
-                onClick={() => setShowNotifications(!showNotifications)}
-                className="w-full flex items-center justify-between px-4 py-3 border-b border-slate-100 hover:bg-slate-50/50 transition-colors"
-                aria-expanded={showNotifications}
-              >
-                <div className="flex items-center gap-2.5">
-                  <div className="p-1.5 rounded-lg bg-primary/8">
-                    <Bell className="h-3.5 w-3.5 text-primary" />
-                  </div>
-                  <h3 className="text-sm font-bold text-slate-700">Notifications</h3>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-primary text-white font-bold">
-                    <span className="h-1 w-1 rounded-full bg-white/80" /> {notifications.length} New
-                  </span>
-                  <ChevronDown className={`h-4 w-4 text-slate-400 transition-transform duration-300 ${showNotifications ? 'rotate-180' : ''}`} />
-                </div>
-              </button>
-
-              <div className={`grid transition-all duration-300 ease-in-out ${showNotifications ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}>
-                <div className="overflow-hidden">
-                  <ul className="divide-y divide-slate-50 max-h-[320px] overflow-y-auto custom-scrollbar">
-                    {notifications.map((n, idx) => {
-                      const isInfo = n.type === "info";
-                      const isPending = n.type === "pending";
-                      return (
-                        <li key={idx}
-                          className="flex items-start gap-3 px-4 py-3 hover:bg-slate-50/70 transition-colors cursor-pointer group">
-                          <div className={`mt-0.5 p-1.5 rounded-full shrink-0 transition-colors ${
-                            isInfo ? "bg-blue-50 text-blue-600 group-hover:bg-blue-100"
-                              : isPending ? "bg-amber-50 text-amber-600 group-hover:bg-amber-100"
-                              : "bg-red-50 text-red-500 group-hover:bg-red-100"
-                          }`}>
-                            {isInfo ? <CheckCircle2 className="h-3 w-3" />
-                              : isPending ? <Clock className="h-3 w-3" />
-                              : <AlertCircle className="h-3 w-3" />}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-xs text-slate-700 leading-relaxed">{n.text}</p>
-                            <p className="text-[10px] text-slate-400 mt-0.5 font-medium">{n.time}</p>
-                          </div>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            {/* Downloads Panel */}
-            <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden transition-all duration-300">
-              <button 
-                onClick={() => setShowDownloads(!showDownloads)}
-                className="w-full flex items-center justify-between px-4 py-3 border-b border-slate-100 hover:bg-slate-50/50 transition-colors"
-                aria-expanded={showDownloads}
-              >
-                <div className="flex items-center gap-2.5">
-                  <div className="p-1.5 rounded-lg bg-primary/8">
-                    <FileDown className="h-3.5 w-3.5 text-primary" />
-                  </div>
-                  <h3 className="text-sm font-bold text-slate-700">Downloads</h3>
-                </div>
-                <ChevronDown className={`h-4 w-4 text-slate-400 transition-transform duration-300 ${showDownloads ? 'rotate-180' : ''}`} />
-              </button>
-
-              <div className={`grid transition-all duration-300 ease-in-out ${showDownloads ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}>
-                <div className="overflow-hidden">
-                  <div className="p-3.5 space-y-2.5">
-                    {[
-                      { label: "Institution Data Report", sub: "PDF · 1.2 MB", Icon: FileDown },
-                      { label: "Programme Summary Sheet", sub: "XLSX · 340 KB", Icon: FileDown },
-                    ].map((item) => (
-                      <div key={item.label}
-                        className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100 group hover:bg-blue-50/50 hover:border-blue-200/50 transition-all cursor-pointer">
-                        <div className="p-2 rounded-lg bg-white border border-slate-200 group-hover:border-blue-200 group-hover:bg-blue-50 transition-all shrink-0">
-                          <item.Icon className="h-3.5 w-3.5 text-slate-500 group-hover:text-blue-600 transition-colors" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-xs font-semibold text-slate-700 leading-tight">{item.label}</p>
-                          <p className="text-[10px] text-slate-400 mt-0.5">{item.sub}</p>
-                        </div>
-                        <Download className="h-3.5 w-3.5 text-slate-300 group-hover:text-blue-600 transition-colors shrink-0" />
-                      </div>
-                    ))}
-                    <Button className="w-full justify-center gap-2 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-xs h-9 rounded-xl mt-1 shadow-[0_1px_2px_rgba(0,0,0,0.02)] font-semibold transition-colors">
-                      <Download className="h-3.5 w-3.5" />
-                      Download All Reports
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
           </div>
         </div>
       </div>

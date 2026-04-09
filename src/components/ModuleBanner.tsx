@@ -22,7 +22,7 @@ export function ModuleBanner({
 
   return (
     <div className="bg-primary text-primary-foreground">
-      <div className="px-6 py-4 flex items-center justify-between">
+      <div className="px-6 py-2.5 flex items-center justify-between">
         <div className="flex items-center gap-3">
           {showBack && (
             <button
@@ -34,7 +34,7 @@ export function ModuleBanner({
           )}
           <div>
             <h2 className="text-lg font-semibold">{title}</h2>
-            <p className="text-xs opacity-80">{subtitle}</p>
+            <p className="text-[10px] opacity-70 hidden md:block max-w-xl truncate">{subtitle}</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
@@ -48,7 +48,7 @@ export function ModuleBanner({
         </div>
       </div>
       {children && (
-        <div className="px-6 pb-4 pt-0">
+        <div className="px-6 pb-2 pt-0">
           {children}
         </div>
       )}

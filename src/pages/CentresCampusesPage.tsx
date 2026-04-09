@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { TopLayout } from "@/components/TopLayout";
 import { ModuleBanner } from "@/components/ModuleBanner";
 import { FormStepper } from "@/components/FormStepper";
-import { SectionStatusSidebar } from "@/components/SectionStatusSidebar";
 import { useFormProgress, FieldState } from "@/hooks/useFormProgress";
 import { PendingFieldsPanel } from "@/components/PendingFieldsPanel";
 import { cn } from "@/lib/utils";
@@ -83,8 +82,11 @@ const renderInputField = (
   const filled = fieldVal.trim().length > 0;
   
   return (
-    <div className="flex flex-col gap-2">
-      <label htmlFor={id} className="text-sm font-medium text-foreground">{label}</label>
+    <div className="flex flex-col gap-1.5">
+      <label htmlFor={id} className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+        {label}
+        <span className="text-red-500 ml-0.5">*</span>
+      </label>
       <div className="relative">
         <input
           id={id}
@@ -93,12 +95,12 @@ const renderInputField = (
           onChange={(e) => setValue(id, e.target.value)}
           placeholder={placeholder}
           className={cn(
-            "w-full rounded-xl border px-3 py-2 text-sm transition-all duration-200 outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent",
-            filled ? "border-success/50 bg-success/5" : "border-border bg-muted/20"
+            "w-full h-9 rounded border px-2.5 text-[12px] transition-all duration-200 outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent",
+            filled ? "border-success/50 bg-success/5" : "border-border bg-white"
           )}
         />
         {filled && (
-          <CheckCircle2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-success" />
+          <CheckCircle2 className="absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-success" />
         )}
       </div>
     </div>
@@ -114,20 +116,23 @@ const renderRadioGroup = (
   const fieldVal = fields.find((f) => f.id === id)?.value || "";
 
   return (
-    <div className="flex flex-col gap-2">
-      <p className="text-sm font-medium text-foreground">{label}</p>
-      <div className="flex gap-4">
+    <div className="flex flex-col gap-1.5">
+      <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+        {label}
+        <span className="text-red-500 ml-0.5">*</span>
+      </p>
+      <div className="flex gap-4 py-0.5">
         {["Yes", "No"].map((opt) => (
-          <label key={opt} className="flex items-center gap-2 text-sm text-foreground cursor-pointer">
+          <label key={opt} className="flex items-center gap-2 text-[12px] text-foreground cursor-pointer group">
             <input
               type="radio"
               name={id}
               value={opt}
               checked={fieldVal === opt}
               onChange={(e) => setValue(id, e.target.value)}
-              className="accent-accent"
+              className="w-4 h-4 accent-accent"
             />
-            {opt}
+            <span className="group-hover:text-accent transition-colors">{opt}</span>
           </label>
         ))}
       </div>
@@ -244,21 +249,21 @@ export default function CentresCampusesPage() {
           size="sm"
         />
       </ModuleBanner>
-      <div className="p-6 lg:p-8">
-        <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
-          <div className="flex items-center justify-between px-6 py-4 border-b border-border border-l-4 border-l-primary relative">
+      <div className="p-3 lg:p-4 pb-24">
+        <div className="bg-card rounded-lg shadow-sm border border-border overflow-hidden">
+          <div className="flex items-center justify-between px-4 py-2.5 border-b border-border border-l-4 border-l-primary bg-muted/5 relative">
             <div className="flex items-center gap-4">
-              <h2 className="text-lg font-semibold text-foreground">Centres / Campuses</h2>
+              <h2 className="text-sm font-bold text-foreground">Centres / Campuses</h2>
               
               {/* Filter Dropdown */}
               <div className="relative">
-                <button
+                   <button
                   onClick={() => setIsFilterOpen(!isFilterOpen)}
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-border bg-muted/30 text-xs font-medium text-foreground hover:bg-muted transition-all"
+                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-border bg-muted/30 text-[11px] font-bold text-foreground hover:bg-muted transition-all uppercase tracking-tight"
                 >
-                  <Filter className="h-3.5 w-3.5 text-accent" />
-                  <span>Sections Filter</span>
-                  <ChevronDown className={cn("h-3 w-3 transition-transform", isFilterOpen && "rotate-180")} />
+                  <Filter className="h-3 w-3 text-accent" />
+                  <span>Filters</span>
+                  <ChevronDown className={cn("h-2.5 w-2.5 transition-transform", isFilterOpen && "rotate-180")} />
                 </button>
                 
                 {isFilterOpen && (
@@ -295,36 +300,34 @@ export default function CentresCampusesPage() {
             
             <button 
               onClick={() => navigate(-1)}
-              className="px-4 py-2 bg-accent text-accent-foreground rounded-lg text-sm font-medium hover:bg-accent/90 transition-colors"
+              className="px-3 py-1.5 bg-accent/10 text-accent font-bold hover:bg-accent/20 rounded text-[11px] uppercase tracking-wider transition-colors"
             >
               Back
             </button>
           </div>
 
-          <div className="flex flex-col lg:flex-row gap-6 px-6 pb-6 pt-6">
-            <div className="flex-1 min-w-0 space-y-6">
+          <div className="flex flex-col">
+            <div className="flex-1 min-w-0 w-full">
+              <div className="p-4 lg:p-5 space-y-4">
               {currentSectionName === "Offshore" && (
-              <section id="section-offshore" className="rounded-2xl border border-border/70 bg-muted/40 p-5 space-y-4">
-                <div className="flex items-center justify-between mb-4 pb-2 border-b border-border/30">
+               <section id="section-offshore" className="rounded border border-border/60 bg-white p-4 space-y-3">
+                <div className="flex items-center justify-between pb-2 border-b border-border/30 text-nowrap">
                   <div className="flex items-center gap-3">
-                    <h3 className="text-base font-semibold text-foreground">Offshore Centres</h3>
-                    
+                    <h3 className="text-[11px] font-black text-primary uppercase tracking-widest">Offshore Centres</h3>
                   </div>
-                  <div className="flex gap-3 items-center"> 
+                  <div className="flex gap-2 items-center"> 
                   {currentSection && (
                     <span className={cn(
                       "text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider",
                       currentSection.completionPercentage >= 100 
                         ? "bg-success/10 text-success" 
-                        : currentSection.completionPercentage > 0
-                        ? "bg-accent/10 text-accent"
-                        : "bg-muted text-muted-foreground"
+                        : "bg-accent/10 text-accent"
                     )}>
                       {currentSection.completionPercentage}% Complete
                     </span>
                   )}
                   <button
-                      className="flex items-center justify-center w-8 h-8 rounded-full bg-accent text-white font-bold hover:shadow-md hover:bg-accent/90 transition-all text-xl"
+                      className="flex items-center justify-center w-6 h-6 rounded bg-accent text-white font-black hover:shadow-md hover:bg-accent/90 transition-all text-sm"
                       onClick={addOffshore}
                       title="Add another Offshore Centre"
                     >
@@ -333,32 +336,32 @@ export default function CentresCampusesPage() {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {renderRadioGroup(fields, updateField, "offshore-exists", "Offshore Centre Exists")}
-                  {renderInputField(fields, updateField, "offshore-count", "Number of Offshore Centres", undefined, "number")}
+                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-4">
+                  {renderRadioGroup(fields, updateField, "offshore-exists", "Offshore Exist")}
+                  {renderInputField(fields, updateField, "offshore-count", "Count", undefined, "number")}
                 </div>
 
-                <div className="space-y-6 pt-2">
+                 <div className="space-y-3 pt-1">
                   {Array.from({ length: offshoreCount }).map((_, i) => (
-                    <div key={i} className="relative bg-white p-5 rounded-xl border border-border shadow-sm group">
-                      <div className="flex justify-between items-center mb-4">
-                        <span className="text-xs font-bold text-primary px-2 py-1 bg-primary/10 rounded-lg">Centre {i + 1}</span>
+                    <div key={i} className="relative bg-muted/20 p-3 rounded border border-border/50 group">
+                      <div className="flex justify-between items-center mb-3">
+                        <span className="text-[10px] font-black text-primary px-1.5 py-0.5 bg-primary/10 rounded uppercase tracking-wider">Centre {i + 1}</span>
                         {offshoreCount > 1 && (
                           <button
-                            className="text-xs text-red-500 hover:text-red-700 font-medium px-2 py-1 rounded hover:bg-red-50 transition-colors"
+                            className="text-[10px] text-red-500 hover:text-red-700 font-bold uppercase tracking-wider px-1.5 py-0.5 rounded hover:bg-red-50 transition-colors"
                             onClick={() => removeOffshore(i)}
                           >
                             Remove
                           </button>
                         )}
                       </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {renderInputField(fields, updateField, `offshore-name-${i}`, "Name of Offshore")}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-x-4 gap-y-4">
+                        {renderInputField(fields, updateField, `offshore-name-${i}`, "Name")}
                         {renderInputField(fields, updateField, `offshore-country-${i}`, "Country")}
-                        {renderInputField(fields, updateField, `offshore-mode-${i}`, "Study Mode")}
-                        {renderInputField(fields, updateField, `offshore-students-${i}`, "Total Enrolled Students", undefined, "number")}
-                        {renderInputField(fields, updateField, `offshore-girls-${i}`, "Total Enrolled Girls Students", undefined, "number")}
-                        {renderInputField(fields, updateField, `offshore-saved-${i}`, "Additional Info")}
+                        {renderInputField(fields, updateField, `offshore-mode-${i}`, "Mode")}
+                        {renderInputField(fields, updateField, `offshore-students-${i}`, "Enrolled", undefined, "number")}
+                        {renderInputField(fields, updateField, `offshore-girls-${i}`, "Girls", undefined, "number")}
+                        {renderInputField(fields, updateField, `offshore-saved-${i}`, "Addl Info")}
                       </div>
                     </div>
                   ))}
@@ -367,41 +370,39 @@ export default function CentresCampusesPage() {
               )}
 
               {currentSectionName === "Off Campus" && (
-              <section id="section-offcampus" className="rounded-2xl border border-border/70 bg-muted/40 p-5 space-y-4">
-                <div className="flex items-center justify-between mb-4 pb-2 border-b border-border/30">
-                  <h3 className="text-base font-semibold text-foreground">Off Campus Centre</h3>
+               <section id="section-offcampus" className="rounded border border-border/60 bg-white p-4 space-y-3">
+                <div className="flex items-center justify-between pb-2 border-b border-border/30">
+                  <h3 className="text-[11px] font-black text-primary uppercase tracking-widest">Off Campus Centre</h3>
                   {currentSection && (
                     <span className={cn(
                       "text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider",
                       currentSection.completionPercentage >= 100 
                         ? "bg-success/10 text-success" 
-                        : currentSection.completionPercentage > 0
-                        ? "bg-accent/10 text-accent"
-                        : "bg-muted text-muted-foreground"
+                        : "bg-accent/10 text-accent"
                     )}>
                       {currentSection.completionPercentage}% Complete
                     </span>
                   )}
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {renderRadioGroup(fields, updateField, "offcampus-exists", "Off Campus Centre Exists")}
-                  {renderInputField(fields, updateField, "offcampus-name", "Name of Off Campus Centre")}
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-x-4 gap-y-4">
+                  {renderRadioGroup(fields, updateField, "offcampus-exists", "Exists")}
+                  {renderInputField(fields, updateField, "offcampus-name", "Name")}
                   {renderInputField(fields, updateField, "offcampus-address", "Address")}
-                  {renderInputField(fields, updateField, "offcampus-lat", "Latitude")}
-                  {renderInputField(fields, updateField, "offcampus-long", "Longitude")}
-                  {renderInputField(fields, updateField, "offcampus-email", "Email Address", undefined, "email")}
-                  {renderInputField(fields, updateField, "offcampus-mobile", "Mobile Number", undefined, "tel")}
+                  {renderInputField(fields, updateField, "offcampus-lat", "Lat")}
+                  {renderInputField(fields, updateField, "offcampus-long", "Long")}
+                  {renderInputField(fields, updateField, "offcampus-email", "Email", undefined, "email")}
+                  {renderInputField(fields, updateField, "offcampus-mobile", "Mobile", undefined, "tel")}
                 </div>
               </section>
               )}
 
               {currentSectionName === "Regional Centre" && (
-              <section id="section-regional" className="rounded-2xl border border-border/70 bg-muted/40 p-5 space-y-4">
-                <div className="flex items-center justify-between mb-4 pb-2 border-b border-border/30">
+               <section id="section-regional" className="rounded border border-border/60 bg-white p-4 space-y-3">
+                <div className="flex items-center justify-between pb-2 border-b border-border/30">
                   <div className="flex items-center gap-3">
-                    <h3 className="text-base font-semibold text-foreground">Regional Centre</h3>
+                    <h3 className="text-[11px] font-black text-primary uppercase tracking-widest">Regional Centre</h3>
                     <button
-                      className="flex items-center justify-center w-8 h-8 rounded-full bg-accent text-white font-bold hover:shadow-md hover:bg-accent/90 transition-all text-xl"
+                      className="flex items-center justify-center w-7 h-7 rounded bg-accent text-white font-black hover:shadow-md hover:bg-accent/90 transition-all text-sm"
                       onClick={addRegional}
                       title="Add another Regional Centre"
                     >
@@ -413,27 +414,25 @@ export default function CentresCampusesPage() {
                       "text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider",
                       currentSection.completionPercentage >= 100 
                         ? "bg-success/10 text-success" 
-                        : currentSection.completionPercentage > 0
-                        ? "bg-accent/10 text-accent"
-                        : "bg-muted text-muted-foreground"
+                        : "bg-accent/10 text-accent"
                     )}>
                       {currentSection.completionPercentage}% Complete
                     </span>
                   )}
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {renderRadioGroup(fields, updateField, "regional-exists", "Regional Centre Exists")}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-4">
+                  {renderRadioGroup(fields, updateField, "regional-exists", "Exist")}
                 </div>
-
-                <div className="space-y-6 pt-2">
+ 
+                <div className="space-y-3 pt-1">
                   {Array.from({ length: regionalCount }).map((_, i) => (
-                    <div key={i} className="relative bg-white p-5 rounded-xl border border-border shadow-sm group">
-                      <div className="flex justify-between items-center mb-4">
-                        <span className="text-xs font-bold text-primary px-2 py-1 bg-primary/10 rounded-lg">Regional Centre {i + 1}</span>
+                    <div key={i} className="relative bg-muted/20 p-3 rounded border border-border/50 group">
+                      <div className="flex justify-between items-center mb-3">
+                        <span className="text-[10px] font-black text-primary px-1.5 py-0.5 bg-primary/10 rounded uppercase tracking-wider">Regional Centre {i + 1}</span>
                           {regionalCount > 1 && (
                             <button
-                              className="text-xs text-red-500 hover:text-red-700 font-medium px-2 py-1 rounded hover:bg-red-50 transition-colors"
+                              className="text-[10px] text-red-500 hover:text-red-700 font-bold uppercase tracking-wider px-1.5 py-0.5 rounded hover:bg-red-50 transition-colors"
                               onClick={() => {
                                 const fieldIds = [`regional-name-${i}`, `regional-address-${i}`, `regional-count-${i}`];
                                 removeFields(fieldIds);
@@ -444,10 +443,10 @@ export default function CentresCampusesPage() {
                             </button>
                           )}
                       </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {renderInputField(fields, updateField, `regional-name-${i}`, "Name of Regional Centre")}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-x-4 gap-y-4">
+                        {renderInputField(fields, updateField, `regional-name-${i}`, "Name")}
                         {renderInputField(fields, updateField, `regional-address-${i}`, "Address")}
-                        {renderInputField(fields, updateField, `regional-count-${i}`, "Number of Study Centres")}
+                        {renderInputField(fields, updateField, `regional-count-${i}`, "Study Centres")}
                       </div>
                     </div>
                   ))}
@@ -456,130 +455,127 @@ export default function CentresCampusesPage() {
               )}
 
               {currentSectionName === "ODL" && (
-              <section id="section-odl" className="rounded-2xl border border-border/70 bg-muted/40 p-5 space-y-4">
-                <div className="flex items-center justify-between mb-4 pb-2 border-b border-border/30">
-                  <h3 className="text-base font-semibold text-foreground">ODL Centres</h3>
+               <section id="section-odl" className="rounded border border-border/60 bg-white p-4 space-y-3">
+                <div className="flex items-center justify-between pb-2 border-b border-border/30">
+                  <h3 className="text-[11px] font-black text-primary uppercase tracking-widest">ODL Centres</h3>
                   {currentSection && (
                     <span className={cn(
                       "text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider",
                       currentSection.completionPercentage >= 100 
                         ? "bg-success/10 text-success" 
-                        : currentSection.completionPercentage > 0
-                        ? "bg-accent/10 text-accent"
-                        : "bg-muted text-muted-foreground"
+                        : "bg-accent/10 text-accent"
                     )}>
                       {currentSection.completionPercentage}% Complete
                     </span>
                   )}
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {renderRadioGroup(fields, updateField, "odl-exists", "ODL Centres Exists")}
-                  {renderInputField(fields, updateField, "odl-name", "Institution Name")}
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-x-4 gap-y-4">
+                  {renderRadioGroup(fields, updateField, "odl-exists", "Exist")}
+                  {renderInputField(fields, updateField, "odl-name", "Name")}
                   {renderInputField(fields, updateField, "odl-address", "Address")}
-                  {renderInputField(fields, updateField, "odl-email", "Email Address", undefined, "email")}
-                  {renderInputField(fields, updateField, "odl-mobile", "Mobile Number", undefined, "tel")}
+                  {renderInputField(fields, updateField, "odl-email", "Email", undefined, "email")}
+                  {renderInputField(fields, updateField, "odl-mobile", "Mobile", undefined, "tel")}
                 </div>
               </section>
               )}
 
               {currentSectionName === "Online" && (
-              <section id="section-online" className="rounded-2xl border border-border/70 bg-muted/40 p-5 space-y-4">
-                <div className="flex items-center justify-between mb-4 pb-2 border-b border-border/30">
-                  <h3 className="text-base font-semibold text-foreground">Online Centres</h3>
+               <section id="section-online" className="rounded border border-border/60 bg-white p-4 space-y-3">
+                <div className="flex items-center justify-between pb-2 border-b border-border/30">
+                  <h3 className="text-[11px] font-black text-primary uppercase tracking-widest">Online Centres</h3>
                   {currentSection && (
                     <span className={cn(
                       "text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider",
                       currentSection.completionPercentage >= 100 
                         ? "bg-success/10 text-success" 
-                        : currentSection.completionPercentage > 0
-                        ? "bg-accent/10 text-accent"
-                        : "bg-muted text-muted-foreground"
+                        : "bg-accent/10 text-accent"
                     )}>
                       {currentSection.completionPercentage}% Complete
                     </span>
                   )}
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {renderRadioGroup(fields, updateField, "online-exists", "Online Centres Exists")}
-                  {renderInputField(fields, updateField, "online-name", "Institution Name")}
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-x-4 gap-y-4">
+                  {renderRadioGroup(fields, updateField, "online-exists", "Exist")}
+                  {renderInputField(fields, updateField, "online-name", "Name")}
                   {renderInputField(fields, updateField, "online-address", "Address")}
-                  {renderInputField(fields, updateField, "online-email", "Email Address", undefined, "email")}
-                  {renderInputField(fields, updateField, "online-mobile", "Mobile Number", undefined, "tel")}
+                  {renderInputField(fields, updateField, "online-email", "Email", undefined, "email")}
+                  {renderInputField(fields, updateField, "online-mobile", "Mobile", undefined, "tel")}
                 </div>
               </section>
               )}
 
               {currentSectionName === "Institute Sharing The Land" && (
-              <section id="section-shared-land" className="rounded-2xl border border-border/70 bg-muted/40 p-5 space-y-4">
-                <div className="flex items-center justify-between mb-4 pb-2 border-b border-border/30">
-                  <h3 className="text-base font-semibold text-foreground">Institute Sharing The Land</h3>
+               <section id="section-shared-land" className="rounded border border-border/60 bg-white p-4 space-y-3">
+                <div className="flex items-center justify-between pb-2 border-b border-border/30">
+                  <h3 className="text-[11px] font-black text-primary uppercase tracking-widest">Institute Sharing The Land</h3>
                   {currentSection && (
                     <span className={cn(
                       "text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider",
                       currentSection.completionPercentage >= 100 
                         ? "bg-success/10 text-success" 
-                        : currentSection.completionPercentage > 0
-                        ? "bg-accent/10 text-accent"
-                        : "bg-muted text-muted-foreground"
+                        : "bg-accent/10 text-accent"
                     )}>
                       {currentSection.completionPercentage}% Complete
                     </span>
                   )}
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {renderRadioGroup(fields, updateField, "land-shared", "Land Shared with Another Institute")}
-                  {renderInputField(fields, updateField, "shared-institute", "Institution Name")}
-                  {renderInputField(fields, updateField, "shared-programme", "Programme")}
-                  {renderInputField(fields, updateField, "shared-level", "Level of Course")}
-                  {renderInputField(fields, updateField, "shared-id", "Permanent ID")}
-                  {renderInputField(fields, updateField, "shared-survey", "Survey Number")}
-                  {renderInputField(fields, updateField, "shared-area", "Area (Acres)")}
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-3">
+                  {renderRadioGroup(fields, updateField, "land-shared", "Shared Land?")}
+                  {renderInputField(fields, updateField, "shared-institute", "Name")}
+                  {renderInputField(fields, updateField, "shared-programme", "Prog")}
+                  {renderInputField(fields, updateField, "shared-level", "Level")}
+                  {renderInputField(fields, updateField, "shared-id", "ID")}
+                  {renderInputField(fields, updateField, "shared-survey", "Survey #")}
+                  {renderInputField(fields, updateField, "shared-area", "Area")}
                 </div>
               </section>
               )}
 
-              <div className="flex flex-col sm:flex-row justify-between items-center gap-3 pt-2">
-                <button
-                  className="flex items-center gap-2 px-5 py-3 rounded-full border border-border text-sm font-semibold text-foreground hover:bg-muted transition-colors"
-                  onClick={() => {
-                    if (activeSubStep > 0) {
-                      setActiveSubStep((prev) => Math.max(prev - 1, 0));
-                    } else {
-                      navigate(-1);
-                    }
-                  }}
-                >
-                  ← Back
-                </button>
-                <button
-                  className="flex items-center gap-2 px-6 py-3 rounded-full bg-accent text-accent-foreground text-sm font-semibold shadow-sm shadow-accent/40"
-                  onClick={() => {
-                    if (!isLastStep) {
-                      setActiveSubStep((s) => Math.min(activeSections.length - 1, s + 1));
-                    } else {
-                      navigate("/institutional-registry");
-                    }
-                  }}
-                >
-                  {isLastStep ? "Save" : "Save & Continue"}
-                </button>
               </div>
             </div>
-
-            <div className="flex-none px-2 pb-6 lg:pb-0">
-              <SectionStatusSidebar
-                sections={sections}
-                sectionOrder={activeSections}
-                activeSection={currentSectionName}
-                onSectionClick={(name) => {
-                  const targetIndex = activeSections.indexOf(name);
-                  if (targetIndex >= 0) {
-                    setActiveSubStep(targetIndex);
-                  }
-                }}
-              />
-            </div>
           </div>
+        </div>
+      </div>
+
+      {/* Sticky Navigation Footer */}
+      <div className="fixed bottom-0 right-0 left-0 bg-white/95 backdrop-blur-sm border-t border-border py-3 z-40 transition-all duration-300"
+           style={{ left: "var(--sidebar-width, 256px)" }}>
+        <div className="max-w-7xl mx-auto flex items-center justify-between px-6">
+          <button
+            onClick={() => {
+              if (activeSubStep > 0) {
+                setActiveSubStep((prev) => Math.max(prev - 1, 0));
+              } else {
+                navigate(-1);
+              }
+            }}
+            className="flex items-center gap-2 px-5 py-2 rounded text-[11px] font-bold uppercase tracking-wider bg-muted text-foreground hover:bg-muted/80 shadow-sm transition-all duration-200"
+          >
+            ← Previous
+          </button>
+
+          <button
+            onClick={() => {
+              if (!isLastStep) {
+                setActiveSubStep((s) => Math.min(activeSections.length - 1, s + 1));
+              } else {
+                navigate("/institutional-registry");
+              }
+            }}
+            className="flex items-center gap-2 px-8 py-2 bg-accent text-accent-foreground rounded text-[11px] font-black uppercase tracking-widest hover:bg-accent/90 transition-all duration-200 shadow-md hover:shadow-lg active:scale-[0.98]"
+          >
+            {isLastStep ? (
+              <>
+                <CheckCircle2 className="h-3.5 w-3.5" />
+                Save & Submit
+              </>
+            ) : (
+              <>
+                Save & Continue
+                <span className="ml-1">→</span>
+              </>
+            )}
+          </button>
         </div>
       </div>
       <PendingFieldsPanel
