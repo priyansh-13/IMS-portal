@@ -7,7 +7,7 @@ const tiles = [
     title: "My Institute",
     description: "View and manage your institution's profile, details and resources.",
     icon: Building2,
-    href: "#",
+    href: "/my-institute",
     completion: 75,
     status: "In Progress" as const,
   },

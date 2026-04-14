@@ -3,6 +3,8 @@ import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import LandingPage from "./landingPage/dashboard/Dashboard";
+import UserDashboard from "./landingPage/UserDashboard/UserDashboard";
 import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
 import InstitutionalRegistryPage from "./pages/InstitutionalRegistryPage";
@@ -18,6 +20,7 @@ import RegulatoryInformationPage from "./pages/RegulatoryInformationPage";
 import ProgrammeCoursePage from "./pages/ProgrammeCoursePage";
 import ProgrammeSummaryPage from "./pages/ProgrammeSummaryPage";
 import CourseCurriculumPage from "./pages/CourseCurriculumPage";
+import Aishe from "./landingPage/UserDashboard/AISHE/Aishe";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -29,9 +32,11 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/dashboard" element={<UserDashboard />} />
+          <Route path="/my-institute" element={<DashboardPage />} />
+          <Route path="/aishe" element={<Aishe />} />
           <Route path="/institutional-registry" element={<InstitutionalRegistryPage />} />
           <Route path="/institutional-registry/institution-details" element={<InstitutionDetailsPage />} />
           <Route path="/institutional-registry/contact-details" element={<ContactDetailsPage />} />
