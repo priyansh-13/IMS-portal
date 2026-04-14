@@ -1,18 +1,25 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import {
-  LayoutDashboard, Building2, Phone, Users, FileText, BarChart3, DollarSign, Globe, Mail, KeyRound, LogOut, Menu,
+  LayoutDashboard, Building2, Phone, Users, FileText, BarChart3,
+  DollarSign, Globe, Mail, KeyRound, LogOut, Menu, ChevronRight, User,
 } from "lucide-react";
-import emblem from "@/assets/emblem.png";
+import emblem from "../../../../public/images/sm.png"
+import ContactDetailsImage from "../../../../public/images/ContactDetails.png"
+import EmailSMSManagementImage from "../../../../public/images/EmailSMSManagement.png"
+import ForeignManagementImage from "../../../../public/images/ForeignInstituteManagement.png"
+import RemunerationManagementImage from "../../../../public/images/RemunerationManagement.png"
+
+const BRAND = "#00446d";
 
 const sidebarItems = [
-  { label: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
-  { label: "Institution Details", icon: Building2, active: true },
+  { label: "Dashboard", icon: LayoutDashboard },
+  { label: "Institution Details", icon: Building2 },
   { label: "Contact Details of the Institution", icon: Phone },
-  { label: "User Management", icon: Users },
-  { label: "Web DCF", icon: FileText },
-  { label: "Institution Management", icon: Building2 },
-  { label: "Web DCF Progress", icon: BarChart3 },
+  { label: "User Management", icon: Users, hasChildren: true },
+  { label: "Web DCF", icon: FileText, hasChildren: true },
+  { label: "Institution Management", icon: Building2, hasChildren: true },
+  { label: "Web DCF Progress", icon: BarChart3, hasChildren: true },
   { label: "Remuneration Management", icon: DollarSign },
   { label: "Foreign Institution Management", icon: Globe },
   { label: "Email Management", icon: Mail },
@@ -22,153 +29,266 @@ const sidebarItems = [
 
 const Aishe = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [currentView, setCurrentView] = useState("dashboard");
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen flex flex-col bg-gray-100" style={{ fontSize: "13px" }}>
+      
       {/* Top govt bar */}
-      <div className="bg-navy-dark text-primary-foreground text-xs py-1.5 px-4">
-        <div className="container mx-auto flex justify-between">
-          <span>भारत सरकार | शिक्षा मंत्रालय | GOVERNMENT OF INDIA | MINISTRY OF EDUCATION</span>
+      <div className="bg-gray-100 border-b border-gray-300 py-1 px-6 ml-40">
+        <div className="flex items-center">
+          <div className="flex flex-col items-center px-4 border-r border-gray-300">
+            <span className="text-[10px] font-medium text-gray-800 leading-tight">भारत सरकार</span>
+            <span className="text-[12px] font-semibold text-black uppercase">Government of India</span>
+          </div>
+          <div className="flex flex-col items-center px-4">
+            <span className="text-[10px] font-medium text leading-tight">शिक्षा मंत्रालय</span>
+            <span className="text-[12px] font-semibold text-black  uppercase">Ministry of Education</span>
+          </div>
         </div>
       </div>
 
       {/* Header */}
-      <header className="bg-card py-3 px-4 shadow-sm">
-        <div className="container mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <img src={emblem} alt="Emblem" width={48} height={48} className="w-12 h-12" />
-            <div>
-              <p className="text-sm text-muted-foreground">उच्चतर शिक्षा विभाग</p>
-              <p className="text-lg font-semibold text-foreground">Department of Higher Education</p>
+      <header className="bg-white border-b border-gray-200 py-4 px-60">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-6">
+            <img src={emblem} alt="National Emblem" className="h-[75px] w-auto" />
+            <div className="pt-2">
+              <p className="text-[22px] text-gray-800 font-medium leading-none mb-1">उच्चतर शिक्षा विभाग</p>
+              <p className="text-[20px] font-normal text-black tracking-tight leading-none">Department of Higher Education</p>
             </div>
           </div>
           <div className="text-right">
-            <p className="text-2xl font-bold text-primary tracking-wide">AISHE</p>
-            <p className="text-xs text-muted-foreground">All India Survey on Higher Education</p>
+            <p className="text-[48px] font-bold tracking-tight leading-none border-w-4 border-b border-blue" style={{ color: BRAND }}>AISHE</p>
+            <p className="text-[12px] text-gray-500 font-semibold mt-1">All India Survey on Higher Education</p>
           </div>
         </div>
       </header>
 
       {/* Info bar */}
-      <div className="bg-primary text-primary-foreground py-2 px-4 text-xs">
-        <div className="container mx-auto flex gap-6 flex-wrap">
-          <span>Last DCF Submitted Survey Year: 2024-25</span>
-          <span>User Role: University Nodal Officer</span>
-          <span>U-0167</span>
-          <span>Maharshi Dayanand University, Rohtak</span>
-          <span>State: Haryana</span>
+      <div className="text-white text-[15px] py-2 px-0 flex items-center shadow-lg z-10" style={{ backgroundColor: BRAND }}>
+        <div className="flex items-center gap-0 flex-1 flex-wrap">
+          <span className="px-5 border-r border-white/20">Last DCF Submitted Survey Year : 2024-25</span>
+          <span className="px-5 border-r border-white/20">User Role : University Nodal Officer</span>
+          <span className="px-5 border-r border-white/20 ml-auto">U-0167</span>
+          <span className="px-5 border-r border-white/20 font-medium tracking-wide">Maharshi Dayanand University, Rohtak</span>
+          <span className="px-5 border-r border-white/20 tracking-wide">State : Haryana</span>
+        </div>
+        <div className="flex items-center gap-2 px-6 shrink-0">
+          <div className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center">
+            <User size={13} className="text-white" />
+          </div>
+          <span className="font-semibold tracking-wide text-[12px]">mdurohtak</span>
         </div>
       </div>
 
-      <div className="flex flex-1">
+      <div className="flex flex-1 mt-2 min-h-0">
         {/* Sidebar */}
-        <aside className={`bg-primary text-primary-foreground w-64 shrink-0 ${sidebarOpen ? "" : "hidden"} md:block`}>
-          <nav className="py-2">
-            {sidebarItems.map((item) => (
-              <Link
-                key={item.label}
-                to={item.href || "#"}
-                className={`flex items-center gap-3 px-4 py-3 text-sm transition-colors ${
-                  item.active ? "bg-sidebar-accent font-semibold" : "hover:bg-navy-light"
-                }`}
-              >
-                <item.icon size={16} />
-                {item.label}
-              </Link>
-            ))}
+        <aside
+          className={`text-white shrink-0 flex flex-col transition-all duration-300 ${sidebarOpen ? "w-72" : "w-0 overflow-hidden"}`}
+          style={{ backgroundColor: BRAND }}
+        >
+          <nav className="flex-1 overflow-y-auto py-1">
+            {sidebarItems.map((item) => {
+              const isActive = (item.label === "Dashboard" && currentView === "dashboard") || 
+                               (item.label === "Institution Details" && currentView === "institution");
+              
+              return (
+                <button
+                  key={item.label}
+                  onClick={() => {
+                    const viewMap: { [key: string]: string } = {
+                      "Dashboard": "dashboard",
+                      "Institution Details": "institution",
+                      "Contact Details of the Institution": "contact",
+                      "Remuneration Management": "remuneration",
+                      "Foreign Institution Management": "foreign",
+                      "Email Management": "email"
+                    };
+                    if (viewMap[item.label]) setCurrentView(viewMap[item.label]);
+                  }}
+                  className={`w-full flex items-center justify-between px-3 py-2.5 text-[12.5px] transition-colors border-b border-white/5 ${
+                    ((item.label === "Dashboard" && currentView === "dashboard") ||
+                     (item.label === "Institution Details" && currentView === "institution") ||
+                     (item.label === "Contact Details of the Institution" && currentView === "contact") ||
+                     (item.label === "Remuneration Management" && currentView === "remuneration") ||
+                     (item.label === "Foreign Institution Management" && currentView === "foreign") ||
+                     (item.label === "Email Management" && currentView === "email"))
+                      ? "bg-white/15 text-white font-semibold"
+                      : "hover:bg-white/10 text-white/85"
+                  }`}
+                >
+                  <span className="flex items-center gap-2">
+                    <item.icon size={14} className="shrink-0" />
+                    {item.label}
+                  </span>
+                  {item.hasChildren && <ChevronRight size={12} className="opacity-60" />}
+                </button>
+              );
+            })}
           </nav>
         </aside>
 
         {/* Main content */}
-        <main className="flex-1 p-6">
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="md:hidden mb-4 text-foreground"
-          >
-            <Menu size={24} />
-          </button>
-
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-foreground">Institution Details</h2>
-            <span className="text-sm text-accent cursor-pointer hover:underline">
-              Please click here the edit icon to update details ✎
-            </span>
-          </div>
-
-          {/* Form */}
-          <div className="bg-card rounded-lg border border-border p-6 space-y-6">
-            {/* Basic Info */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <Field label="AISHE Code" value="U-0167" />
-              <Field label="Institute Name" value="Maharshi Dayanand University, Rohtak" />
-              <Field label="Institute Type" value="State Public University" />
+        <main className="flex-1 overflow-y-auto bg-gray-100 p-0">
+          {currentView !== "institution" ? (
+            <div className="p-4">
+              <div className="flex items-center gap-3 mb-4">
+                <button
+                  onClick={() => setSidebarOpen(!sidebarOpen)}
+                  className="text-gray-500 hover:text-gray-800 transition-colors p-1"
+                >
+                  <Menu size={18} />
+                </button>
+                <h2 className="text-[14px] font-bold text-gray-600 tracking-wide uppercase">
+                  {currentView === "dashboard" && "Dashboard"}
+                  {currentView === "contact" && "Contact Details of the Institution"}
+                  {currentView === "remuneration" && "Remuneration Management"}
+                  {currentView === "foreign" && "Foreign Institution Management"}
+                  {currentView === "email" && "Email Management"}
+                </h2>
+              </div>
+              <div className="bg-white rounded shadow-lg border border-gray-200 overflow-hidden">
+                {currentView === "dashboard" && <img src="/images/dashboard_image.png" alt="Dashboard" className="w-full h-auto" />}
+                {currentView === "contact" && <img src={ContactDetailsImage} alt="Contact Details" className="w-full h-auto" />}
+                {currentView === "remuneration" && <img src={RemunerationManagementImage} alt="Remuneration" className="w-full h-auto" />}
+                {currentView === "foreign" && <img src={ForeignManagementImage} alt="Foreign Management" className="w-full h-auto" />}
+                {currentView === "email" && <img src={EmailSMSManagementImage} alt="Email Management" className="w-full h-auto" />}
+              </div>
             </div>
-            <div>
-              <Field label="Ownership Status of Institution" value="State Government" select />
-            </div>
+          ) : (
+            <div className="p-5">
+              {/* Page title bar with toggle icon */}
+              <div className="bg-white border border-gray-200 rounded shadow-sm mb-4 overflow-hidden">
+                <div className="flex items-center justify-between px-3 py-2 border-b border-gray-200">
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => setSidebarOpen(!sidebarOpen)}
+                      className="text-gray-500 hover:text-gray-800 transition-colors p-1"
+                    >
+                      <Menu size={18} />
+                    </button>
+                    <h2 className="text-[14px] font-bold text-gray-600 tracking-wide">Institution Details</h2>
+                  </div>
+                  <span className="text-[12px] font-semibold cursor-pointer hover:underline text-blue-800">
+                    Please click here the edit icon to update details ✎
+                  </span>
+                </div>
 
-            {/* Address section */}
-            <div className="bg-destructive/10 text-destructive font-semibold text-sm px-4 py-2 rounded">
-              Address:
-            </div>
+                {/* Form content */}
+                <div className="p-5 space-y-5">
+                  {/* Basic Info */}
+                  <div className="grid grid-cols-3 gap-6">
+                    <Field label="AISHE Code" value="U-0167" />
+                    <Field label="Institute Name" value="Maharshi Dayanand University, Rohtak" />
+                    <Field label="Institute Type" value="State Public University" />
+                  </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <p className="text-sm text-muted-foreground mb-2">Location of the Institution:</p>
-                <div className="flex gap-4">
-                  <label className="flex items-center gap-1.5 text-sm text-foreground">
-                    <input type="radio" name="location" className="accent-accent" /> Rural
-                  </label>
-                  <label className="flex items-center gap-1.5 text-sm text-foreground">
-                    <input type="radio" name="location" defaultChecked className="accent-accent" /> Urban
-                  </label>
+                  <div className="grid grid-cols-2 gap-6">
+                    <Field label="Ownership Status of Institution" value="State Government" select />
+                  </div>
+
+                  {/* Address section header */}
+                  <div className="text-white text-[12.5px] font-semibold px-4 py-2 rounded-sm" style={{ backgroundColor: BRAND }}>
+                    Address:
+                  </div>
+
+                  {/* Location radio */}
+                  <div>
+                    <p className="text-[12px] text-gray-600 mb-1.5">Location of the Institution:-</p>
+                    <div className="flex gap-6">
+                      <label className="flex items-center gap-1.5 text-[12px] text-gray-700 cursor-pointer">
+                        <input type="radio" name="location" className="accent-blue-700" /> Rural
+                      </label>
+                      <label className="flex items-center gap-1.5 text-[12px] text-gray-700 cursor-pointer">
+                        <input type="radio" name="location" defaultChecked className="accent-blue-700" /> Urban
+                      </label>
+                    </div>
+                  </div>
+
+                  {/* Address fields */}
+                  <div className="grid grid-cols-2 gap-6">
+                    <Field label="Address Line 1:" value="Maharshi Dayanand University, Rohtak" />
+                    <Field label="Address Line 2:" value="Delhi Road, Rohtak" />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-6">
+                    <Field label="Locality/City/Town/Village:" value="Rohtak" />
+                    <Field label="Country:" value="INDIA" select />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-6">
+                    <Field label="State:" value="Haryana" />
+                    <Field label="District:" value="Rohtak" />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-6">
+                    <Field label="Subdistrict (Subdivision/Tehsil/Taluk/Taluka/Mandal/Mandal(Circle) /Circle):" value="Rohtak" select />
+                    <Field label="Urban Local Body:" value="Rohtak" select />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-6">
+                    <Field label="Pincode:" value="124001" />
+                    <Field label="Website:" value="www.mdurohtak.ac.in" />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-6">
+                    <Field label="Total Area (In acre):" value="624" highlight />
+                    <Field label="Total Constructed Area (Ground level only) (In sq m):" value="500000" highlight />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-6 pb-2">
+                    <Field label="Latitude (Range: 6.00000 - 38.00000 in degree):" value="28.23562" highlight />
+                    <Field label="Longitude (Range: 68.00000 - 98.00000 in degree):" value="76.25364" highlight />
+                  </div>
                 </div>
               </div>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Field label="Address Line 1" value="Maharshi Dayanand University, Rohtak" />
-              <Field label="Address Line 2" value="Delhi Road, Rohtak" />
-              <Field label="Locality/City/Town/Village" value="Rohtak" />
-              <Field label="Country" value="INDIA" select />
-              <Field label="State" value="Haryana" />
-              <Field label="District" value="Rohtak" />
-              <Field label="Subdistrict" value="Rohtak" select />
-              <Field label="Urban Local Body" value="Rohtak" select />
-              <Field label="Pincode" value="124001" />
-              <Field label="Website" value="www.mdurohtak.ac.in" />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Field label="Total Area (In acre)" value="624" highlight />
-              <Field label="Total Constructed Area (Ground level only) (In sq m)" value="500000" highlight />
-              <Field label="Latitude (Range: 6.00000 - 38.00000 in degree)" value="28.23562" highlight />
-              <Field label="Longitude (Range: 68.00000 - 98.00000 in degree)" value="76.25364" highlight />
-            </div>
-          </div>
+          )}
         </main>
       </div>
+      
 
       {/* Footer */}
-      <footer className="bg-card border-t border-border py-4 px-4 text-center text-xs text-muted-foreground">
-        This site is designed, developed and hosted by <span className="text-accent cursor-pointer">National Informatics Centre (NIC)</span>,
-        content provided by Statistics Division, D/o Higher Education, Ministry of Education,{" "}
-        <span className="text-accent cursor-pointer">Government of India</span>
+      <footer className="text-white border-t border-white/10 py-4 px-4 text-center text-[12px] leading-6" style={{ backgroundColor: BRAND }}>
+        <p>
+          This site is designed, developed and hosted by{" "}
+          <span className="cursor-pointer hover:underline text-yellow-400 font-medium whitespace-nowrap">National Informatics Centre (NIC)</span>
+          {" "}, content provided by Statistics Divison, D/o
+        </p>
+        <p>
+          Higher Education, Ministry of Education,{" "}
+          <span className="cursor-pointer hover:underline text-yellow-400 font-medium whitespace-nowrap">Government of India</span>
+        </p>
       </footer>
     </div>
   );
 };
 
-function Field({ label, value, select, highlight }: { label: string; value: string; select?: boolean; highlight?: boolean }) {
+function Field({
+  label,
+  value,
+  select,
+  highlight,
+}: {
+  label: string;
+  value: string;
+  select?: boolean;
+  highlight?: boolean;
+}) {
   return (
     <div>
-      <label className={`text-sm font-medium mb-1 block ${highlight ? "text-destructive" : "text-muted-foreground"}`}>
-        {label}:
+      <label
+        className={`text-[11.5px] font-medium mb-0.5 block ${
+          highlight ? "text-red-600" : "text-gray-600"
+        }`}
+      >
+        {label}
       </label>
       {select ? (
         <select
           defaultValue={value}
-          className="w-full px-3 py-2.5 border-b border-border bg-card text-sm text-foreground focus:outline-none focus:border-accent"
+          className="w-full border-b border-gray-300 bg-transparent text-[12.5px] text-gray-800 py-1.5 focus:outline-none focus:border-blue-700"
         >
           <option>{value}</option>
         </select>
@@ -176,11 +296,12 @@ function Field({ label, value, select, highlight }: { label: string; value: stri
         <input
           type="text"
           defaultValue={value}
-          className="w-full px-3 py-2.5 border-b border-border bg-card text-sm text-foreground focus:outline-none focus:border-accent"
+          className="w-full border-b border-gray-300 bg-transparent text-[12.5px] text-gray-800 py-1.5 focus:outline-none focus:border-blue-700"
         />
       )}
     </div>
   );
 }
+
 
 export default Aishe;
