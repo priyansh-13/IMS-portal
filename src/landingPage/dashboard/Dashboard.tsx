@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Home, Info, Building2, BookOpen, LogIn, Search, Users, ChevronDown, Globe, Phone, Mail, MapPin, ExternalLink } from "lucide-react";
-import emblem from "@/assets/emblem.png";
 import heroBanner from "@/assets/hero-banner.jpg";
 
 const Index = () => {
@@ -28,13 +27,7 @@ const Index = () => {
       {/* Header with logo */}
       <header className="bg-card py-4 px-4 shadow-sm">
         <div className="container mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <img src={emblem} alt="National Emblem" width={60} height={60} className="w-14 h-14" />
-            <div>
-              <h1 className="text-3xl font-bold text-primary tracking-wide">ONOD</h1>
-              <p className="text-sm text-muted-foreground font-medium">One Nation One Data</p>
-            </div>
-          </div>
+            <img src="/images/ONOD-logo.png" alt="ONOD Logo" className="h-12 w-auto object-contain" />
           <div className="text-right hidden md:block">
             <p className="text-lg font-semibold text-orange">विकसित भारत</p>
             <p className="text-xs text-muted-foreground">अभियान 🇮🇳</p>

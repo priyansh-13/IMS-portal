@@ -101,7 +101,7 @@ export function TopNav() {
         <div className="flex items-center h-14 px-4">
           {/* Logo */}
           <button onClick={() => navigate("/dashboard")} className="flex items-center gap-2 mr-6 shrink-0 h-10">
-            <img src="/images/ONOD-logo.png" alt="ONOD Logo" className="h-[28px] w-auto brightness-0 invert" />
+            <img src="/images/ONOD-logo.png" alt="ONOD Logo" className="h-[28px] w-auto" />
           </button>
 
           {/* Desktop menu */}

@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { Building2, GraduationCap, Users, LogOut } from "lucide-react";
-import emblem from "@/assets/emblem.png";
 
 const tiles = [
   {
@@ -33,16 +32,12 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="bg-primary text-primary-foreground py-3 px-4">
+      <header className="bg-white border-b border-border py-3 px-4 shadow-sm">
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img src={emblem} alt="Emblem" width={40} height={40} className="w-10 h-10" />
-            <div>
-              <h1 className="text-xl font-bold">ONOD</h1>
-              <p className="text-xs opacity-80">One Nation One Data</p>
-            </div>
+            <img src="/images/ONOD-logo.png" alt="ONOD Logo" className="h-10 w-auto object-contain" />
           </div>
-          <Link to="/" className="flex items-center gap-2 text-sm opacity-80 hover:opacity-100 transition-opacity">
+          <Link to="/" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
             <LogOut size={16} /> Logout
           </Link>
         </div>
