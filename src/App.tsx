@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { AuthProvider } from "./context/AuthContext";
 import LandingPage from "./landingPage/dashboard/Dashboard";
 import UserDashboard from "./landingPage/UserDashboard/UserDashboard";
 import LoginPage from "./pages/LoginPage";
@@ -21,6 +22,8 @@ import ProgrammeCoursePage from "./pages/ProgrammeCoursePage";
 import ProgrammeSummaryPage from "./pages/ProgrammeSummaryPage";
 import CourseCurriculumPage from "./pages/CourseCurriculumPage";
 import Aishe from "./landingPage/UserDashboard/AISHE/Aishe";
+import AisheCollege from "./landingPage/UserDashboard/AISHE/AisheCollege";
+import AisheStandalone from "./landingPage/UserDashboard/AISHE/AisheStandalone";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,38 +33,42 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/dashboard" element={<UserDashboard />} />
-          <Route path="/my-institute" element={<DashboardPage />} />
-          <Route path="/aishe" element={<Aishe />} />
-          <Route path="/institutional-registry" element={<InstitutionalRegistryPage />} />
-          <Route path="/institutional-registry/institution-details" element={<InstitutionDetailsPage />} />
-          <Route path="/institutional-registry/contact-details" element={<ContactDetailsPage />} />
-          <Route path="/institutional-registry/parent-org" element={<ParentOrganizationPage />} />
-          <Route path="/institutional-registry/affiliation" element={<AffiliationApprovalPage />} />
-          <Route path="/institutional-registry/committees" element={<CommitteesPage />} />
-          <Route path="/institutional-registry/financial" element={<FinancialDetailsPage />} />
-          <Route path="/institutional-registry/centres" element={<CentresCampusesPage />} />
-          <Route path="/institutional-registry/student-support" element={<StudentSupportPage />} />
-          <Route path="/institutional-registry/regulatory" element={<RegulatoryInformationPage />} />
-          <Route path="/programme-course" element={<ProgrammeCoursePage />} />
-          <Route path="/programme-course/details" element={<ProgrammeCoursePage defaultView="details" />} />
-          <Route path="/programme-course/summary" element={<ProgrammeSummaryPage />} />
-          <Route path="/programme-course/curriculum" element={<CourseCurriculumPage />} />
-          {/* Placeholder routes for other modules */}
-          <Route path="/student-info" element={<DashboardPage />} />
-          <Route path="/faculty-hr" element={<DashboardPage />} />
-          <Route path="/infrastructure" element={<DashboardPage />} />
-          <Route path="/quality-assurance" element={<DashboardPage />} />
-          <Route path="/abc-ncrf" element={<DashboardPage />} />
-          <Route path="/innovation" element={<DashboardPage />} />
-          <Route path="/research" element={<DashboardPage />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
+      <AuthProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/dashboard" element={<UserDashboard />} />
+            <Route path="/my-institute" element={<DashboardPage />} />
+            <Route path="/aishe" element={<Aishe />} />
+            <Route path="/aishe-college" element={<AisheCollege />} />
+            <Route path="/aishe-standalone" element={<AisheStandalone />} />
+            <Route path="/institutional-registry" element={<InstitutionalRegistryPage />} />
+            <Route path="/institutional-registry/institution-details" element={<InstitutionDetailsPage />} />
+            <Route path="/institutional-registry/contact-details" element={<ContactDetailsPage />} />
+            <Route path="/institutional-registry/parent-org" element={<ParentOrganizationPage />} />
+            <Route path="/institutional-registry/affiliation" element={<AffiliationApprovalPage />} />
+            <Route path="/institutional-registry/committees" element={<CommitteesPage />} />
+            <Route path="/institutional-registry/financial" element={<FinancialDetailsPage />} />
+            <Route path="/institutional-registry/centres" element={<CentresCampusesPage />} />
+            <Route path="/institutional-registry/student-support" element={<StudentSupportPage />} />
+            <Route path="/institutional-registry/regulatory" element={<RegulatoryInformationPage />} />
+            <Route path="/programme-course" element={<ProgrammeCoursePage />} />
+            <Route path="/programme-course/details" element={<ProgrammeCoursePage defaultView="details" />} />
+            <Route path="/programme-course/summary" element={<ProgrammeSummaryPage />} />
+            <Route path="/programme-course/curriculum" element={<CourseCurriculumPage />} />
+            {/* Placeholder routes for other modules */}
+            <Route path="/student-info" element={<DashboardPage />} />
+            <Route path="/faculty-hr" element={<DashboardPage />} />
+            <Route path="/infrastructure" element={<DashboardPage />} />
+            <Route path="/quality-assurance" element={<DashboardPage />} />
+            <Route path="/abc-ncrf" element={<DashboardPage />} />
+            <Route path="/innovation" element={<DashboardPage />} />
+            <Route path="/research" element={<DashboardPage />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );

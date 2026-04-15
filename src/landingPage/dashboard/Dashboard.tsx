@@ -86,7 +86,7 @@ const Index = () => {
       {/* Header with logo */}
       <header className="bg-card py-4 px-4 shadow-sm">
         <div className="container mx-auto flex items-center justify-between">
-            <img src="/images/ONOD-logo.png" alt="ONOD Logo" className="h-12 w-auto object-contain" />
+          <img src="/images/ONOD-logo.png" alt="ONOD Logo" className="h-12 w-auto object-contain" />
           <div className="text-right hidden md:block">
             <p className="text-lg font-semibold text-orange">विकसित भारत</p>
             <p className="text-xs text-muted-foreground">अभियान 🇮🇳</p>
@@ -129,14 +129,21 @@ const Index = () => {
                   className="block px-4 py-3 text-sm text-foreground hover:bg-muted transition-colors"
                   onClick={() => setLoginOpen(false)}
                 >
-                  User Login
+                  University Login
                 </Link>
                 <Link
-                  to="/login"
+                  to="/aishe-college"
                   className="block px-4 py-3 text-sm text-foreground hover:bg-muted transition-colors border-t border-border"
                   onClick={() => setLoginOpen(false)}
                 >
-                  Admin Login
+                  College Login
+                </Link>
+                <Link
+                  to="/aishe-standalone"
+                  className="block px-4 py-3 text-sm text-foreground hover:bg-muted transition-colors border-t border-border"
+                  onClick={() => setLoginOpen(false)}
+                >
+                  Standalone Login
                 </Link>
               </div>
             )}
@@ -183,16 +190,15 @@ const Index = () => {
             </div>
           ))}
         </div>
-        
+
         {/* Navigation Dots */}
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
           {slides.map((_, index) => (
             <button
               key={index}
               onClick={() => emblaApi?.scrollTo(index)}
-              className={`w-2 h-2 rounded-full transition-all ${
-                selectedIndex === index ? "bg-orange w-4" : "bg-white/50"
-              }`}
+              className={`w-2 h-2 rounded-full transition-all ${selectedIndex === index ? "bg-orange w-4" : "bg-white/50"
+                }`}
             />
           ))}
         </div>
