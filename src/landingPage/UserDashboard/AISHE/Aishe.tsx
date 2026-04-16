@@ -9,6 +9,13 @@ import ContactDetailsImage from "../../../../public/images/ContactDetails.png"
 import EmailSMSManagementImage from "../../../../public/images/EmailSMSManagement.png"
 import ForeignManagementImage from "../../../../public/images/ForeignInstituteManagement.png"
 import RemunerationManagementImage from "../../../../public/images/RemunerationManagement.png"
+import UserManagementSideImage from "../../../../public/images/UserManagement.png"
+import WebDCFImage from "../../../../public/images/Webb-DCF.png"
+import DownloadDocumentImage from "../../../../public/images/DownloadDocument.png"
+import CollegeManagementImage from "../../../../public/images/CollageManagement.png"
+import AffiliateUniversityImage from "../../../../public/images/Affiliate-Deaffiliate University.png"
+import MonitoringImage from "../../../../public/images/Monitoring.png"
+import ProgressMonitoringStatusImage from "../../../../public/images/ProgressMonitoringStatus.png"
 import { useAuth } from "@/context/AuthContext";
 
 const BRAND = "#00446d";
@@ -17,10 +24,41 @@ const sidebarItems = [
   { label: "Dashboard", icon: LayoutDashboard },
   { label: "Institution Details", icon: Building2 },
   { label: "Contact Details of the Institution", icon: Phone },
-  { label: "User Management", icon: Users, hasChildren: true },
-  { label: "Web DCF", icon: FileText, hasChildren: true },
-  { label: "Institution Management", icon: Building2, hasChildren: true },
-  { label: "Web DCF Progress", icon: BarChart3, hasChildren: true },
+  { 
+    label: "User Management", 
+    icon: Users, 
+    hasChildren: true,
+    children: [
+      { label: "User Management", viewId: "user-management-sub" }
+    ]
+  },
+  { 
+    label: "Web DCF", 
+    icon: FileText, 
+    hasChildren: true,
+    children: [
+      { label: "Fill Web-DCF", viewId: "fill-web-dcf" },
+      { label: "Download Document", viewId: "download-document" }
+    ]
+  },
+  { 
+    label: "Institution Management", 
+    icon: Building2, 
+    hasChildren: true,
+    children: [
+      { label: "College Management", viewId: "college-management" },
+      { label: "Affiliate/Deaffiliate University", viewId: "affiliate-university" }
+    ]
+  },
+  { 
+    label: "Web DCF Progress", 
+    icon: BarChart3, 
+    hasChildren: true,
+    children: [
+      { label: "Monitoring", viewId: "monitoring" },
+      { label: "Progress Monitoring Status", viewId: "progress-monitoring-status" }
+    ]
+  },
   { label: "Remuneration Management", icon: DollarSign },
   { label: "Foreign Institution Management", icon: Globe },
   { label: "Email Management", icon: Mail },
@@ -45,6 +83,14 @@ const Aishe = () => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
+
+  const toggleMenu = (label: string) => {
+    setExpandedMenus(prev => 
+      prev.includes(label) ? prev.filter(m => m !== label) : [...prev, label]
+    );
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-100" style={{ fontSize: "13px" }}>
@@ -134,40 +180,69 @@ const Aishe = () => {
         >
           <nav className="flex-1 overflow-y-auto py-1">
             {sidebarItems.map((item) => {
+              const isExpanded = expandedMenus.includes(item.label);
               const isActive = (item.label === "Dashboard" && currentView === "dashboard") || 
-                               (item.label === "Institution Details" && currentView === "institution");
+                               (item.label === "Institution Details" && currentView === "institution") ||
+                               (item.label === "Contact Details of the Institution" && currentView === "contact") ||
+                               (item.label === "Remuneration Management" && currentView === "remuneration") ||
+                               (item.label === "Foreign Institution Management" && currentView === "foreign") ||
+                               (item.label === "Email Management" && currentView === "email");
               
               return (
-                <button
-                  key={item.label}
-                  onClick={() => {
-                    const viewMap: { [key: string]: string } = {
-                      "Dashboard": "dashboard",
-                      "Institution Details": "institution",
-                      "Contact Details of the Institution": "contact",
-                      "Remuneration Management": "remuneration",
-                      "Foreign Institution Management": "foreign",
-                      "Email Management": "email"
-                    };
-                    if (viewMap[item.label]) setCurrentView(viewMap[item.label]);
-                  }}
-                  className={`w-full flex items-center justify-between px-3 py-2.5 text-[12.5px] transition-colors border-b border-white/5 ${
-                    ((item.label === "Dashboard" && currentView === "dashboard") ||
-                     (item.label === "Institution Details" && currentView === "institution") ||
-                     (item.label === "Contact Details of the Institution" && currentView === "contact") ||
-                     (item.label === "Remuneration Management" && currentView === "remuneration") ||
-                     (item.label === "Foreign Institution Management" && currentView === "foreign") ||
-                     (item.label === "Email Management" && currentView === "email"))
-                      ? "bg-white/15 text-white font-semibold"
-                      : "hover:bg-white/10 text-white/85"
-                  }`}
-                >
-                  <span className="flex items-center gap-2">
-                    <item.icon size={14} className="shrink-0" />
-                    {item.label}
-                  </span>
-                  {item.hasChildren && <ChevronRight size={12} className="opacity-60" />}
-                </button>
+                <div key={item.label}>
+                  <button
+                    onClick={() => {
+                      if (item.hasChildren) {
+                        toggleMenu(item.label);
+                      } else {
+                        const viewMap: { [key: string]: string } = {
+                          "Dashboard": "dashboard",
+                          "Institution Details": "institution",
+                          "Contact Details of the Institution": "contact",
+                          "Remuneration Management": "remuneration",
+                          "Foreign Institution Management": "foreign",
+                          "Email Management": "email"
+                        };
+                        if (viewMap[item.label]) setCurrentView(viewMap[item.label]);
+                      }
+                    }}
+                    className={`w-full flex items-center justify-between px-3 py-2.5 text-[12.5px] transition-colors border-b border-white/5 ${
+                      isActive
+                        ? "bg-white/15 text-white font-semibold"
+                        : "hover:bg-white/10 text-white/85"
+                    }`}
+                  >
+                    <span className="flex items-center gap-2">
+                      <item.icon size={14} className="shrink-0" />
+                      {item.label}
+                    </span>
+                    {item.hasChildren && (
+                      <ChevronRight 
+                        size={12} 
+                        className={`transition-transform duration-200 ${isExpanded ? "rotate-90" : "opacity-60"}`} 
+                      />
+                    )}
+                  </button>
+                  
+                  {item.hasChildren && isExpanded && (
+                    <div className="bg-white/10">
+                      {item.children?.map((child) => (
+                        <button
+                          key={child.label}
+                          onClick={() => setCurrentView(child.viewId)}
+                          className={`w-full flex items-center gap-3 pl-10 pr-3 py-2.5 text-[12.5px] transition-colors border-b border-white/5 ${
+                            currentView === child.viewId
+                              ? "bg-white/20 text-white font-semibold"
+                              : "hover:bg-white/10 text-white/85"
+                          }`}
+                        >
+                          <ChevronRight size={12} className="shrink-0 opacity-60" />
+                          {child.label}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
               );
             })}
           </nav>
@@ -190,6 +265,13 @@ const Aishe = () => {
                   {currentView === "remuneration" && "Remuneration Management"}
                   {currentView === "foreign" && "Foreign Institution Management"}
                   {currentView === "email" && "Email Management"}
+                  {currentView === "user-management-sub" && "User Management"}
+                  {currentView === "fill-web-dcf" && "Fill Web-DCF"}
+                  {currentView === "download-document" && "Download Document"}
+                  {currentView === "college-management" && "College Management"}
+                  {currentView === "affiliate-university" && "Affiliate/Deaffiliate University"}
+                  {currentView === "monitoring" && "Monitoring"}
+                  {currentView === "progress-monitoring-status" && "Progress Monitoring Status"}
                 </h2>
               </div>
               <div className="bg-white rounded shadow-lg border border-gray-200 overflow-hidden">
@@ -198,6 +280,13 @@ const Aishe = () => {
                 {currentView === "remuneration" && <img src={RemunerationManagementImage} alt="Remuneration" className="w-full h-auto" />}
                 {currentView === "foreign" && <img src={ForeignManagementImage} alt="Foreign Management" className="w-full h-auto" />}
                 {currentView === "email" && <img src={EmailSMSManagementImage} alt="Email Management" className="w-full h-auto" />}
+                {currentView === "user-management-sub" && <img src={UserManagementSideImage} alt="User Management" className="w-full h-auto" />}
+                {currentView === "fill-web-dcf" && <img src={WebDCFImage} alt="Fill Web-DCF" className="w-full h-auto" />}
+                {currentView === "download-document" && <img src={DownloadDocumentImage} alt="Download Document" className="w-full h-auto" />}
+                {currentView === "college-management" && <img src={CollegeManagementImage} alt="College Management" className="w-full h-auto" />}
+                {currentView === "affiliate-university" && <img src={AffiliateUniversityImage} alt="Affiliate/Deaffiliate University" className="w-full h-auto" />}
+                {currentView === "monitoring" && <img src={MonitoringImage} alt="Monitoring" className="w-full h-auto" />}
+                {currentView === "progress-monitoring-status" && <img src={ProgressMonitoringStatusImage} alt="Progress Monitoring Status" className="w-full h-auto" />}
               </div>
             </div>
           ) : (

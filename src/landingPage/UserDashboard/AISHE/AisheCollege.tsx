@@ -5,6 +5,12 @@ import {
   DollarSign, KeyRound, LogOut, Menu, ChevronRight, User, Mail, Smartphone,
 } from "lucide-react";
 import emblem from "../../../../public/images/sm.png";
+import ContactDetailsImage from "../../../../public/images/ContactDetails.png"
+import RemunerationManagementImage from "../../../../public/images/RemunerationManagement.png"
+import UserManagementSideImage from "../../../../public/images/UserManagementCollege.png"
+import WebDCFImage from "../../../../public/images/Webb-DCF.png"
+import DownloadDocumentImage from "../../../../public/images/DownloadDocument.png"
+// import RequestShiftUniversityImage from "../../../../public/images/Requestforshiftuniversity.png"
 import { useAuth } from "@/context/AuthContext";
 
 const BRAND = "#00446d";
@@ -12,9 +18,31 @@ const BRAND = "#00446d";
 const sidebarItems = [
   { label: "Institution Details", icon: Building2 },
   { label: "Contact Details of the Institution", icon: Phone },
-  { label: "User Management", icon: Users, hasChildren: true },
-  { label: "Web DCF", icon: FileText, hasChildren: true },
-  { label: "Institution Management", icon: Building2, hasChildren: true },
+  {
+    label: "User Management",
+    icon: Users,
+    hasChildren: true,
+    children: [
+      { label: "User Management", viewId: "user-management-sub" }
+    ]
+  },
+  {
+    label: "Web DCF",
+    icon: FileText,
+    hasChildren: true,
+    children: [
+      { label: "Fill Web-DCF", viewId: "fill-web-dcf" },
+      { label: "Download Document", viewId: "download-document" }
+    ]
+  },
+  {
+    label: "Institution Management",
+    icon: Building2,
+    hasChildren: true,
+    children: [
+      { label: "Request for Shift University", viewId: "request-shift-university" }
+    ]
+  },
   { label: "Remuneration Management", icon: DollarSign },
   { label: "Change Password", icon: KeyRound },
   { label: "Logout", icon: LogOut, href: "/" },
@@ -28,6 +56,14 @@ const AisheCollege = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
+  const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
+
+  const toggleMenu = (label: string) => {
+    setExpandedMenus(prev =>
+      prev.includes(label) ? prev.filter(m => m !== label) : [...prev, label]
+    );
+  };
+
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
@@ -40,7 +76,7 @@ const AisheCollege = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-100" style={{ fontSize: "13px" }}>
-      
+
       {/* Top govt bar */}
       <div className="bg-gray-100 border-b border-gray-300 py-1 px-6 ml-40">
         <div className="flex items-center">
@@ -126,37 +162,66 @@ const AisheCollege = () => {
         >
           <nav className="flex-1 overflow-y-auto py-1">
             {sidebarItems.map((item) => {
-              const isActive =
-                (item.label === "Institution Details" && currentView === "institution");
+              const isExpanded = expandedMenus.includes(item.label);
+              const isActive = (item.label === "Institution Details" && currentView === "institution") ||
+                (item.label === "Contact Details of the Institution" && currentView === "contact") ||
+                (item.label === "Remuneration Management" && currentView === "remuneration");
 
               return (
-                <button
-                  key={item.label}
-                  onClick={() => {
-                    if (item.href) {
-                      logout();
-                      window.location.href = item.href;
-                      return;
-                    }
-                    const viewMap: { [key: string]: string } = {
-                      "Institution Details": "institution",
-                      "Contact Details of the Institution": "contact",
-                      "Remuneration Management": "remuneration",
-                    };
-                    if (viewMap[item.label]) setCurrentView(viewMap[item.label]);
-                  }}
-                  className={`w-full flex items-center justify-between px-3 py-2.5 text-[12.5px] transition-colors border-b border-white/5 ${
-                    isActive
+                <div key={item.label}>
+                  <button
+                    onClick={() => {
+                      if (item.href) {
+                        logout();
+                        window.location.href = item.href;
+                        return;
+                      }
+                      if (item.hasChildren) {
+                        toggleMenu(item.label);
+                      } else {
+                        const viewMap: { [key: string]: string } = {
+                          "Institution Details": "institution",
+                          "Contact Details of the Institution": "contact",
+                          "Remuneration Management": "remuneration",
+                        };
+                        if (viewMap[item.label]) setCurrentView(viewMap[item.label]);
+                      }
+                    }}
+                    className={`w-full flex items-center justify-between px-3 py-2.5 text-[12.5px] transition-colors border-b border-white/5 ${isActive
                       ? "bg-white/15 text-white font-semibold"
                       : "hover:bg-white/10 text-white/85"
-                  }`}
-                >
-                  <span className="flex items-center gap-2">
-                    <item.icon size={14} className="shrink-0" />
-                    {item.label}
-                  </span>
-                  {item.hasChildren && <ChevronRight size={12} className="opacity-60" />}
-                </button>
+                      }`}
+                  >
+                    <span className="flex items-center gap-2">
+                      <item.icon size={14} className="shrink-0" />
+                      {item.label}
+                    </span>
+                    {item.hasChildren && (
+                      <ChevronRight
+                        size={12}
+                        className={`transition-transform duration-200 ${isExpanded ? "rotate-90" : "opacity-60"}`}
+                      />
+                    )}
+                  </button>
+
+                  {item.hasChildren && isExpanded && (
+                    <div className="bg-white/10">
+                      {item.children?.map((child) => (
+                        <button
+                          key={child.label}
+                          onClick={() => setCurrentView(child.viewId)}
+                          className={`w-full flex items-center gap-3 pl-10 pr-3 py-2.5 text-[12.5px] transition-colors border-b border-white/5 ${currentView === child.viewId
+                              ? "bg-white/20 text-white font-semibold"
+                              : "hover:bg-white/10 text-white/85"
+                            }`}
+                        >
+                          <ChevronRight size={12} className="shrink-0 opacity-60" />
+                          {child.label}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
               );
             })}
           </nav>
@@ -165,108 +230,134 @@ const AisheCollege = () => {
         {/* Main content */}
         <main className="flex-1 overflow-y-auto bg-gray-100 p-0">
           <div className="p-5">
-            {/* Page title bar with toggle icon */}
-            <div className="bg-white border border-gray-200 rounded shadow-sm mb-4 overflow-hidden">
-              <div className="flex items-center justify-between px-3 py-2 border-b border-gray-200">
-                <div className="flex items-center gap-3">
+            {currentView !== "institution" ? (
+              <>
+                <div className="flex items-center gap-3 mb-4">
                   <button
                     onClick={() => setSidebarOpen(!sidebarOpen)}
                     className="text-gray-500 hover:text-gray-800 transition-colors p-1"
                   >
                     <Menu size={18} />
                   </button>
-                  <h2 className="text-[14px] font-bold text-gray-600 tracking-wide">Institution Details</h2>
+                  <h2 className="text-[14px] font-bold text-gray-600 tracking-wide uppercase">
+                    {currentView === "contact" && "Contact Details of the Institution"}
+                    {currentView === "remuneration" && "Remuneration Management"}
+                    {currentView === "user-management-sub" && "User Management"}
+                    {currentView === "fill-web-dcf" && "Fill Web-DCF"}
+                    {currentView === "download-document" && "Download Document"}
+                    {currentView === "request-shift-university" && "Request for Shift University"}
+                  </h2>
                 </div>
-                <span className="text-[12px] font-semibold cursor-pointer hover:underline text-blue-800">
-                  Please click here the edit icon to update details ✎
-                </span>
-              </div>
-
-              {/* Form content */}
-              <div className="p-5 space-y-5">
-                {/* Basic Info */}
-                <div className="grid grid-cols-3 gap-6">
-                  <Field label="AISHE Code" value="C-10034" />
-                  <Field label="Institute Name" value="PEOPLETREE EDUCATION  SOCIETY'S BBA/BCA AND BCOM COLLEGE, AP NEHARU NAGAR, BELAGAVI" />
-                  <Field label="Institute Type" value="Affiliated College" />
+                <div className="bg-white rounded shadow-lg border border-gray-200 overflow-hidden">
+                  {currentView === "contact" && <img src={ContactDetailsImage} alt="Contact Details" className="w-full h-auto" />}
+                  {currentView === "remuneration" && <img src={RemunerationManagementImage} alt="Remuneration" className="w-full h-auto" />}
+                  {currentView === "user-management-sub" && <img src={UserManagementSideImage} alt="User Management" className="w-full h-auto" />}
+                  {currentView === "fill-web-dcf" && <img src={WebDCFImage} alt="Fill Web-DCF" className="w-full h-auto" />}
+                  {currentView === "download-document" && <img src={DownloadDocumentImage} alt="Download Document" className="w-full h-auto" />}
+                  {currentView === "request-shift-university" && <img src="/images/Requestforshiftuniversity.png" alt="Request for Shift University" className="w-full h-auto" />}
                 </div>
-
-                <div className="grid grid-cols-3 gap-6">
-                  <Field label="Management Type" value="Private Un-Aided" select />
-                  <Field label="Ownership Status of Institution" value="Society" select />
-                  <Field label="Name of University to which Affiliated.." value="Rani Channamma University, Belagavi" select />
+              </>
+            ) : (
+              <div className="bg-white border border-gray-200 rounded shadow-sm mb-4 overflow-hidden">
+                <div className="flex items-center justify-between px-3 py-2 border-b border-gray-200">
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => setSidebarOpen(!sidebarOpen)}
+                      className="text-gray-500 hover:text-gray-800 transition-colors p-1"
+                    >
+                      <Menu size={18} />
+                    </button>
+                    <h2 className="text-[14px] font-bold text-gray-600 tracking-wide uppercase">Institution Details</h2>
+                  </div>
+                  <span className="text-[12px] font-semibold cursor-pointer hover:underline text-blue-800 pr-3">
+                    Please click here the edit icon to update details ✎
+                  </span>
                 </div>
+                <div className="p-5 space-y-5">
+                  {/* Basic Info */}
+                  <div className="grid grid-cols-3 gap-6">
+                    <Field label="AISHE Code" value="C-10034" />
+                    <Field label="Institute Name" value="PEOPLETREE EDUCATION  SOCIETY'S BBA/BCA AND BCOM COLLEGE, AP NEHARU NAGAR, BELAGAVI" />
+                    <Field label="Institute Type" value="Affiliated College" />
+                  </div>
 
-                {/* Affiliation question */}
-                <div>
-                  <p className="text-[12px] text-gray-600 mb-1.5">
-                    Is the institution affiliated with any other University/Statutory body?*
-                  </p>
-                  <div className="flex gap-6">
-                    <label className="flex items-center gap-1.5 text-[12px] text-gray-700 cursor-pointer">
-                      <input type="radio" name="affiliated" className="accent-blue-700" /> Yes
-                    </label>
-                    <label className="flex items-center gap-1.5 text-[12px] text-gray-700 cursor-pointer">
-                      <input type="radio" name="affiliated" defaultChecked className="accent-blue-700" /> No
-                    </label>
+                  <div className="grid grid-cols-3 gap-6">
+                    <Field label="Management Type" value="Private Un-Aided" select />
+                    <Field label="Ownership Status of Institution" value="Society" select />
+                    <Field label="Name of University to which Affiliated.." value="Rani Channamma University, Belagavi" select />
+                  </div>
+
+                  {/* Affiliation question */}
+                  <div>
+                    <p className="text-[12px] text-gray-600 mb-1.5">
+                      Is the institution affiliated with any other University/Statutory body?*
+                    </p>
+                    <div className="flex gap-6">
+                      <label className="flex items-center gap-1.5 text-[12px] text-gray-700 cursor-pointer">
+                        <input type="radio" name="affiliated" className="accent-blue-700" /> Yes
+                      </label>
+                      <label className="flex items-center gap-1.5 text-[12px] text-gray-700 cursor-pointer">
+                        <input type="radio" name="affiliated" defaultChecked className="accent-blue-700" /> No
+                      </label>
+                    </div>
+                  </div>
+
+                  {/* Address section header */}
+                  <div className="text-white text-[12.5px] font-semibold px-4 py-2 rounded-sm" style={{ backgroundColor: BRAND }}>
+                    Address:
+                  </div>
+
+                  {/* Location radio */}
+                  <div>
+                    <p className="text-[12px] text-gray-600 mb-1.5">Location of the Institution:-</p>
+                    <div className="flex gap-6">
+                      <label className="flex items-center gap-1.5 text-[12px] text-gray-700 cursor-pointer">
+                        <input type="radio" name="location" className="accent-blue-700" /> Rural
+                      </label>
+                      <label className="flex items-center gap-1.5 text-[12px] text-gray-700 cursor-pointer">
+                        <input type="radio" name="location" defaultChecked className="accent-blue-700" /> Urban
+                      </label>
+                    </div>
+                  </div>
+
+                  {/* Address fields */}
+                  <div className="grid grid-cols-2 gap-6">
+                    <Field label="Address Line 1:" value="CTS No 10588/1,2,3 Behind Hotel Ramdev," />
+                    <Field label="Address Line 2:" value="Nehru Nagar" />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-6">
+                    <Field label="Locality/City/Town/Village:" value="Belagavi" />
+                    <Field label="Country:" value="INDIA" select />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-6">
+                    <Field label="State:" value="Karnataka" />
+                    <Field label="District:" value="Belagavi" />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-6">
+                    <Field label="Subdistrict (Subdivision/Tehsil/Taluk/Taluka/Mandal/Man.." value="Belagavi" select />
+                    <Field label="Urban Local Body:" value="Belagavi" select />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-6">
+                    <Field label="Pincode:" value="590010" />
+                    <Field label="Website:" value="www.ptes.edu.in" />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-6">
+                    <Field label="Total Area (In acre):" value="0.5" highlight />
+                    <Field label="Total Constructed Area (Ground level only) (In sq m):" value="2160" highlight />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-6 pb-2">
+                    <Field label="Latitude (Range: 6.00000 - 38.00000 in degree):" value="15.87746833" highlight />
+                    <Field label="Longitude (Range: 68.00000 - 98.00000 in degree):" value="74.51657965" highlight />
                   </div>
                 </div>
-
-                {/* Address section header */}
-                <div className="text-white text-[12.5px] font-semibold px-4 py-2 rounded-sm" style={{ backgroundColor: BRAND }}>
-                  Address:
-                </div>
-
-                {/* Location radio */}
-                <div>
-                  <p className="text-[12px] text-gray-600 mb-1.5">Location of the Institution:-</p>
-                  <div className="flex gap-6">
-                    <label className="flex items-center gap-1.5 text-[12px] text-gray-700 cursor-pointer">
-                      <input type="radio" name="location" className="accent-blue-700" /> Rural
-                    </label>
-                    <label className="flex items-center gap-1.5 text-[12px] text-gray-700 cursor-pointer">
-                      <input type="radio" name="location" defaultChecked className="accent-blue-700" /> Urban
-                    </label>
-                  </div>
-                </div>
-
-                {/* Address fields */}
-                <div className="grid grid-cols-2 gap-6">
-                  <Field label="Address Line 1:" value="CTS No 10588/1,2,3 Behind Hotel Ramdev," />
-                  <Field label="Address Line 2:" value="Nehru Nagar" />
-                </div>
-
-                <div className="grid grid-cols-2 gap-6">
-                  <Field label="Locality/City/Town/Village:" value="Belagavi" />
-                  <Field label="Country:" value="INDIA" select />
-                </div>
-
-                <div className="grid grid-cols-2 gap-6">
-                  <Field label="State:" value="Karnataka" />
-                  <Field label="District:" value="Belagavi" />
-                </div>
-
-                <div className="grid grid-cols-2 gap-6">
-                  <Field label="Subdistrict (Subdivision/Tehsil/Taluk/Taluka/Mandal/Man.." value="Belagavi" select />
-                  <Field label="Urban Local Body:" value="Belagavi" select />
-                </div>
-
-                <div className="grid grid-cols-2 gap-6">
-                  <Field label="Pincode:" value="590010" />
-                  <Field label="Website:" value="www.ptes.edu.in" />
-                </div>
-
-                <div className="grid grid-cols-2 gap-6">
-                  <Field label="Total Area (In acre):" value="0.5" highlight />
-                  <Field label="Total Constructed Area (Ground level only) (In sq m):" value="2160" highlight />
-                </div>
-
-                <div className="grid grid-cols-2 gap-6 pb-2">
-                  <Field label="Latitude (Range: 6.00000 - 38.00000 in degree):" value="15.87746833" highlight />
-                  <Field label="Longitude (Range: 68.00000 - 98.00000 in degree):" value="74.51657965" highlight />
-                </div>
               </div>
-            </div>
+            )}
           </div>
         </main>
       </div>
@@ -301,9 +392,8 @@ function Field({
   return (
     <div>
       <label
-        className={`text-[11.5px] font-medium mb-0.5 block ${
-          highlight ? "text-red-600" : "text-gray-600"
-        }`}
+        className={`text-[11.5px] font-medium mb-0.5 block ${highlight ? "text-red-600" : "text-gray-600"
+          }`}
       >
         {label}
       </label>
